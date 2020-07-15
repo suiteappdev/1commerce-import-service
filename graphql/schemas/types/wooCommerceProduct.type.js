@@ -5,8 +5,8 @@ const {
     GraphQLInt
 } = require('graphql');
 
-let ProductType = new GraphQLObjectType({
-    name: 'ProductType',
+let WooCommerceProductType = new GraphQLObjectType({
+    name: 'WooCommerceProductType',
     fields: () => ({
       name: { type: GraphQLString},
       reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
@@ -50,4 +50,4 @@ let ProductType = new GraphQLObjectType({
     }),
 });
 
-module.exports = ProductType;
+module.exports = WooCommerceProductType;

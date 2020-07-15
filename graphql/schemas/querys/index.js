@@ -1,7 +1,7 @@
-const ProductListQuery = require('./product.query');
+const WooCommerceProductListQuery = require('./wooCommerceProduct.query');
 
 module.exports = {
     public : {
-        ProductListQuery
+        WooCommerceProductListQuery
     }
 }
