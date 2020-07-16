@@ -75,15 +75,17 @@ let boot = async (app) =>{
 
             app.use(
                 '/graphql',
-                graphqlHTTP({
-                  schema: publicGraph,
-                  graphiql: true,
-                }),
-              );
+                graphqlHTTP((req, res, params)=>({
+                    schema: publicGraph,
+                    graphiql: true,
+                    context: { req }
+                })),
+            );
 
             app.locals.mainController = {
                 returnError: returnError,
-                apiResponder : apiResponder 
+                apiResponder : apiResponder,
+                graphiqlResponder :  graphiqlResponder
             };
 
             resolve(true);
@@ -112,6 +114,10 @@ const apiResponder = (res, httpCode, data)=>{
     res.status(httpCode);
     res.send(JSON.stringify(data));
     res.end();
+}
+
+const graphiqlResponder = (status, type)=>{
+    return {};
 }
 
 module.exports = {

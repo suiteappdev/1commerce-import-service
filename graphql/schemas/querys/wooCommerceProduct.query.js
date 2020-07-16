@@ -3,13 +3,26 @@ const {
 } = require('graphql');
 
 const { getProducts } = require('../../../controllers/WooCommerce.controller');
-
+const { getToken, validate}  = require('../../../util/auth.util');
 const WooCommerceProductType  = require('../types/wooCommerceProduct.type');
 
 let WooCommerceProductListQuery = {
     type:  new GraphQLList(WooCommerceProductType),
-    resolve: (context) => {
-        return getProducts()
+    resolve: (obj, args, { req }, info) => {
+        try {
+            let token = getToken(req);
+            let credentials = validate(token)
+
+            if(!credentials){
+                throw new Error("Auth token error");
+            }
+            
+            return getProducts(credentials);
+
+        } catch (error) {
+            throw new Error("Auth token error");
+        }
+
     },
 };
   

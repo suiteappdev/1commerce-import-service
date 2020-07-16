@@ -20,17 +20,18 @@ let init = (app, locals)=>{
 
 }
 
-let getProducts = ()=>{
+let getProducts = (credentials)=>{
     return new Promise(async (resolve, reject)=>{
         try {
-         let products = await services.wooCommerce.get("products");
+
+         let WooCommerce = new services.WooCommerceRestApi(credentials);
+         let products = await WooCommerce.get("products");
          
          return resolve (products.data);
             
         } catch (error) {
             reject(error);
         }
-        
     });
 }
 
