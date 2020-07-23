@@ -9,6 +9,12 @@
             "request": "launch",
             "name": "1commerce-import-service-debug",
             "program": "${workspaceFolder}/app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "playground-debug",
+            "program": "${workspaceFolder}/sailsPlayground.js"
         }
     ]
 }

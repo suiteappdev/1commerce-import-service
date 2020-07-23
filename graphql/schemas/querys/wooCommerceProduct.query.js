@@ -17,6 +17,8 @@ let WooCommerceProductListQuery = {
                 throw new Error("Auth token error");
             }
             
+            req.credentials = credentials;
+            
             return getProducts(credentials);
 
         } catch (error) {

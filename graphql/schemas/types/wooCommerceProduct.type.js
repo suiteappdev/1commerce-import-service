@@ -8,6 +8,10 @@ const {
 
 const WooCommerceCategoryType = require('./wooCommerceCategoryType');
 const WooCommerceImageType = require('./WooCommerceImageType');
+const WooCommerceProductVariationType = require('./WooCommerceProductVariationType');
+const stripHtml = require("string-strip-html");
+
+const { getVariations } = require('../../../controllers/WooCommerce.controller');
 
 let WooCommerceProductType = new GraphQLObjectType({
     name: 'WooCommerceProductType',
@@ -16,9 +20,11 @@ let WooCommerceProductType = new GraphQLObjectType({
       reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
         return obj.sku
       }}, //Referencia del Producto
-      description:{ type:GraphQLString }, //Descripción del Producto o Descripción técnica
+      description:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
+        return stripHtml(obj.description)
+      }}, //Descripción del Producto o Descripción técnica
       descriptionShort:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-        return obj.short_description
+        return stripHtml(obj.short_description)
       }}, //Descripción Corta o Descripción comercial
       active:{ type:GraphQLBoolean, resolve:(obj, args, context, info)=>{
         return obj.status == "publish" ? true : false
@@ -29,11 +35,8 @@ let WooCommerceProductType = new GraphQLObjectType({
         return obj.categories.length > 0 ? obj.categories[0] : null
       }}, //Categoria Principal del Producto
       mainColor:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-        console.log(obj)
         return obj.attributes.filter((obj)=>(obj.name.toLowerCase() === 'color' ))[0].options[0]
-
-      }}, //Color Principal del Producto
-      //manufacturer: {model:'manufacturer'}, // Fabricante o Marca del Producto
+      }},
       gender:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
         return obj.attributes.filter((obj)=>(obj.name.toLowerCase() === 'gender' ) || (obj.name.toLowerCase() === 'genero'))[0].options[0]
       }}, //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
@@ -49,28 +52,17 @@ let WooCommerceProductType = new GraphQLObjectType({
       weight:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
         return obj.weight ? parseInt(obj.weight) : null;
       } }, //Peso del Empaque del Producto
-      stock:{ type:GraphQLBoolean, defaultValue:false, resolve:(obj, args, context, info)=>{
-        return obj.manage_stock
-      }}, //No Habilitado, a futuro se utilizará para habilitar funciones avanzadas de manejo de stock
-      //seller: {model:'seller'}, //Vendedor o Seller: Se refiere a quien es el "Dueño" de cada producto
       categories: { type:new GraphQLList(WooCommerceCategoryType), resolve:(obj, args, context, info)=>{
         return obj.categories
       }},
       images:{ type:new GraphQLList(WooCommerceImageType), resolve:(obj, args, context, info)=>{
+        console.log(obj);
         return obj.images
       }},
-      /*variations:{ //Variaciones del Producto Ej: Tallas. Todos los productos deben incluir como mínimo una variación
-        collection:'productvariation',
-        via:'product'
-      },
-      suppliers:{//Proveedores del producto
-        collection:'supplier',
-        via:'products'
-      },
-      discount:{ //Descuentos Asociados al Producto
-        collection:'catalogdiscount',
-        via:'products'
-      }*/
+      variations:{ type:new GraphQLList(WooCommerceProductVariationType), resolve:(obj, args, context, info)=>{
+        let credentials = context.req.credentials;
+        return getVariations(credentials, obj.id);
+      }},
     }),
 });
 

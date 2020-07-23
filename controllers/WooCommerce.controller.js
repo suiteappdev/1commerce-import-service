@@ -35,5 +35,20 @@ let getProducts = (credentials)=>{
     });
 }
 
+let getVariations = (credentials, productId)=>{
+    return new Promise(async (resolve, reject)=>{
+        try {
 
-module.exports = { init, getProducts };
+         let WooCommerce = new services.WooCommerceRestApi(credentials);
+         let products = await WooCommerce.get(`products/${productId}/variations`)
+
+         return resolve (products.data);
+            
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+
+module.exports = { init, getProducts, getVariations };

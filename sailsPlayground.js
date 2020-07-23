@@ -10,9 +10,9 @@ const axios = require('axios');
 //las credenciales y la version del api
 
 let token = jwt.sign({
-    url: "http://localhost",
-    consumerKey: "ck_20ccc436daf55cdadcaa7e933bf3a9728f6a9833",
-    consumerSecret: "cs_60b38991a13e32f1b41d32a097b29ec22f6dce58",
+    url: "http://develop1.webstudiopanama.com/moises/",
+    consumerKey: "ck_7f7954d728760cf952ecf782cf93c49bdaa6abf7",
+    consumerSecret: "cs_01c6139ce2c46cb12766d27e388ae85450f3cfee",
     version: "wc/v3"
 }, 'secret');
 
@@ -31,24 +31,50 @@ const query = `
                 mainCategory {
                     id
                     name
+                    description
+                    parent
+                    active
+                    url
+                    level
+                    createdAt
+                    updateAt
+                    dafiti
+                    mercadolibre
+                    linio
                 }
                 categories{
                     id
                     name
+                    description
+                    parent
+                    active
+                    url
+                    level
+                    createdAt
+                    updateAt
+                    dafiti
+                    mercadolibre
+                    linio
                 }
                 gender
                 mainColor
                 width
                 height
                 length
-                stock
                 images{
-                    id
-                    name
-                    alt
+                    file
+                    position
+                    product
+                    cover
                     src
                 }
-                
+                variations{
+                    quantity
+                    reference
+                    upc
+                    price
+                    ean13
+                }
                 }
             }
   `
@@ -57,10 +83,11 @@ const query = `
 let getData = async ()=>{
     let response =  await axios.post('http://localhost:9000/graphql', { query : query}, { headers : {
         'ips-api-token' : `Bearer ${token}`
-    }});
+    }}).catch((e)=>console.log(e.message));
 
     //la respuesta con el listado de los productos
-    console.log("products", response.data.data['WooCommerceProductListQuery']);
+
+    console.dir(response.data.data['WooCommerceProductListQuery'], {depth: null, colors: true})
 }
 
 getData();
