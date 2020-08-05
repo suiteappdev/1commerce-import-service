@@ -60,6 +60,7 @@ const query = `
                 mainColor
                 width
                 height
+                weight
                 length
                 images{
                     file

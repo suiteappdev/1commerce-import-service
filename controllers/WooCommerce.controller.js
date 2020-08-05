@@ -14,6 +14,8 @@ let init = (app, locals)=>{
     
     locals.controllers.WooCommerce = {
         getProducts,
+        getCategories,
+        getTax
     }
 
     logger.info("Initialization finished.");
@@ -28,6 +30,41 @@ let getProducts = (credentials)=>{
          let products = await WooCommerce.get("products");
          
          return resolve (products.data);
+            
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+let getTax = (type, credentials)=>{
+    return new Promise(async (resolve, reject)=>{
+        try {
+
+         let WooCommerce = new services.WooCommerceRestApi(credentials);
+         let tax = await WooCommerce.get("taxes");
+
+         if(tax && tax.data && tax.data.length > 0){
+            let rs = tax.data.filter((c)=>c.name.toLowerCase() === type.toLowerCase());
+            return resolve (rs.length > 0 ? rs[0] : null);
+         }
+
+         resolve(null);
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+let getCategories = (credentials)=>{
+    return new Promise(async (resolve, reject)=>{
+        try {
+
+         let WooCommerce = new services.WooCommerceRestApi(credentials);
+         let categories = await WooCommerce.get(`products/categories`)
+
+         return resolve (categories.data);
             
         } catch (error) {
             reject(error);
@@ -51,4 +88,4 @@ let getVariations = (credentials, productId)=>{
 }
 
 
-module.exports = { init, getProducts, getVariations };
+module.exports = { init, getProducts, getVariations, getCategories, getTax };
