@@ -9,18 +9,39 @@ const axios = require('axios');
 //la url es el endpoint del servicio rest del woocomerce
 //las credenciales y la version del api
 
+/*
+Shopify
+
+Clave API
+9e8877c5de8113efcbb21754fee5183a
+
+Contraseña
+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
+
+Url
+https://9e8877c5de8113efcbb21754fee5183a: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@openhouseg.myshopify.com/admin/api/2020-07/orders.json
+
+Secret
+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
+
+
+*/
+
 let token = jwt.sign({
     url: "http://develop1.webstudiopanama.com/moises/",
-    consumerKey: "ck_7f7954d728760cf952ecf782cf93c49bdaa6abf7",
-    consumerSecret: "cs_01c6139ce2c46cb12766d27e388ae85450f3cfee",
-    version: "wc/v3"
+    apiKey: "9e8877c5de8113efcbb21754fee5183a",
+    consumerSecret: "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",
+    password : "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",
+    version: "2020-07",
+    provider : 'shopify',
+    shopName : 'openhouseg.myshopify.com'
 }, 'secret');
 
 
 //esta es la query
 const query = `
             {
-                WooCommerceProductListQuery{
+                ShopifyProductListQuery{
                 name
                 description
                 reference
@@ -65,13 +86,13 @@ const query = `
                 images{
                     file
                     position
-                    product
                     cover
                     src
                 }
                 variations{
                     quantity
                     reference
+                    talla
                     upc
                     price
                     ean13
@@ -86,9 +107,7 @@ let getData = async ()=>{
         'ips-api-token' : `Bearer ${token}`
     }}).catch((e)=>console.log(e.message));
 
-    //la respuesta con el listado de los productos
-
-    console.dir(response.data.data['WooCommerceProductListQuery'], {depth: null, colors: true})
+    console.dir(response.data, {depth: null, colors: true})
 }
 
 getData();

@@ -4,29 +4,29 @@ var fs = require('fs');
 var loggers = {};
 var logger = getLogger("logger");
 
-function init(app, locals){
+function init(app, locals) {
     logger.info("Initialization started.");
 
     locals.logger = {
         getLogger: getLogger
     };
 
-    try{
+    try {
         fs.accessSync("./logs/global.log", fs.F_OK);
         initLog4js();
-    }catch(e){
+    } catch (e) {
         logger.warn("Couldn't find ./logs/global.log.");
         logger.info("Try to create ./logs/global.log.");
-        try{
+        try {
             fs.mkdirSync("./logs");
 
             var stream = fs.createWriteStream("./logs/global.log");
             stream.end();
 
             initLog4js();
-        }catch (e2){
+        } catch (e2) {
             logger.error("Stopped the cetr initialization, can't initializes the logger.");
-            logger.error("Error: "+e2.message);
+            logger.error("Error: " + e2.message);
             process.exit(1);
         }
     }
@@ -34,9 +34,9 @@ function init(app, locals){
     logger.info("Initialization finished.");
 }
 
-function getLogger(name){
-    if(name != undefined) {
-        name = name+"";
+function getLogger(name) {
+    if (name != undefined) {
+        name = name + "";
 
         if (loggers[name] != undefined) {
             return loggers[name];
@@ -53,7 +53,7 @@ function getLogger(name){
         return getLogger("UNKNOWN");
 }
 
-function initLog4js(){
+function initLog4js() {
     logger.info("Initialization of log4js started.");
 
     log4js.configure({

@@ -12,7 +12,7 @@ const WooCommerceProductVariationType = require('./WooCommerceProductVariationTy
 const WoocommerceTaxType =  require('./WooCommerceTaxType');
 const stripHtml = require("string-strip-html");
 
-const { getVariations, getCategories, getTax } = require('../../../controllers/WooCommerce.controller');
+const { getVariations, getCategories, getTax } = require('../../../../controllers/WooCommerce.controller');
 
 let WooCommerceProductType = new GraphQLObjectType({
     name: 'WooCommerceProductType',
@@ -38,7 +38,10 @@ let WooCommerceProductType = new GraphQLObjectType({
         return getTax(obj.tax_class, credentials);
       }},
       manufacturer:{ type:GraphQLString, resolve : (obj, args, context, info)=>{
-        return obj.brands[0].name;
+        if(obj.brands){
+          return obj.brands[0].name;
+        }
+        return  obj.attributes.length > 0  ? obj.attributes.filter((o)=>(o.name.toLowerCase() === 'marca'  || o.name.toLowerCase() === 'Marca' ))[0].options[0] : ""
       }}, 
       mainCategory: { type:WooCommerceCategoryType, resolve:(obj, args, context, info)=>{
         return obj.categories.length > 0 ? obj.categories[0] : null
@@ -48,14 +51,14 @@ let WooCommerceProductType = new GraphQLObjectType({
             return obj.attributes.length > 0  ? obj.attributes.filter((o)=>(o.name.toLowerCase() === 'color'  || o.name.toLowerCase() === 'Color' ))[0].options[0] : ""
           
         } catch (error) {
-          console.log(error);
+         return null;
         }
       }},
       gender:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
         try {
-           return obj.attributes.length > 0 ?  obj.attributes.filter((o)=>(o.name.toLowerCase() === 'gender' ) || (o.name.toLowerCase() === 'genero'))[0].options[0] : ""
+           return obj.attributes.length > 0 ?  obj.attributes.filter((o)=>(o.name.toLowerCase() === 'gender' )  || (o.name.toLowerCase() === 'género' )  || (o.name.toLowerCase() === 'genero'))[0].options[0] : ""
         } catch (error) {
-          return "" 
+          return null;
         }
       }}, //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
       width:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{

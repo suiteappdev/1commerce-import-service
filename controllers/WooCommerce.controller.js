@@ -2,7 +2,7 @@
 let services;
 let logger;
 
-let init = (app, locals)=>{
+let init = (app, locals) => {
     logger = locals.logger.getLogger("WooCommerceController");
 
     services = locals.services || {};
@@ -11,7 +11,7 @@ let init = (app, locals)=>{
 
 
     locals.controllers = locals.controllers || {}
-    
+
     locals.controllers.WooCommerce = {
         getProducts,
         getCategories,
@@ -22,34 +22,14 @@ let init = (app, locals)=>{
 
 }
 
-let getProducts = (credentials)=>{
-    return new Promise(async (resolve, reject)=>{
+let getProducts = (credentials) => {
+    return new Promise(async (resolve, reject) => {
         try {
 
-         let WooCommerce = new services.WooCommerceRestApi(credentials);
-         let products = await WooCommerce.get("products");
-         
-         return resolve (products.data);
-            
-        } catch (error) {
-            reject(error);
-        }
-    });
-}
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+            let products = await WooCommerce.get("products");
 
-let getTax = (type, credentials)=>{
-    return new Promise(async (resolve, reject)=>{
-        try {
-
-         let WooCommerce = new services.WooCommerceRestApi(credentials);
-         let tax = await WooCommerce.get("taxes");
-
-         if(tax && tax.data && tax.data.length > 0){
-            let rs = tax.data.filter((c)=>c.name.toLowerCase() === type.toLowerCase());
-            return resolve (rs.length > 0 ? rs[0] : null);
-         }
-
-         resolve(null);
+            return resolve(products.data);
 
         } catch (error) {
             reject(error);
@@ -57,30 +37,50 @@ let getTax = (type, credentials)=>{
     });
 }
 
-let getCategories = (credentials)=>{
-    return new Promise(async (resolve, reject)=>{
+let getTax = (type, credentials) => {
+    return new Promise(async (resolve, reject) => {
         try {
 
-         let WooCommerce = new services.WooCommerceRestApi(credentials);
-         let categories = await WooCommerce.get(`products/categories`)
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+            let tax = await WooCommerce.get("taxes");
 
-         return resolve (categories.data);
-            
+            if (tax && tax.data && tax.data.length > 0) {
+                let rs = tax.data.filter((c) => c.name.toLowerCase() === type.toLowerCase());
+                return resolve(rs.length > 0 ? rs[0] : null);
+            }
+
+            resolve(null);
+
         } catch (error) {
             reject(error);
         }
     });
 }
 
-let getVariations = (credentials, productId)=>{
-    return new Promise(async (resolve, reject)=>{
+let getCategories = (credentials) => {
+    return new Promise(async (resolve, reject) => {
         try {
 
-         let WooCommerce = new services.WooCommerceRestApi(credentials);
-         let products = await WooCommerce.get(`products/${productId}/variations`)
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+            let categories = await WooCommerce.get(`products/categories`)
 
-         return resolve (products.data);
-            
+            return resolve(categories.data);
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+let getVariations = (credentials, productId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+            let products = await WooCommerce.get(`products/${productId}/variations`)
+
+            return resolve(products.data);
+
         } catch (error) {
             reject(error);
         }

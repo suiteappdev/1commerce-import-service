@@ -2,19 +2,19 @@ const {
     GraphQLList
 } = require('graphql');
 
-const { getProducts } = require('../../../controllers/WooCommerce.controller');
+const { getProducts, fetchAll } = require('../../../controllers/Shopify.controller');
 const { getToken, validate}  = require('../../../util/auth.util');
-const WooCommerceProductType  = require('../types/wooCommerce/wooCommerceProduct.type');
+const shopifyProductType  = require('../types/shopify/shopifyProduct.type');
 
-let WooCommerceProductListQuery = {
-    type:  new GraphQLList(WooCommerceProductType),
-    resolve: (obj, args, { req }, info) => {
+let ShopifyProductListQuery = {
+    type:  new GraphQLList(shopifyProductType),
+    resolve: async (obj, args, { req }, info) => {
         try {
             let token = getToken(req);
             let credentials = validate(token);
-           
-            delete credentials.iat;
-            
+
+            await fetchAll(credentials);
+
             if(!credentials){
                 throw new Error("Auth token error");
             }
@@ -30,4 +30,4 @@ let WooCommerceProductListQuery = {
     },
 };
   
-module.exports = WooCommerceProductListQuery;
+module.exports = ShopifyProductListQuery;
