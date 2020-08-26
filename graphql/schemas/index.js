@@ -1,5 +1,5 @@
 const { GraphQLObjectType, GraphQLSchema } = require('graphql');
-const { public } = require('./querys/');
+const { public } = require('./querys/index');
 
 const PublicRootQuery = new GraphQLObjectType({
     name: 'PublicQuery',

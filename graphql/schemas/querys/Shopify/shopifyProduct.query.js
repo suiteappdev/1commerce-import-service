@@ -2,9 +2,9 @@ const {
     GraphQLList
 } = require('graphql');
 
-const { getProducts, fetchAll } = require('../../../controllers/Shopify.controller');
-const { getToken, validate}  = require('../../../util/auth.util');
-const shopifyProductType  = require('../types/shopify/shopifyProduct.type');
+const { getProducts, fetchAll } = require('../../../../controllers/Shopify.controller');
+const { getToken, validate}  = require('../../../../util/auth.util');
+const shopifyProductType  = require('../../types/shopify/shopifyProduct.type');
 
 let ShopifyProductListQuery = {
     type:  new GraphQLList(shopifyProductType),

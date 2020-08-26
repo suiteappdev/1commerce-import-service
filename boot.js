@@ -72,7 +72,6 @@ let boot = async (app) =>{
             for(r in routes){
                 app.use('/api/',  require(`${ROUTE_DIR}${routes[r]}`));
             }
-
             app.use(
                 '/graphql',
                 graphqlHTTP((req, res, params)=>({

@@ -34,31 +34,39 @@ let WooCommerceProductType = new GraphQLObjectType({
         return obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0
       }}, 
       tax:{ type:WoocommerceTaxType, resolve : (obj, args, context, info)=>{
-        let credentials = context.req.credentials;
-        return getTax(obj.tax_class, credentials);
+        return getTax(obj.tax_class, context.req);
       }},
       manufacturer:{ type:GraphQLString, resolve : (obj, args, context, info)=>{
         if(obj.brands){
           return obj.brands[0].name;
         }
-        return  obj.attributes.length > 0  ? obj.attributes.filter((o)=>(o.name.toLowerCase() === 'marca'  || o.name.toLowerCase() === 'Marca' ))[0].options[0] : ""
+
+        if(( obj.attributes &&  obj.attributes.length > 0 )){
+          let attrs = obj.attributes;
+          let manufacturer = attrs.filter(o=>o.name.toLowerCase() === 'marca');
+
+          if(manufacturer.length > 0)
+            return manufacturer[0].options[0];
+          else
+            return null;
+        }
+        
       }}, 
       mainCategory: { type:WooCommerceCategoryType, resolve:(obj, args, context, info)=>{
         return obj.categories.length > 0 ? obj.categories[0] : null
       }}, //Categoria Principal del Producto
       mainColor:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-        try {
             return obj.attributes.length > 0  ? obj.attributes.filter((o)=>(o.name.toLowerCase() === 'color'  || o.name.toLowerCase() === 'Color' ))[0].options[0] : ""
-          
-        } catch (error) {
-         return null;
-        }
       }},
       gender:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-        try {
-           return obj.attributes.length > 0 ?  obj.attributes.filter((o)=>(o.name.toLowerCase() === 'gender' )  || (o.name.toLowerCase() === 'género' )  || (o.name.toLowerCase() === 'genero'))[0].options[0] : ""
-        } catch (error) {
-          return null;
+        if(( obj.attributes &&  obj.attributes.length > 0 )){
+          let attrs = obj.attributes;
+          let gender = attrs.filter(o=>(o.name.toLowerCase() === 'gender' || o.name.toLowerCase() === 'genero' || o.name.toLowerCase() === 'género'));
+
+          if(gender.length > 0)
+            return gender[0].options[0];
+          else
+            return null;
         }
       }}, //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
       width:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
@@ -74,15 +82,13 @@ let WooCommerceProductType = new GraphQLObjectType({
         return obj.weight ? parseInt(obj.weight == "" ?  0 : obj.weight ) : 0;
       } }, //Peso del Empaque del Producto
       categories: { type:new GraphQLList(WooCommerceCategoryType), resolve:(obj, args, context, info)=>{
-        let credentials = context.req.credentials;
-        return getCategories(credentials);
+        return obj.categories || [];
       }},
       images:{ type:new GraphQLList(WooCommerceImageType), resolve:(obj, args, context, info)=>{
         return obj.images
       }},
       variations:{ type:new GraphQLList(WooCommerceProductVariationType), resolve:(obj, args, context, info)=>{
-        let credentials = context.req.credentials;
-        return getVariations(credentials, obj.id);
+          return getVariations(context.req, obj.id);
       }},
     }),
 });

@@ -22,14 +22,21 @@ let init = (app, locals) => {
 
 }
 
-let getProducts = (credentials) => {
+let getProducts = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
+            let list = [];
+            let products = [];
+            //let categories = await WooCommerce.get(`products/categories`).catch((e)=>console.log(e));
 
             let WooCommerce = new services.WooCommerceRestApi(credentials);
-            let products = await WooCommerce.get("products");
+            let response = await WooCommerce.get("products", { per_page: listing.pagination.pageSize, page: listing.pagination.page });
 
-            return resolve(products.data);
+            resolve({
+                totalRecords : (response.headers['x-wp-total']),
+                pagesCount : parseInt(response.headers['x-wp-totalpages']),
+                data : response.data || []
+            });
 
         } catch (error) {
             reject(error);
@@ -77,9 +84,13 @@ let getVariations = (credentials, productId) => {
         try {
 
             let WooCommerce = new services.WooCommerceRestApi(credentials);
-            let products = await WooCommerce.get(`products/${productId}/variations`)
+            let products = await WooCommerce.get(`products/${productId}/variations`);
 
-            return resolve(products.data);
+            if (products && products.data) {
+                return resolve(products.data);
+            }
+
+            resolve([])
 
         } catch (error) {
             reject(error);
