@@ -2,32 +2,28 @@ const {
     GraphQLList
 } = require('graphql');
 
-const { getProducts, fetchAll } = require('../../../../controllers/Shopify.controller');
+const { getProducts } = require('../../../../controllers/Shopify.controller');
 const { getToken, validate}  = require('../../../../util/auth.util');
-const shopifyProductType  = require('../../types/shopify/shopifyProduct.type');
+const ShopifyProductListType  = require('../../types/shopify/shopifyProductListType');
+const ListingInput = require('../../types/pagination/listingInput');
 
-let ShopifyProductListQuery = {
-    type:  new GraphQLList(shopifyProductType),
-    resolve: async (obj, args, { req }, info) => {
-        try {
-            let token = getToken(req);
-            let credentials = validate(token);
-
-            await fetchAll(credentials);
-
-            if(!credentials){
-                throw new Error("Auth token error");
-            }
-            
-            req.credentials = credentials;
-            
-            return getProducts(credentials);
-
-        } catch (error) {
+const ShopifyProductListQuery = {
+    type:  ShopifyProductListType,
+    args: { listing: { type: ListingInput } },
+    resolve: (_, { listing }, context) => {
+        let token = getToken(context.req);
+        let credentials = validate(token);
+       
+        delete credentials.iat;
+        
+        if(!credentials){
             throw new Error("Auth token error");
         }
-
-    },
+        
+        context.req = credentials;
+        
+        return getProducts(credentials, listing);
+    }
 };
   
 module.exports = ShopifyProductListQuery;

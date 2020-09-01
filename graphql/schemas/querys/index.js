@@ -1,8 +1,9 @@
 let WooCommerceProduct = require('./WooCommerce/wooCommerceProduct.query');
-//const ShopifyProductListQuery = require('./Shopify/shopifyProduct.query');
+const ShopifyProducts = require('./Shopify/ShopifyProduct.query');
 
 module.exports = {
     public: {
-        WooCommerceProduct
+        WooCommerceProduct,
+        ShopifyProducts
     }
 }

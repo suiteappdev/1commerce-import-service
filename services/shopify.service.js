@@ -30,10 +30,33 @@ let init = async (app, locals) => {
 
 }
 
-let getData = (credentials, collection, params) => {
+let getData = (credentials, collection, params, includePagination) => {
     return new Promise(async (resolve, reject) => {
-        let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/${collection}.json${params ? params : ''}`).catch(e => reject(e))
-
+        let response;
+        try {
+         response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/${collection}.json${params ? params : ''}`).catch(e => reject(e))
+        } catch (error) {
+            console.log(error);
+        }
+        
+        if(includePagination){
+            const url = require('url');
+            let page_info;
+            let next;
+    
+            if(response.headers['link'].split(',').length === 1){
+                next = response.headers['link'].replace('; rel="next"','').replace('<', '').replace('>', '');
+            }else{
+                next = response.headers['link'].split(',')[1].replace('; rel="next"','').replace('<', '').replace('>', '');
+            }
+    
+         const current_url = new URL(next);
+            const search_params = current_url.searchParams;
+            page_info = search_params.get('page_info');
+    
+            response.data.pagination = page_info;
+        }
+        
         if(response && response.data){
             return resolve(response.data);
         }
@@ -44,7 +67,7 @@ let getData = (credentials, collection, params) => {
 
 let count = (credentials, collection) => {
     return new Promise(async (resolve, reject) => {
-        let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/${collection}/count.json`).catch(e => reject(e))
+        let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/${collection}/count.json`).catch(e => console.log("ERR", e) && reject(e))
 
         resolve(response.data);
     });

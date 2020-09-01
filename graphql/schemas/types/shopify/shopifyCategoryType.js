@@ -10,7 +10,7 @@ let ShopifyCategoryType = new GraphQLObjectType({
     fields: () => ({
       id : { type: GraphQLString},
       name: { type: GraphQLString, resolve: (obj, args, context, info) => {
-        return obj.handle
+        return obj.handle || obj.title
       }},
       description : { type: GraphQLString, resolve: (obj, args, context, info) => {
         return obj.title
@@ -18,6 +18,7 @@ let ShopifyCategoryType = new GraphQLObjectType({
       parent : { type: GraphQLInt},
       active : {type: GraphQLBoolean},
       url : {type: GraphQLString},
+      product_id : {type: GraphQLString},
       level : {type: GraphQLInt},
       createdAt : {type: GraphQLString, resolve: (obj, args, context, info) => {
         return obj.published_at

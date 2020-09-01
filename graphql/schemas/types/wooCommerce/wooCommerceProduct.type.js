@@ -56,12 +56,12 @@ let WooCommerceProductType = new GraphQLObjectType({
         return obj.categories.length > 0 ? obj.categories[0] : null
       }}, //Categoria Principal del Producto
       mainColor:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-            return obj.attributes.length > 0  ? obj.attributes.filter((o)=>(o.name.toLowerCase() === 'color'  || o.name.toLowerCase() === 'Color' ))[0].options[0] : ""
+            return obj.attributes.length > 0  ? obj.attributes.filter((o)=>(o.name.toLowerCase() === 'color'))[0].options[0] : ""
       }},
       gender:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
         if(( obj.attributes &&  obj.attributes.length > 0 )){
           let attrs = obj.attributes;
-          let gender = attrs.filter(o=>(o.name.toLowerCase() === 'gender' || o.name.toLowerCase() === 'genero' || o.name.toLowerCase() === 'género'));
+          let gender = attrs.filter(o=>(o.name.toLowerCase() === 'gender' || o.name.toLowerCase() === 'genero' || o.name.toLowerCase() === 'género' || o.name.toLowerCase() === 'género'));
 
           if(gender.length > 0)
             return gender[0].options[0];

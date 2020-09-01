@@ -31,19 +31,12 @@ let each = async (array, callback) => {
 
 let getCategoryByProductId = (credentials, productId)=>{
     return new Promise( async (resolve, reject)=>{
-        let collectCount = await services.Shopify.count({
-            shopName: credentials.shopName,
-            apiKey: credentials.consumerSecret,
-            password: credentials.password,
-            version: credentials.version
-        }, 'collects');
-
         let collectsRequest = await services.Shopify.getData({
             shopName: credentials.shopName,
             apiKey: credentials.consumerSecret,
             password: credentials.password,
             version: credentials.version
-        }, 'collects',  `?limit=${collectCount.count}`).catch((e)=>reject(e));
+        }, 'collects',  `?limit=${1000}`, false).catch((e)=>reject(e));
 
         if(collectsRequest &&  collectsRequest.collects.length  > 0){
             let colId = collectsRequest.collects.filter(p=>p.product_id == productId);
@@ -55,7 +48,7 @@ let getCategoryByProductId = (credentials, productId)=>{
                     apiKey: credentials.consumerSecret,
                     password: credentials.password,
                     version: credentials.version
-                }, `collections/${category}`,  ``).catch((e)=>reject(e));
+                }, `collections/${category}`,  ``, false).catch((e)=>reject(e));
     
                 return resolve(response.collection);
             }
@@ -67,25 +60,57 @@ let getCategoryByProductId = (credentials, productId)=>{
     });
 }
 
-let getProducts = (credentials) => {
-    return new Promise(async (resolve, reject) => {
-        try {
 
-            let responseCount = await services.Shopify.count({
+let getCollects = (credentials)=>{
+    return new Promise(async (resolve, reject)=>{
+        try {
+            let collectCount = await services.Shopify.count({
                 shopName: credentials.shopName,
                 apiKey: credentials.consumerSecret,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products');
+            }, 'collects');
+    
+            let collectsRequest = await services.Shopify.getData({
+                shopName: credentials.shopName,
+                apiKey: credentials.consumerSecret,
+                password: credentials.password,
+                version: credentials.version
+            }, 'collects',  `?limit=${collectCount.count}`).catch((e)=>reject(e));
+            
+            resolve(collectsRequest.collects);
+
+        } catch (error) {
+            reject(error);
+        }
+
+    });
+}
+
+let getProducts = (credentials, listing) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            let categories = await getCategories(credentials);
 
             let response = await services.Shopify.getData({
                 shopName: credentials.shopName,
                 apiKey: credentials.consumerSecret,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${responseCount.count}`);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}`, true);
+            
+            let rs = {
+                totalRecords :null,
+                pagination : response.pagination  || null,
+                pagesCount : null ,
+                data : response.products.map((p)=>{
+                    p.categories = categories;
+                    return p;
+                }) || []
+            }
 
-            return resolve(response.products);
+            return resolve(rs);
 
         } catch (error) {
             reject(error);
@@ -116,15 +141,25 @@ let getTax = (type, credentials) => {
 let getCategories = (credentials) => {
     return new Promise(async (resolve, reject) => {
         try {
+            let categories = [];
 
-            let response = await services.Shopify.getData({
+            let responseCustomCollection = await services.Shopify.getData({
                 shopName: credentials.shopName,
                 apiKey: credentials.consumerSecret,
                 password: credentials.password,
                 version: credentials.version
-            }, 'custom_collections');
+            }, 'custom_collections', '', false);
 
-            return resolve(response.custom_collections);
+            let responseSmartCollection = await services.Shopify.getData({
+                shopName: credentials.shopName,
+                apiKey: credentials.consumerSecret,
+                password: credentials.password,
+                version: credentials.version
+            }, 'smart_collections', '', false);
+
+            categories = [...responseCustomCollection.custom_collections, ...responseSmartCollection.smart_collections];
+
+            return resolve(categories);
 
         } catch (error) {
             reject(error);
@@ -132,60 +167,9 @@ let getCategories = (credentials) => {
     });
 }
 
-let getCollections = (credentials)=>{
-    return new Promise(async (resolve, reject)=>{
-        try {
-            let collectCount = await services.Shopify.count({
-                shopName: credentials.shopName,
-                apiKey: credentials.consumerSecret,
-                password: credentials.password,
-                version: credentials.version
-            }, 'collects');
-        } catch (error) {
-            return reject(error);
-        }
-
-        try {
-            let collectsRequest = await services.Shopify.getData({
-                shopName: credentials.shopName,
-                apiKey: credentials.consumerSecret,
-                password: credentials.password,
-                version: credentials.version
-            }, 'collects',  `?limit=${collectCount.count}`).catch((e)=>reject(e));
-        
-        } catch (error) {
-            return reject(error);
-        }
-
-        resolve(collectsRequest.collects);
-    });
+let categorize  = (product_id, collections, categories)=>{
+    let colId = collections.filter(p=>p.product_id == product_id);
+    return colId.length > 0 ? colId[0].collection_id : null;
 }
 
-let getVariations = (credentials, productId) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-
-            let WooCommerce = new services.WooCommerceRestApi(credentials);
-            let products = await WooCommerce.get(`products/${productId}/variations`)
-
-            return resolve(products.data);
-
-        } catch (error) {
-            reject(error);
-        }
-    });
-}
-
-let fetchAll = (credentials)=>{
-    let catalogs = {};
-
-    return new Promise(async (resolve, reject)=>{
-        try{ catalogs.products = await getProducts(credentials)}catch(e){ reject(new Error("cant get product catalog"))}
-        try{ catalogs.collection = await getCollections(credentials)}catch(e){ reject(new Error("cant get product collections"))}
-        
-        resolve(catalogs);
-    });
-}
-
-
-module.exports = { init, getProducts, getVariations, getCategories, getTax, getCategoryByProductId, fetchAll };
+module.exports = { init, getProducts, getCategories, getTax, getCategoryByProductId, categorize, getCollects };

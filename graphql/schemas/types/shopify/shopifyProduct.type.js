@@ -49,8 +49,8 @@ let ShopifyProductType = new GraphQLObjectType({
     },
     tax: {
       type: ShopifyTaxType, resolve: (obj, args, context, info) => {
-        let credentials = context.req.credentials;
-        return getTax(obj.tax_class, credentials);
+        let credentials = context.req;
+        return null
       }
     },
     manufacturer: {
@@ -60,7 +60,7 @@ let ShopifyProductType = new GraphQLObjectType({
     },
     mainCategory: {
       type: ShopifyCategoryType, resolve: (obj, args, context, info) => {
-        let credentials = context.req.credentials;
+        let credentials = context.req;
         return getCategoryByProductId(credentials, obj.variants[0].product_id);
       }
     },
@@ -96,8 +96,8 @@ let ShopifyProductType = new GraphQLObjectType({
     },
     categories: {
       type: new GraphQLList(ShopifyCategoryType), resolve: (obj, args, context, info) => {
-        let credentials = context.req.credentials;
-        return getCategories(credentials);
+        let credentials = context.req;
+        return obj.categories;
       }
     },
     images: {
@@ -107,7 +107,10 @@ let ShopifyProductType = new GraphQLObjectType({
     },
     variations: {
       type: new GraphQLList(ShopifyProductVariationType), resolve: (obj, args, context, info) => {
-        return obj.variants
+        return obj.variants.map((v)=>{
+            v.options = obj.options;
+            return v;
+        });
       }
     },
   }),
