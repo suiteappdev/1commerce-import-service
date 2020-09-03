@@ -88,7 +88,48 @@ let WooCommerceProductType = new GraphQLObjectType({
         return obj.images
       }},
       variations:{ type:new GraphQLList(WooCommerceProductVariationType), resolve:(obj, args, context, info)=>{
-          return getVariations(context.req, obj.id);
+          let getGender = (p)=>{
+            if(( p.attributes &&  p.attributes.length > 0 )){
+              let attrs = obj.attributes;
+              let gender = attrs.filter(o=>(o.name.toLowerCase() === 'gender' || o.name.toLowerCase() === 'genero' || o.name.toLowerCase() === 'género'));
+    
+              if(gender.length > 0)
+                return gender[0].options[0];
+              else
+                return null;
+            }
+            return null;
+          }
+
+          let getSize = (p)=>{
+            if(( p.attributes &&  p.attributes.length > 0 )){
+              let attrs = p.attributes;
+              let size = attrs.filter(o=>(o.name.toLowerCase() === 'talla' || o.name.toLowerCase() === 'tamaño' || o.name.toLowerCase() === 'size'));
+    
+              if(size.length > 0)
+                return size[0].option;
+              else
+                return null;
+            }
+    
+            return null;
+          }
+
+        if(!obj.variations || obj.variations.length == 0){
+          return [
+            {
+              supplierreference:obj.sku,
+              ean13:obj.ean13 || '',
+              upc:obj.upc || '', 
+              price:obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0,
+              gender:getGender(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
+              talla:getSize(obj) || 'Único', //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
+              quantity:obj.stock_quantity || 0
+            }
+          ];
+        }
+        
+        return getVariations(context.req, obj.id);
       }},
     }),
 });
