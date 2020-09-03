@@ -109,26 +109,26 @@ let WooCommerceProductType = new GraphQLObjectType({
               if(size.length > 0)
                 return size[0].option;
               else
-                return null;
+                return 'único';
             }
     
-            return null;
+            return 'único';
           }
 
-        if(!obj.variations || obj.variations.length == 0){
-          return [
-            {
-              supplierreference:obj.sku,
-              ean13:obj.ean13 || '',
-              upc:obj.upc || '', 
-              price:obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0,
-              gender:getGender(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
-              talla:getSize(obj) || 'Único', //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
-              quantity:obj.stock_quantity || 0
+          if(!obj.variations || obj.variations.length === 0){
+            let defaultVariation = {
+                reference:obj.sku,
+                ean13:obj.ean13 || '',
+                upc:obj.upc || '', 
+                price:obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0,
+                gender:getGender(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
+                talla:getSize(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
+                quantity:obj.stock_quantity || 0
             }
-          ];
-        }
-        
+            
+            return [defaultVariation];
+          }
+
         return getVariations(context.req, obj.id);
       }},
     }),
