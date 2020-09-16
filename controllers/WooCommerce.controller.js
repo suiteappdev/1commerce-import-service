@@ -53,6 +53,11 @@ let getTax = (type, credentials) => {
 
             if (tax && tax.data && tax.data.length > 0) {
                 let rs = tax.data.filter((c) => c.name.toLowerCase() === type.toLowerCase());
+
+                if(!rs || rs.length == 0){
+                    return resolve(tax.data.filter(t=>t.class === 'standard')[0]);
+                }
+
                 return resolve(rs.length > 0 ? rs[0] : null);
             }
 
