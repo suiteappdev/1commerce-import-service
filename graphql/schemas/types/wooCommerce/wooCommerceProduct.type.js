@@ -129,7 +129,7 @@ let WooCommerceProductType = new GraphQLObjectType({
                 price:obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0,
                 gender:getGender(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
                 talla:getSize(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
-                quantity:obj.stock_quantity || 0
+                stock_quantity:obj.stock_quantity || 0
             }
             
             return [defaultVariation];
