@@ -25,17 +25,28 @@ let init = (app, locals) => {
 let getProducts = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let list = [];
-            let products = [];
-            //let categories = await WooCommerce.get(`products/categories`).catch((e)=>console.log(e));
-
             let WooCommerce = new services.WooCommerceRestApi(credentials);
             let response = await WooCommerce.get("products", { per_page: listing.pagination.pageSize, page: listing.pagination.page });
+            let tax = await WooCommerce.get("taxes");
+
+            let findTax = (taxClass, taxes)=>{
+                return tax.data.filter((c) => c.name.toLowerCase() === taxClass.toLowerCase());
+            }
+
+            let results = response.data.map((p)=>{
+                let tx = findTax(p.tax_class, tax);
+
+                if(!tx || tx.length == 0){
+                    p.tax = tax.data.filter(t=>t.class === 'standard')[0]
+                }
+
+                return p;
+            });
 
             resolve({
                 totalRecords : (response.headers['x-wp-total']),
                 pagesCount : parseInt(response.headers['x-wp-totalpages']),
-                data : response.data || []
+                data : results || []
             });
 
         } catch (error) {

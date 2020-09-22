@@ -18,7 +18,13 @@ let WooCommerceProductType = new GraphQLObjectType({
     name: 'WooCommerceProductType',
     fields: () => ({
       name: { type: GraphQLString},
+      externalId: { type: GraphQLString,  resolve:(obj, args, context, info)=>{
+        return obj.id.toString();
+      }},
       reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
+        if(obj.sku === 'CM021401'){
+          console.log(obj)
+        }
         return obj.sku
       }}, //Referencia del Producto
       description:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
@@ -31,10 +37,10 @@ let WooCommerceProductType = new GraphQLObjectType({
         return obj.status == "publish" ? true : false
       }}, //Estado del Producto
       price:{ type:GraphQLInt, resolve : (obj, args, context, info)=>{
-        return obj.regular_price ? parseInt(obj.regular_price == "" ? 0 : obj.regular_price) : 0
+        return obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0
       }}, 
       tax:{ type:WoocommerceTaxType, resolve : (obj, args, context, info)=>{
-        return getTax(obj.tax_class, context.req);
+        return obj.tax;
       }},
       manufacturer:{ type:GraphQLString, resolve : (obj, args, context, info)=>{
         if(obj.brands){
