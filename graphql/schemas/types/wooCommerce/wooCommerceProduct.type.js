@@ -97,7 +97,7 @@ let WooCommerceProductType = new GraphQLObjectType({
           let getGender = (p)=>{
             if(( p.attributes &&  p.attributes.length > 0 )){
               let attrs = obj.attributes;
-              let gender = attrs.filter(o=>(o.name.toLowerCase() === 'gender' || o.name.toLowerCase() === 'genero' || o.name.toLowerCase() === 'género'));
+              let gender = attrs.filter(o=>(o.name.toLowerCase() === 'gender' || o.name.toLowerCase() === 'genero' || o.name === 'Género'));
     
               if(gender.length > 0)
                 return gender[0].options[0];
@@ -113,7 +113,7 @@ let WooCommerceProductType = new GraphQLObjectType({
               let size = attrs.filter(o=>(o.name.toLowerCase() === 'talla' || o.name.toLowerCase() === 'tamaño' || o.name.toLowerCase() === 'size'));
     
               if(size.length > 0)
-                return size[0].option;
+                return size[0].options[0];
               else
                 return 'único';
             }
@@ -123,7 +123,7 @@ let WooCommerceProductType = new GraphQLObjectType({
 
           if(!obj.variations || obj.variations.length === 0){
             let defaultVariation = {
-                reference:obj.sku,
+                sku:obj.sku,
                 ean13:obj.ean13 || '',
                 upc:obj.upc || '', 
                 price:obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0,

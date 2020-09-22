@@ -27,9 +27,9 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
             return gender[0].options[0];
           else
             return null;
+        }else{
+          return obj.gender;
         }
-
-        return null;
       }}, //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
       talla:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
         if(( obj.attributes &&  obj.attributes.length > 0 )){
@@ -40,10 +40,9 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
             return size[0].option;
           else
             return null;
+        }else{
+          return obj.talla;
         }
-
-        return null;
-   
       }}, //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
       quantity:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
         return obj.stock_quantity || 0
