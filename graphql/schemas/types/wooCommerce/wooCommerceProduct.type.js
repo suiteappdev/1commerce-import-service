@@ -22,9 +22,6 @@ let WooCommerceProductType = new GraphQLObjectType({
         return obj.id.toString();
       }},
       reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-        if(obj.sku === 'CM021401'){
-          console.log(obj)
-        }
         return obj.sku
       }}, //Referencia del Producto
       description:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
