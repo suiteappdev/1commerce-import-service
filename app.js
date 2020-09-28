@@ -13,11 +13,10 @@ app.config = config;
     })
 
     if (isReady) {
-        app.listen(process.env.PORT || 9000, function () {
-            console.log(`[${process.env.NODE_ENV || 'development'}] - 1commerce-import-service on PORT ${(process.env.PORT || 9000)}`);
+        app.listen(/*process.env.PORT || */9000, function () {
+            console.log(`[${process.env.NODE_ENV || 'development'}] - 1commerce-import-service on PORT ${(process.env.PORT || 443)}`);
         });
     }
 
 })(app);
-
 
