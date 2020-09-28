@@ -2,11 +2,9 @@ const {
     GraphQLObjectType,
     GraphQLString,
     GraphQLBoolean,
-    GraphQLInt,
-    GraphQLList
+    GraphQLInt
 } = require('graphql');
 
-const WooCommerceCategoryType = require('./wooCommerceCategoryType');
 const WoocommerceTaxType =  require('./WooCommerceTaxType');
 const stripHtml = require("string-strip-html");
 
@@ -49,25 +47,7 @@ let WooCommerceProductType = new GraphQLObjectType({
           else
             return null;
         }
-        
       }},
-      mainCategory: { type:WooCommerceCategoryType, resolve:(obj, args, context, info)=>{
-        return obj.categories.length > 0 ? obj.categories[0] : null
-      }}, //Categoria Principal del Producto
-      mainColor:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-            return obj.attributes.length > 0  ? obj.attributes.filter((o)=>(o.name.toLowerCase() === 'color'))[0].options[0] : ""
-      }},
-      gender:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-        if(( obj.attributes &&  obj.attributes.length > 0 )){
-          let attrs = obj.attributes;
-          let gender = attrs.filter(o=>(o.name.toLowerCase() === 'gender' || o.name.toLowerCase() === 'genero' || o.name.toLowerCase() === 'género' || o.name.toLowerCase() === 'género'));
-
-          if(gender.length > 0)
-            return gender[0].options[0];
-          else
-            return null;
-        }
-      }}, //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
       width:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
         return obj.dimensions ? parseInt(obj.dimensions.width == "" ? 0 : obj.dimensions.width) : 0;
       }}, //Ancho del Empaque del producto
@@ -79,10 +59,7 @@ let WooCommerceProductType = new GraphQLObjectType({
       }}, //Largo del Empaque del Producto
       weight:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
         return obj.weight ? parseInt(obj.weight == "" ?  0 : obj.weight ) : 0;
-      } }, //Peso del Empaque del Producto
-      categories: { type:new GraphQLList(WooCommerceCategoryType), resolve:(obj, args, context, info)=>{
-        return obj.categories || [];
-      }},
+      } }
     }),
 });
 
