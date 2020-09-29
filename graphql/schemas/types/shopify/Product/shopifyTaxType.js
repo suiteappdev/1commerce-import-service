@@ -1,9 +1,7 @@
 const {
     GraphQLObjectType,
     GraphQLString,
-    GraphQLBoolean,
-    GraphQLInt,
-    GraphQLList
+    GraphQLInt
 } = require('graphql');
 
 let ShopifyTaxType = new GraphQLObjectType({

@@ -11,7 +11,9 @@ let init = (app, locals) => {
 
     locals.controllers = locals.controllers || {}
     locals.controllers.Shopify = {
-        getProducts
+        getProducts,
+        getVariations,
+        getImages
     }
 
     logger.info("Initialization finished.");
@@ -42,4 +44,44 @@ let getProducts = (credentials, listing) => {
     });
 }
 
-module.exports = { init, getProducts};
+let getVariations = (credentials, productId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response = await services.Shopify.requestProduct({
+                shopName: credentials.shopName,
+                apiKey: credentials.apiKey,
+                password: credentials.password,
+                version: credentials.version
+            }, 'variants', productId, `?fields=id,price,sku,inventory_quantity,option1`);
+            let rs = {
+                data: response.variants || []
+            }
+            resolve(rs)
+            
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+let getImages = (credentials, productId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response = await services.Shopify.requestProduct({
+                shopName: credentials.shopName,
+                apiKey: credentials.apiKey,
+                password: credentials.password,
+                version: credentials.version
+            }, 'images', productId, `?fields=id,src,position`);
+            let rs = {
+                data: response.images || []
+            }
+            resolve(rs)
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+module.exports = { init, getProducts, getVariations, getImages};

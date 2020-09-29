@@ -5,7 +5,7 @@ const {
   GraphQLInt
 } = require('graphql');
 
-const ShopifyTaxType = require('../shopifyTaxType');
+const ShopifyTaxType = require('./shopifyTaxType');
 const stripHtml = require("string-strip-html");
 
 let ShopifyProductType = new GraphQLObjectType({
