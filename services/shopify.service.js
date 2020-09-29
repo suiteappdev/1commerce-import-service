@@ -15,6 +15,7 @@ let init = async (app, locals) => {
 
             locals.services.Shopify = {
                 getData,
+                requestProduct,
                 count
             };
 
@@ -55,6 +56,23 @@ let getData = (credentials, collection, params, includePagination) => {
             page_info = search_params.get('page_info');
     
             response.data.pagination = page_info;
+        }
+        
+        if(response && response.data){
+            return resolve(response.data);
+        }
+
+        resolve(null);
+    });
+}
+
+let requestProduct = (credentials, collection, productId, params) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/products/${productId}/${collection}.json${params ? params : ''}`).catch(e => reject(e))
+        } catch (error) {
+            console.log(error);
         }
         
         if(response && response.data){
