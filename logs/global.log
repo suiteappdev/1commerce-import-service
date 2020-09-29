@@ -3738,3 +3738,8 @@
 [2020-09-22 10:36:46.906] [INFO] logger - Initialization finished.
 [2020-09-22 11:08:45.741] [INFO] logger - Initialization finished.
 [2020-09-22 11:20:19.952] [INFO] logger - Initialization finished.
+[2020-09-29 13:17:15.913] [INFO] logger - Initialization finished.
+[2020-09-29 13:17:15.914] [INFO] ShopifyController - Initialization started.
+[2020-09-29 13:17:15.915] [INFO] ShopifyController - Initialization finished.
+[2020-09-29 13:17:15.916] [INFO] WooCommerceController - Initialization started.
+[2020-09-29 13:17:15.916] [INFO] WooCommerceController - Initialization finished.
