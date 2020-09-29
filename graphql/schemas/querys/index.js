@@ -4,6 +4,7 @@ const WooCommerceProductImage = require('./WooCommerce/wooCommerceProductImage.q
 const ShopifyProducts = require('./Shopify/shopifyProduct.query.js');
 const ShopifyProductVariation = require('./Shopify/shopifyProductVariation.query');
 const ShopifyProductImage = require('./Shopify/shopifyProductImage.query');
+const VtexProducts = require('./Vtex/vtexProduct.query');
 
 module.exports = {
     public: {
@@ -12,6 +13,7 @@ module.exports = {
         WooCommerceProductImage,
         ShopifyProducts,
         ShopifyProductVariation,
-        ShopifyProductImage
+        ShopifyProductImage,
+        VtexProducts
     }
 }
