@@ -2,17 +2,11 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLBoolean,
-  GraphQLInt,
-  GraphQLList
+  GraphQLInt
 } = require('graphql');
 
-const ShopifyCategoryType = require('./shopifyCategoryType');
-const ShopifyImageType = require('./shopifyImageType');
-const ShopifyProductVariationType = require('./shopifyProductVariationType');
 const ShopifyTaxType = require('./shopifyTaxType');
 const stripHtml = require("string-strip-html");
-
-const { getVariations, getCategories, getTax, getCategoryByProductId } = require('../../../../controllers/Shopify.controller');
 
 let ShopifyProductType = new GraphQLObjectType({
   name: 'ShopifyProductType',
@@ -22,9 +16,12 @@ let ShopifyProductType = new GraphQLObjectType({
         return obj.title
       }
     },
+    externalId: { type: GraphQLString,  resolve:(obj, args, context, info)=>{
+      return obj.id
+    }},
     reference: {
       type: GraphQLString, resolve: (obj, args, context, info) => {
-        return obj.variants[0].sku
+        return obj.id
       }
     },
     description: {
@@ -49,29 +46,12 @@ let ShopifyProductType = new GraphQLObjectType({
     },
     tax: {
       type: ShopifyTaxType, resolve: (obj, args, context, info) => {
-        let credentials = context.req;
         return null
       }
     },
     manufacturer: {
       type: GraphQLString, resolve: (obj, args, context, info) => {
         return obj.vendor;
-      }
-    },
-    mainCategory: {
-      type: ShopifyCategoryType, resolve: (obj, args, context, info) => {
-        let credentials = context.req;
-        return getCategoryByProductId(credentials, obj.variants[0].product_id);
-      }
-    },
-    mainColor: {
-      type: GraphQLString, resolve: (obj, args, context, info) => {
-        return obj.variants[0].option2
-      }
-    },
-    gender: {
-      type: GraphQLString, resolve: (obj, args, context, info) => {
-        return obj.variants[0].option1
       }
     },
     width: {
@@ -93,26 +73,7 @@ let ShopifyProductType = new GraphQLObjectType({
       type: GraphQLInt, resolve: (obj, args, context, info) => {
         return obj.variants[0].weight ? parseInt(obj.variants[0].weight == "" ? 0 : obj.variants[0].weight) : 0;
       }
-    },
-    categories: {
-      type: new GraphQLList(ShopifyCategoryType), resolve: (obj, args, context, info) => {
-        let credentials = context.req;
-        return obj.categories;
-      }
-    },
-    images: {
-      type: new GraphQLList(ShopifyImageType), resolve: (obj, args, context, info) => {
-        return obj.images
-      }
-    },
-    variations: {
-      type: new GraphQLList(ShopifyProductVariationType), resolve: (obj, args, context, info) => {
-        return obj.variants.map((v)=>{
-            v.options = obj.options;
-            return v;
-        });
-      }
-    },
+    }
   }),
 });
 

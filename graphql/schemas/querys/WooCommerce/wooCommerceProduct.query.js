@@ -1,10 +1,6 @@
-const {
-    GraphQLList
-} = require('graphql');
-
 const { getProducts } = require('../../../../controllers/WooCommerce.controller');
 const { getToken, validate}  = require('../../../../util/auth.util');
-const WooCommerceProductListType  = require('../../types/wooCommerce/wooCommerceProductListType');
+const WooCommerceProductListType  = require('../../types/wooCommerce/Product/wooCommerceProductListType');
 const ListingInput = require('../../types/pagination/listingInput');
 
 const WooCommerceProductListQuery = {
