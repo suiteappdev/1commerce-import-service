@@ -63,10 +63,10 @@ let getVariations = (credentials, productId) => {
             let products = await WooCommerce.get(`products/${productId}/variations`);
 
             if (products && products.data) {
-                return resolve({data: products.data});
+                return resolve(products.data);
             }
 
-            resolve({data: []})
+            resolve([])
 
         } catch (error) {
             reject(error);
