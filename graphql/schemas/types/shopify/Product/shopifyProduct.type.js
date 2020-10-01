@@ -2,9 +2,13 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLBoolean,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLList,
+  GraphQLFloat
 } = require('graphql');
 
+const ShopifyProductVariationType = require('../ProductVariation/shopifyProductVariation.type');
+const ShopifyImageProductType = require('../ProductImages/shopifyImage.type');
 const ShopifyTaxType = require('./shopifyTaxType');
 const stripHtml = require("string-strip-html");
 
@@ -70,10 +74,19 @@ let ShopifyProductType = new GraphQLObjectType({
       }
     },
     weight: {
-      type: GraphQLInt, resolve: (obj, args, context, info) => {
-        return obj.variants[0].weight ? parseInt(obj.variants[0].weight == "" ? 0 : obj.variants[0].weight) : 0;
+      type: GraphQLFloat, resolve: (obj, args, context, info) => {
+        return obj.variants[0].weight ? parseFloat(obj.variants[0].weight == "" ? 0 : obj.variants[0].weight) : 0;
       }
-    }
+    },
+    images:{ type:new GraphQLList(ShopifyImageProductType), resolve:(obj, args, context, info)=>{
+      return obj.images
+    }},
+    variations:{ type:new GraphQLList(ShopifyProductVariationType), resolve:(obj, args, context, info)=>{      
+      return obj.variants.map(v => {
+        v.options = obj.options;
+        return v;
+      })
+    }},
   }),
 });
 
