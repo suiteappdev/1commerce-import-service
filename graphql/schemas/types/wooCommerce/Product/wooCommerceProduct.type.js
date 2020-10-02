@@ -97,6 +97,7 @@ let WooCommerceProductType = new GraphQLObjectType({
             return 'único';
           }
 
+
           if(!obj.variations || obj.variations.length === 0){
             let defaultVariation = {
                 sku:obj.sku,
@@ -104,7 +105,7 @@ let WooCommerceProductType = new GraphQLObjectType({
                 upc:obj.upc || '', 
                 price:obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0,
                 gender:getGender(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
-                talla:getSize(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
+                talla:'único', //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
                 stock_quantity:obj.stock_quantity || 0
             }
             
