@@ -41,7 +41,6 @@ let getData = (credentials, collection, params, includePagination) => {
         }
         
         if(includePagination){
-            const url = require('url');
             let page_info;
             let next;
     
@@ -51,7 +50,7 @@ let getData = (credentials, collection, params, includePagination) => {
                 next = response.headers['link'].split(',')[1].replace('; rel="next"','').replace('<', '').replace('>', '');
             }
     
-         const current_url = new URL(next);
+            const current_url = new URL(next);
             const search_params = current_url.searchParams;
             page_info = search_params.get('page_info');
     
@@ -85,9 +84,12 @@ let requestProduct = (credentials, collection, productId, params) => {
 
 let count = (credentials, collection) => {
     return new Promise(async (resolve, reject) => {
-        let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/${collection}/count.json`).catch(e => console.log("ERR", e) && reject(e))
+        let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/products/${collection}.json`).catch(e => console.log("ERR", e) && reject(e))
+        if(response && response.data){
+            return resolve(response.data);
+        }
 
-        resolve(response.data);
+        resolve(null);
     });
 }
 
