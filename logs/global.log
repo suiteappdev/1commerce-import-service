@@ -3809,3 +3809,10 @@
 [2020-10-01 12:52:10.615] [INFO] logger - Initialization finished.
 [2020-10-01 16:35:28.032] [INFO] logger - Initialization finished.
 [2020-10-01 17:04:57.527] [INFO] logger - Initialization finished.
+[2020-10-03 17:11:24.343] [INFO] logger - Initialization finished.
+[2020-10-03 17:11:24.357] [INFO] PrestashopController - Initialization started.
+[2020-10-03 17:11:24.397] [INFO] PrestashopController - Initialization finished.
+[2020-10-03 17:11:24.461] [INFO] ShopifyController - Initialization started.
+[2020-10-03 17:11:24.468] [INFO] ShopifyController - Initialization finished.
+[2020-10-03 17:11:24.471] [INFO] WooCommerceController - Initialization started.
+[2020-10-03 17:11:24.502] [INFO] WooCommerceController - Initialization finished.
