@@ -35,8 +35,8 @@ const {
       price:{ type:GraphQLInt, resolve : (obj, args, context, info)=>{
         return obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0
       }},
-      tax:{ type:GraphQLInt, resolve : (obj, args, context, info)=>{
-        return obj.id_tax_rules_group;
+      tax:{ type:PrestashopTaxType, resolve : (obj, args, context, info)=>{
+        return obj.tax;
       }},
       manufacturer:{ type:GraphQLString, resolve : (obj, args, context, info)=>{
         return obj.manufacturer_name;

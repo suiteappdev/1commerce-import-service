@@ -4,10 +4,11 @@ const {
     GraphQLInt
 } = require('graphql');
 
-let ShopifyTaxType = new GraphQLObjectType({
-    name: 'ShopifyTaxType',
+let PrestashopTaxType = new GraphQLObjectType({
+    name: 'PrestashopTaxType',
     fields: () => ({
       name:{ type:GraphQLString, resolve :(obj, args, context, info)=>{
+        console.log(obj);
         return obj.name;
       }},
       rate:{type:GraphQLInt, resolve :(obj, args, context, info)=>{
@@ -16,4 +17,4 @@ let ShopifyTaxType = new GraphQLObjectType({
     }),
 });
 
-module.exports = ShopifyTaxType;
+module.exports = PrestashopTaxType;
