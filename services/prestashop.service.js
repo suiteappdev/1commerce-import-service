@@ -15,7 +15,8 @@ let init = async (app, locals) => {
 
             locals.services.Prestashop = {
                 getData,
-                getTaxes
+                getTaxes,
+                getImages
             };
 
             logger.info(`Prestashop service done.`);
@@ -58,7 +59,7 @@ let getData = (credentials, collection, params, includePagination) => {
     });
 }
 
-let getTaxes = (credentials, collection) => {
+let getTaxes = () => {
         return new Promise(async (resolve, reject) => {
             let response;
             try {
@@ -83,6 +84,33 @@ let getTaxes = (credentials, collection) => {
     
             resolve(null);
     });
+}
+
+let getImages = (id) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: `http://superalimentos.store/api/images/products/${id}`,
+                headers: {
+                    'Authorization':'Basic QUgzWTE1VVQ3SkxKUUo1MVhDQUxWNlUzNEI0VTU4SjY6'
+                },
+                auth:{
+                    username:'AH3Y15UT7JLJQJ51XCALV6U34B4U58J6'
+                }
+            };
+            response = await axios(options).catch(e => reject(e));
+            // console.log(response);
+        } catch (error) {
+            console.log(error);
+        }
+        if(response && response.data){
+            return resolve(response.data);
+        }
+
+        resolve(null);
+});
 }
 
 module.exports = { init };

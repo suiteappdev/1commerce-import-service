@@ -1,4 +1,4 @@
-
+var convert = require('xml-js');
 let services;
 let logger;
 
@@ -22,7 +22,34 @@ let getProducts = (credentials, listing) => {
         try {
             let response = await services.Prestashop.getData();
             let taxes = await services.Prestashop.getTaxes();
-            const id_tax=taxes.taxes[0].id;
+  
+            
+                for (let i = 0; i < response.products.length; i++) {
+                    let resxml = await services.Prestashop.getImages(response.products[i].id);
+                    let resjson = JSON.parse(convert.xml2json(resxml));
+                    let array_id_images=resjson.elements[0].elements[0].elements;
+                    let id_images=[];
+                    response.products[i].images={};
+
+                    for (let index = 0; index < array_id_images.length; index++) {
+                        let id_img_digits = [];
+                        let id_img=array_id_images[index].attributes.id;
+                        let file=id_img+'.jpg';
+                        for(let j = 0; j < id_img.length; j++){
+                            id_img_digits.push(id_img.substr(j, 1));
+                        }
+                        let src=`http://superalimentos.store/img/p/${id_img_digits.join('/')}/${id_img}.jpg`;                      
+                        let obj={        
+                            file,
+                            src
+                        };
+                        id_images.push(obj);
+                        response.products[i].images=id_images;
+                    }
+                }
+
+
+           
 
             taxes.taxes.map((t)=>{
                 response.products.map((p)=>{
@@ -41,7 +68,7 @@ let getProducts = (credentials, listing) => {
 
                 
             });
-
+            
             let rs = {
                 totalRecords :null,
                 pagination : response.pagination  || null,

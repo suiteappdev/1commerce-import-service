@@ -10,6 +10,7 @@ const {
 
   const stripHtml = require("string-strip-html");
   const PrestashopTaxType =  require('./prestashopTaxType');
+  const PrestashopImageProductType = require('../ProductImages/prestashopProductImage.type');
   
   let PrestashopProductType = new GraphQLObjectType({
     name: 'PresthashopProductType',
@@ -54,8 +55,8 @@ const {
       weight:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
         return parseInt(obj.weight);
       } }, //Peso del Empaque del Producto
-      images:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
-        return parseInt(obj.id_default_image == "" ?  0 : obj.id_default_image );
+      images:{ type:new GraphQLList(PrestashopImageProductType), resolve:(obj, args, context, info)=>{
+        return obj.images;
       }},
     }),
   });

@@ -9,7 +9,6 @@ const PrestashopProductListQuery = {
     resolve: (_, { listing }, context) => {
         let token = getToken(context.req);
         let credentials = validate(token);
-        console.log('------------query-----------');
         delete credentials.iat;
         
         if(!credentials){
