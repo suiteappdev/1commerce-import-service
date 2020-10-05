@@ -37,13 +37,12 @@ let getData = (credentials, collection, params, includePagination) => {
         try {
             const options = {
                 method: 'get',
-                url: `http://superalimentos.store/api/products?display=[id,name,reference,description,description_short,active,price,id_tax_rules_group,manufacturer_name,width,height,depth,weight,id_default_image]`,
+                url: credentials.url+'/api/products?display=[id,name,reference,description,description_short,active,price,id_tax_rules_group,manufacturer_name,width,height,depth,weight]&limit=10',
                 headers: {
-                    'Authorization':'Basic QUgzWTE1VVQ3SkxKUUo1MVhDQUxWNlUzNEI0VTU4SjY6',
                     'Io-Format':'JSON'
                 },
                 auth:{
-                    username:'AH3Y15UT7JLJQJ51XCALV6U34B4U58J6'
+                    username:credentials.apiKey
                 }
             };
             response = await axios(options).catch(e => reject(e));
@@ -59,19 +58,18 @@ let getData = (credentials, collection, params, includePagination) => {
     });
 }
 
-let getTaxes = () => {
+let getTaxes = (credentials) => {
         return new Promise(async (resolve, reject) => {
             let response;
             try {
                 const options = {
                     method: 'get',
-                    url: `http://superalimentos.store/api/taxes?display=[id,rate,name]`,
+                    url: credentials.url+`/api/taxes?display=[id,rate,name]`,
                     headers: {
-                        'Authorization':'Basic QUgzWTE1VVQ3SkxKUUo1MVhDQUxWNlUzNEI0VTU4SjY6',
                         'Io-Format':'JSON'
                     },
                     auth:{
-                        username:'AH3Y15UT7JLJQJ51XCALV6U34B4U58J6'
+                        username:credentials.apiKey
                     }
                 };
                 response = await axios(options).catch(e => reject(e));
@@ -86,18 +84,15 @@ let getTaxes = () => {
     });
 }
 
-let getImages = (id) => {
+let getImages = (credentials,id) => {
     return new Promise(async (resolve, reject) => {
         let response;
         try {
             const options = {
                 method: 'get',
-                url: `http://superalimentos.store/api/images/products/${id}`,
-                headers: {
-                    'Authorization':'Basic QUgzWTE1VVQ3SkxKUUo1MVhDQUxWNlUzNEI0VTU4SjY6'
-                },
+                url: credentials.url+`/api/images/products/${id}`,
                 auth:{
-                    username:'AH3Y15UT7JLJQJ51XCALV6U34B4U58J6'
+                    username:credentials.apiKey
                 }
             };
             response = await axios(options).catch(e => reject(e));

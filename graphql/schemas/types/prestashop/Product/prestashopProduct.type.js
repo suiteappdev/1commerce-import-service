@@ -16,7 +16,7 @@ const {
     name: 'PresthashopProductType',
     fields: () => ({
       name: {type: GraphQLString, resolve: (obj, args, context, info) => {
-          return obj.name[0].value
+          return obj.name
       }},
       externalId: { type: GraphQLString,  resolve:(obj, args, context, info)=>{
           return obj.id.toString();
@@ -25,13 +25,13 @@ const {
         return obj.reference
       }}, //Referencia del Producto  
       description:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-        return stripHtml(obj.description[0].value)
+        return stripHtml(obj.description)
       }}, //Descripción del Producto o Descripción técnica
       descriptionShort:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-        return stripHtml(obj.description_short[0].value)
+        return stripHtml(obj.description_short)
       }}, //Descripción Corta o Descripción comercial
       active:{ type:GraphQLBoolean, resolve:(obj, args, context, info)=>{
-        return obj.status == "1" ? true : false
+        return obj.active == '1' ? true : false
       }}, //Estado del Producto
       price:{ type:GraphQLInt, resolve : (obj, args, context, info)=>{
         return obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0

@@ -20,12 +20,11 @@ let init = (app, locals) => {
 let getProducts = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let response = await services.Prestashop.getData();
-            let taxes = await services.Prestashop.getTaxes();
-  
+            let response = await services.Prestashop.getData(credentials);
+            let taxes = await services.Prestashop.getTaxes(credentials);
             
                 for (let i = 0; i < response.products.length; i++) {
-                    let resxml = await services.Prestashop.getImages(response.products[i].id);
+                    let resxml = await services.Prestashop.getImages(credentials,response.products[i].id);
                     let resjson = JSON.parse(convert.xml2json(resxml));
                     let array_id_images=resjson.elements[0].elements[0].elements;
                     let id_images=[];
@@ -38,7 +37,7 @@ let getProducts = (credentials, listing) => {
                         for(let j = 0; j < id_img.length; j++){
                             id_img_digits.push(id_img.substr(j, 1));
                         }
-                        let src=`http://superalimentos.store/img/p/${id_img_digits.join('/')}/${id_img}.jpg`;                      
+                        let src=credentials.url+`/img/p/${id_img_digits.join('/')}/${id_img}.jpg`;                      
                         let obj={        
                             file,
                             src
@@ -53,9 +52,9 @@ let getProducts = (credentials, listing) => {
 
             taxes.taxes.map((t)=>{
                 response.products.map((p)=>{
-                    if(t.id==p.id_tax_rules_group){
+                    if((t.id+1)==p.id_tax_rules_group){//////////////el uno es para que funcione, al parecer registraron un 2 como id del impuesto para el producto, pero despues borraron la regla
                         p.tax={
-                            name:t.name[0].value,
+                            name:t.name,
                             rate:t.rate
                         }
                     }else{
@@ -83,4 +82,23 @@ let getProducts = (credentials, listing) => {
     });
 }
 
-module.exports = { init, getProducts};
+let getVariations = (credentials, productId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+            let products = await WooCommerce.get(`products/${productId}/variations`);
+
+            if (products && products.data) {
+                return resolve(products.data);
+            }
+
+            resolve([])
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+module.exports = { init, getProducts, getVariations};
