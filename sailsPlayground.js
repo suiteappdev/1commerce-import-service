@@ -4,6 +4,7 @@
 
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+const { response } = require('express');
 
 //Pasamos el obj con las credenciales del api rest woocommerce
 //la url es el endpoint del servicio rest del woocomerce
@@ -28,16 +29,11 @@ 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
 */
 
 let token = jwt.sign({
-    url: "http://develop1.webstudiopanama.com/moises/",
-    apiKey: "9e8877c5de8113efcbb21754fee5183a",
-    consumerSecret: "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",
-    password : "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",
-    version: "2020-07",
-    provider : 'shopify',
-    shopName : 'openhouseg.myshopify.com'
+    apiKey: "vtexappkey-speedoco-LBCIYP",
+    password : "EPUTATWIOQVJGMHNPEBBTBBPJXLLSBRHOMYOBOVYDAZEFIHSBVZZMXTCNEKCIKQMYNVUNTMBJDXTCXJAPSJWBSVQSWAWDSQSKNFSMNFIJYQIAAAPUJNPBTKGRFCRSPXQ",
+    shopName : 'speedoco'
 }, 'secret');
-
-
+// console.log(token)
 //esta es la query
 const query = `
             {
@@ -103,11 +99,20 @@ const query = `
 
   //aca se lanza el request al microservicio devuelve error si falla la autenticacion
 let getData = async ()=>{
-    let response =  await axios.post('http://localhost:9000/graphql', { query : query}, { headers : {
-        'ips-api-token' : `Bearer ${token}`
-    }}).catch((e)=>console.log(e.message));
+    const options = {
+        method: 'GET',
+        url: 'https://speedoco.vtexcommercestable.com.br/api/catalog/pvt/stockkeepingunitkit',
+        params: {skuId: '131'},
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json',
+          'x-vtex-api-appkey': 'vtexappkey-speedoco-LBCIYP',
+          'x-vtex-api-apptoken': 'EPUTATWIOQVJGMHNPEBBTBBPJXLLSBRHOMYOBOVYDAZEFIHSBVZZMXTCNEKCIKQMYNVUNTMBJDXTCXJAPSJWBSVQSWAWDSQSKNFSMNFIJYQIAAAPUJNPBTKGRFCRSPXQ'
+        }
+      };
+    let response = await axios(options).catch(e => console.log(e))
 
-    console.dir(response.data, {depth: null, colors: true})
+    console.log(response)
 }
 
 getData();

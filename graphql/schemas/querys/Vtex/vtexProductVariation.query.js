@@ -1,10 +1,10 @@
-const { getProducts } = require('../../../../controllers/Vtex.controller');
+const { getVariations } = require('../../../../controllers/Vtex.controller');
 const { getToken, validate}  = require('../../../../util/auth.util');
-const VtexProductListType  = require('../../types/vtex/Product/vtexProductListType');
+const vtexProductVariationListType  = require('../../types/vtex/ProductVariations/vtexProductVariationListType');
 const ListingInput = require('../../types/pagination/listingInput');
 
-const VtexProductListQuery = {
-    type:  VtexProductListType,
+const VtexProductVariationListQuery = {
+    type:  vtexProductVariationListType,
     args: { listing: { type: ListingInput } },
     resolve: (_, { listing }, context) => {
         let token = getToken(context.req);
@@ -18,8 +18,8 @@ const VtexProductListQuery = {
         
         context.req = credentials;
         
-        return getProducts(credentials, listing);
+        return getVariations(credentials, listing);
     }
 };
   
-module.exports = VtexProductListQuery;
+module.exports = VtexProductVariationListQuery;

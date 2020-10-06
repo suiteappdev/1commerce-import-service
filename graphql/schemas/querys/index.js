@@ -5,6 +5,7 @@ const ShopifyProducts = require('./Shopify/shopifyProduct.query.js');
 const ShopifyProductVariation = require('./Shopify/shopifyProductVariation.query');
 const ShopifyProductImage = require('./Shopify/shopifyProductImage.query');
 const VtexProducts = require('./Vtex/vtexProduct.query');
+const VtexProductVariation = require('./Vtex/vtexProductVariation.query');
 
 module.exports = {
     public: {
@@ -14,6 +15,7 @@ module.exports = {
         ShopifyProducts,
         ShopifyProductVariation,
         ShopifyProductImage,
-        VtexProducts
+        VtexProducts,
+        VtexProductVariation
     }
 }
