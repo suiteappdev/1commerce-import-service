@@ -16,7 +16,9 @@ let init = async (app, locals) => {
             locals.services.Prestashop = {
                 getData,
                 getTaxes,
-                getImages
+                getImages,
+                getCombinations,
+                getAttributes
             };
 
             logger.info(`Prestashop service done.`);
@@ -31,13 +33,13 @@ let init = async (app, locals) => {
 
 }
 
-let getData = (credentials, collection, params, includePagination) => {
+let getData = (credentials, limits) => {
     return new Promise(async (resolve, reject) => {
         let response;
         try {
             const options = {
                 method: 'get',
-                url: credentials.url+'/api/products?display=[id,name,reference,description,description_short,active,price,id_tax_rules_group,manufacturer_name,width,height,depth,weight]&limit=10',
+                url: credentials.url+`/api/products?display=full&limit=${limits.pagination.page},${limits.pagination.pageSize}`,
                 headers: {
                     'Io-Format':'JSON'
                 },
@@ -96,7 +98,62 @@ let getImages = (credentials,id) => {
                 }
             };
             response = await axios(options).catch(e => reject(e));
-            // console.log(response);
+            
+        } catch (error) {
+            console.log(error);
+        }
+        if(response && response.data){
+            return resolve(response.data);
+        }
+
+        resolve(null);
+});
+}
+
+let getCombinations = (credentials,id) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        
+        try {
+            const options = {
+                method: 'get',
+                url: credentials.url+`/api/combinations/?display=full&filter[id_product]=${id}`,
+                headers: {
+                    'Io-Format':'JSON'
+                },
+                auth:{
+                    username:credentials.apiKey
+                }
+            };
+            response = await axios(options).catch(e => reject(e));
+
+        } catch (error) {
+            console.log(error);
+        }
+        if(response && response.data){
+            
+            return resolve(response.data.combinations);
+        }
+
+        resolve(null);
+});
+}
+
+let getAttributes = (credentials,id) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: credentials.url+`/api/product_option_values/?display=full`,
+                headers: {
+                    'Io-Format':'JSON'
+                },
+                auth:{
+                    username:credentials.apiKey
+                }
+            };
+            response = await axios(options).catch(e => reject(e));
         } catch (error) {
             console.log(error);
         }
