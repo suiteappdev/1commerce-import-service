@@ -74,7 +74,10 @@ let getProductIds = (credentials, params) => {
         }
         
         if(response && response.data){
-            return resolve({data: Object.keys(response.data.data), range: response.data.range});
+            const result = Object.keys(response.data.data).map(function(key) {
+              return {productId: key, skus: response.data.data[key]};
+            });
+            return resolve({data: result, range: response.data.range});
         }
 
         resolve([]);

@@ -12,7 +12,8 @@ let init = (app, locals) => {
     locals.controllers = locals.controllers || {}
     locals.controllers.Vtex = {
       getProducts,
-      getVariations
+      getVariations,
+      getImages
     }
 
     logger.info("Initialization finished.");
@@ -28,6 +29,9 @@ let getProductsIds = (credentials, listing) => {
       });
       let productIds = [];
       let total = 0;
+      let from = ((listing.pagination.page - 1 ) * 10 + 1);
+      let to = listing.pagination.page * 10;
+
       if (categories.length > 0) {
         for (const category of categories) {
           let result = await services.Vtex.getProductIds({
@@ -36,8 +40,8 @@ let getProductsIds = (credentials, listing) => {
             password: credentials.password
           }, {
             categoryId: category.id,
-            from: 1,
-            to: 3
+            from,
+            to
           })
           productIds = productIds.concat(result.data);
           total += result.range.total;
@@ -56,19 +60,20 @@ let getProducts = (credentials, listing) => {
       let data = await getProductsIds(credentials, listing);
       let products = [];
       if (data.productIds.length > 0) {
-        for (const id of data.productIds) {
+        for (const element of data.productIds) {
           let product = await services.Vtex.getProduct({
             shopName: credentials.shopName,
             apiKey: credentials.apiKey,
             password: credentials.password
-          }, id);
+          }, element.productId);
 
           let variation = await services.Vtex.getVariations({
             shopName: credentials.shopName,
             apiKey: credentials.apiKey,
             password: credentials.password
-          }, id);
-          if (product) {
+          }, element.productId);
+
+          if (product && variation) {
             product.width = variation ? variation.skus[0].measures.width : 0;
             product.height = variation ? variation.skus[0].measures.height : 0;
             product.length = variation ? variation.skus[0].measures.length : 0;
@@ -98,12 +103,12 @@ let getVariations = (credentials, listing) => {
       let data = await getProductsIds(credentials, listing);
       let variations = [];
       if (data.productIds.length > 0) {
-        for (const id of data.productIds) {
+        for (const element of data.productIds) {
           let variation = await services.Vtex.getVariations({
             shopName: credentials.shopName,
             apiKey: credentials.apiKey,
             password: credentials.password
-          }, id);
+          }, element.productId);
 
           if (variation) {
             variations.push(variation);
@@ -124,24 +129,40 @@ let getVariations = (credentials, listing) => {
   });
 }
 
-// let getImages = (credentials, productId) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             let response = await services.Shopify.requestProduct({
-//                 shopName: credentials.shopName,
-//                 apiKey: credentials.apiKey,
-//                 password: credentials.password,
-//                 version: credentials.version
-//             }, 'images', productId, `?fields=id,src,position`);
-//             let rs = {
-//                 data: response.images || []
-//             }
-//             resolve(rs)
+let getImages = (credentials, listing) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let data = await getProductsIds(credentials, listing);
+      let images = [];
+      if (data.productIds.length > 0) {
+        for (const element of data.productIds) {
+          var i = 0;
+          while (i < element.skus.length) {
+            let getSku = await services.Vtex.getSku({
+              shopName: credentials.shopName,
+              apiKey: credentials.apiKey,
+              password: credentials.password
+            }, element.skus[i]);
+            if (getSku.Images.length > 0){
+              images.push(getSku);
+              break;
+            }
+            i++;
+          }
+        }
+      }
+      let count = Math.ceil(data.total / listing.pagination.pageSize);
+      let rs = {
+        totalRecords: data.total,
+        pagesCount: count,
+        data: images
+      }
+      return resolve(rs);
+      
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
 
-//         } catch (error) {
-//             reject(error);
-//         }
-//     });
-// }
-
-module.exports = { init, getProducts, getVariations };
+module.exports = { init, getProducts, getVariations, getImages };
