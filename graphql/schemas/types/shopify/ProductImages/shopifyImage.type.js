@@ -11,13 +11,13 @@ let ShopifyImageType = new GraphQLObjectType({
     fields: () => ({
       file: { type: GraphQLString, resolve : (obj, args, context, info)=>{
         var parsed = url.parse(obj.src);
-        return path.basename(parsed.pathname) ;
+        return path.basename(parsed.pathname);
       }},
       position: { type: GraphQLInt, resolve : (obj, args, context, info)=>{
         return obj.position;
       }},
       src: { type: GraphQLString , resolve : (obj, args, context, info)=>{
-        return obj.src
+        return obj.src;
       }}
     }),
 });
