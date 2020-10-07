@@ -23,7 +23,7 @@ let getProducts = (credentials, listing) => {
             let response = await services.Prestashop.getData(credentials,listing);
             let taxes = await services.Prestashop.getTaxes(credentials);
             let attributes = await services.Prestashop.getAttributes(credentials);
-            
+            console.log(listing);
                 
                 for (let i = 0; i < response.products.length; i++) {
                     let array_id_images=response.products[i].associations.images;
@@ -79,7 +79,7 @@ let getProducts = (credentials, listing) => {
             });
             
             let rs = {
-                totalRecords :null,
+                totalRecords :listing.pagination.pageSize,
                 pagination : response.pagination  || null,
                 pagesCount : null ,
                 data : response.products || []
