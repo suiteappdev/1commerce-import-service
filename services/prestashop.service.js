@@ -18,7 +18,8 @@ let init = async (app, locals) => {
                 getTaxes,
                 getImages,
                 getCombinations,
-                getAttributes
+                getAttributes,
+                getQuantities
             };
 
             logger.info(`Prestashop service done.`);
@@ -159,6 +160,33 @@ let getAttributes = (credentials,id) => {
         }
         if(response && response.data){
             return resolve(response.data);
+        }
+
+        resolve(null);
+});
+}
+
+let getQuantities = (credentials,id) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: credentials.url+`/api/stock_availables/?filter[id_product]=${id}&display=[id_product_attribute,quantity]`,
+                headers: {
+                    'Io-Format':'JSON'
+                },
+                auth:{
+                    username:credentials.apiKey
+                }
+            };
+            response = await axios(options).catch(e => reject(e));
+           
+        } catch (error) {
+            console.log(error);
+        }
+        if(response && response.data){
+            return resolve(response.data.stock_availables);
         }
 
         resolve(null);

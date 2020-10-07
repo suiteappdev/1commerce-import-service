@@ -97,14 +97,18 @@ let getVariations = (credentials, productId,attributes) => {
         try {
 
             let variations = await services.Prestashop.getCombinations(credentials,productId);
-
+            let quantities = await services.Prestashop.getQuantities(credentials,productId);
 
 
             if (variations) {
                 for (let index = 0; index < variations.length; index++) {
-                    let id=variations[index].associations.product_option_values[0].id;
-                    let attr=attributes.find(a => a.id == id);
-    
+                    let id_attr=variations[index].associations.product_option_values[0].id;
+                    let attr=attributes.find(a => a.id == id_attr);
+                    let id_variation=variations[index].id;
+                    let quantity=quantities.find(q => q.id_product_attribute == id_variation).quantity;
+                    
+                    variations[index].quantity=quantity;
+                    
                     if(attr.id_attribute_group=='3'){
                         variations[index].talla='';
                     }else{
