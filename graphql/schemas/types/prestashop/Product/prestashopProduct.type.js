@@ -11,8 +11,6 @@ const {
   const stripHtml = require("string-strip-html");
   const PrestashopTaxType =  require('./prestashopTaxType');
   const PrestashopImageProductType = require('../ProductImages/prestashopProductImage.type');
-  const PrestashopProductVariationType = require('../ProductVariation/prestashopProductVariation.type');
-  const { getVariations} = require('../../../../../controllers/Prestashop.controller');
   
   let PrestashopProductType = new GraphQLObjectType({
     name: 'PresthashopProductType',
@@ -58,9 +56,6 @@ const {
       } }, //Peso del Empaque del Producto
       images:{ type:new GraphQLList(PrestashopImageProductType), resolve:(obj, args, context, info)=>{
         return obj.images;
-      }},
-      variations:{ type:new GraphQLList(PrestashopProductVariationType), resolve:(obj, args, context, info)=>{
-        return getVariations(context.req, obj.id,obj.attributes.product_option_values);
       }},
     }),
   });

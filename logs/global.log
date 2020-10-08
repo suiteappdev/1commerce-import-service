@@ -4032,3 +4032,12 @@
 [2020-10-07 12:23:16.903] [INFO] VtexController - Initialization finished.
 [2020-10-07 12:23:16.948] [INFO] WooCommerceController - Initialization started.
 [2020-10-07 12:23:16.975] [INFO] WooCommerceController - Initialization finished.
+[2020-10-07 15:59:38.979] [INFO] logger - Initialization finished.
+[2020-10-07 15:59:39.004] [INFO] PrestashopController - Initialization started.
+[2020-10-07 15:59:39.036] [INFO] PrestashopController - Initialization finished.
+[2020-10-07 15:59:39.039] [INFO] ShopifyController - Initialization started.
+[2020-10-07 15:59:39.073] [INFO] ShopifyController - Initialization finished.
+[2020-10-07 15:59:39.086] [INFO] VtexController - Initialization started.
+[2020-10-07 15:59:39.087] [INFO] VtexController - Initialization finished.
+[2020-10-07 15:59:39.089] [INFO] WooCommerceController - Initialization started.
+[2020-10-07 15:59:39.129] [INFO] WooCommerceController - Initialization finished.

@@ -22,8 +22,6 @@ let getProducts = (credentials, listing) => {
         try {
             let response = await services.Prestashop.getData(credentials,listing);
             let taxes = await services.Prestashop.getTaxes(credentials);
-            let attributes = await services.Prestashop.getAttributes(credentials);
-            console.log(listing);
                 
                 for (let i = 0; i < response.products.length; i++) {
                     let array_id_images=response.products[i].associations.images;
@@ -53,7 +51,6 @@ let getProducts = (credentials, listing) => {
                         id_images.push(obj);
                         response.products[i].images=id_images; //Condicional para los productos que no tienen imagenes
                     }
-                    response.products[i].attributes=attributes;//añade informacion de tallas
 
                 }
 
@@ -62,7 +59,7 @@ let getProducts = (credentials, listing) => {
 
             taxes.taxes.map((t)=>{
                 response.products.map((p)=>{
-                    if((t.id+1)==p.id_tax_rules_group){//el uno es para que funcione, al parecer registraron un 2 como id del impuesto para el producto, pero despues borraron la regla
+                    if((t.id)==p.id_tax_rules_group){//t.id+1)==p.id_tax_rules_group el uno es para que funcione, al parecer registraron un 2 como id del impuesto para el producto, pero despues borraron la regla
                         p.tax={
                             name:t.name,
                             rate:t.rate
@@ -81,7 +78,7 @@ let getProducts = (credentials, listing) => {
             let rs = {
                 totalRecords :listing.pagination.pageSize,
                 pagination : response.pagination  || null,
-                pagesCount : null ,
+                pagesCount : Math.ceil((listing.pagination.pageSize / listing.pagination.pageSize)) ,
                 data : response.products || []
             }
             return resolve(rs);
@@ -98,12 +95,12 @@ let getVariations = (credentials, productId,attributes) => {
 
             let variations = await services.Prestashop.getCombinations(credentials,productId);
             let quantities = await services.Prestashop.getQuantities(credentials,productId);
-
+            let attributes = await services.Prestashop.getAttributes(credentials);
 
             if (variations) {
                 for (let index = 0; index < variations.length; index++) {
                     let id_attr=variations[index].associations.product_option_values[0].id;
-                    let attr=attributes.find(a => a.id == id_attr);
+                    let attr=attributes.product_option_values.find(a => a.id == id_attr);
                     let id_variation=variations[index].id;
                     let quantity=quantities.find(q => q.id_product_attribute == id_variation).quantity;
                     
@@ -116,7 +113,11 @@ let getVariations = (credentials, productId,attributes) => {
                     }
                     
                 }
-                return resolve(variations);
+
+                let rs = {
+                    data : variations || []
+                }
+                return resolve(rs);
             }
 
             resolve([])
