@@ -7,6 +7,8 @@ const ShopifyProductImage = require('./Shopify/shopifyProductImage.query');
 const VtexProducts = require('./Vtex/vtexProduct.query');
 const VtexProductVariation = require('./Vtex/vtexProductVariation.query');
 const VtexProductImage = require('./Vtex/vtexProductImage.query');
+const PrestashopProducts = require('./Prestashop/prestashopProduct.query.js');
+const PrestashopProductVariation = require('./Prestashop/prestashopProductVariation.query');
 
 module.exports = {
     public: {
@@ -18,6 +20,8 @@ module.exports = {
         ShopifyProductImage,
         VtexProducts,
         VtexProductVariation,
-        VtexProductImage
+        VtexProductImage,
+        PrestashopProducts,
+        PrestashopProductVariation
     }
 }
