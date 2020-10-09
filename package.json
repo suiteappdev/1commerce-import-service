@@ -25,7 +25,8 @@
     "morgan": "^1.9.1",
     "shopify-api-node": "^3.4.4",
     "string-strip-html": "^4.5.0",
-    "woocommerce-api": "^1.5.0"
+    "woocommerce-api": "^1.5.0",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "axios": "^0.19.2"

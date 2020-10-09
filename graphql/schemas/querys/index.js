@@ -10,6 +10,8 @@ const VtexPagination = require('./Vtex/vtexPagination.query');
 const VtexProducts = require('./Vtex/vtexProduct.query');
 const VtexProductVariation = require('./Vtex/vtexProductVariation.query');
 const VtexProductImage = require('./Vtex/vtexProductImage.query');
+const PrestashopProducts = require('./Prestashop/prestashopProduct.query.js');
+const PrestashopProductVariation = require('./Prestashop/prestashopProductVariation.query');
 
 module.exports = {
     public: {
@@ -24,6 +26,8 @@ module.exports = {
         VtexPagination,
         VtexProducts,
         VtexProductVariation,
-        VtexProductImage
+        VtexProductImage,
+        PrestashopProducts,
+        PrestashopProductVariation
     }
 }
