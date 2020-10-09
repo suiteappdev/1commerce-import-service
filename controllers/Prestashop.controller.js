@@ -21,7 +21,11 @@ let getProducts = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
             let response = await services.Prestashop.getData(credentials,listing);
+            let tax_rules = await services.Prestashop.getIdTaxes(credentials);
             let taxes = await services.Prestashop.getTaxes(credentials);
+            // console.log(id_tax);
+            
+                // let id_tax=tax_rules.find(tr => tr.tax_rules_group == id_attr).id_tax;
                 
                 for (let i = 0; i < response.products.length; i++) {
                     let array_id_images=response.products[i].associations.images;
@@ -59,7 +63,8 @@ let getProducts = (credentials, listing) => {
 
             taxes.taxes.map((t)=>{
                 response.products.map((p)=>{
-                    if((t.id)==p.id_tax_rules_group){//t.id+1)==p.id_tax_rules_group el uno es para que funcione, al parecer registraron un 2 como id del impuesto para el producto, pero despues borraron la regla
+                    let id_tax=tax_rules.find(tr => tr.tax_rules_group = p.id_tax_rules_group).id_tax;
+                    if((t.id)==id_tax){
                         p.tax={
                             name:t.name,
                             rate:t.rate
