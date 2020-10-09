@@ -9,10 +9,13 @@ let ShopifyProductVType = new GraphQLObjectType({
   name: 'ShopifyProductVType',
   fields: () => ({
     externalId: { type: GraphQLString, resolve:(obj, args, context, info)=>{
-      return obj.productId;
+      return obj.id;
     }},
     variations:{ type:new GraphQLList(ShopifyProductVariationType), resolve:(obj, args, context, info)=>{      
-      return obj.skus
+      return obj.variants.map(v => {
+        v.options = obj.options;
+        return v;
+      })
     }},
   }),
 });

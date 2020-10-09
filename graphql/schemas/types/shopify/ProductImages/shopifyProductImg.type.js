@@ -9,10 +9,10 @@ let ShopifyProductImgType = new GraphQLObjectType({
   name: 'ShopifyProductImgType',
   fields: () => ({
     externalId: { type: GraphQLString, resolve:(obj, args, context, info)=>{
-      return obj.ProductId;
+      return obj.id;
     }},
     images:{ type: new GraphQLList(ShopifyImageType), resolve:(obj, args, context, info)=>{      
-      return obj.Images
+      return obj.images
     }},
   }),
 });
