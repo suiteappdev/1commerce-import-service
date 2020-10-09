@@ -19,6 +19,30 @@ let init = (app, locals) => {
     logger.info("Initialization finished.");
 }
 
+let getPagination = (credentials, listing) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let totalRecords = await services.Shopify.count({
+                shopName: credentials.shopName,
+                apiKey: credentials.apiKey,
+                password: credentials.password,
+                version: credentials.version
+            }, 'count');
+
+            let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
+
+            let rs = {
+                totalRecords: totalRecords.count || null,
+                pagesCount: count,
+            }
+            return resolve(rs);
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 let getProducts = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -84,4 +108,4 @@ let getImages = (credentials, productId) => {
     });
 }
 
-module.exports = { init, getProducts, getVariations, getImages};
+module.exports = { init, getPagination, getProducts, getVariations, getImages};

@@ -15,11 +15,27 @@ let init = (app, locals) => {
     locals.controllers.WooCommerce = {
         getProducts,
         getVariations,
-        getImages
+        getImages,
+        getPagination
     }
 
     logger.info("Initialization finished.");
+}
 
+let getPagination = (credentials, listing) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+            let response = await WooCommerce.get("products", { per_page: listing.pagination.pageSize, page: listing.pagination.page });
+            resolve({
+                totalRecords : (response.headers['x-wp-total']),
+                pagesCount : parseInt(response.headers['x-wp-totalpages'])
+            });
+
+        } catch (error) {
+            reject(error);
+        }
+    });
 }
 
 let getProducts = (credentials, listing) => {
@@ -93,4 +109,4 @@ let getImages = (credentials, productId) => {
 }
 
 
-module.exports = { init, getProducts, getVariations, getImages };
+module.exports = { init, getPagination, getProducts, getVariations, getImages };
