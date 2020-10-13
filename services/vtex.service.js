@@ -13,7 +13,8 @@ let init = async (app, locals) => {
                 getProductIds,
                 getProduct,
                 getVariations,
-                getSku
+                getSku,
+                getBrand
             };
 
             logger.info(`vtex service done.`);
@@ -39,7 +40,8 @@ let getCategories = (credentials) => {
                   accept: 'application/json',
                   'x-vtex-api-appkey': credentials.apiKey,
                   'x-vtex-api-apptoken': credentials.password
-                }
+                },
+                timeout: 60000
             };
             response = await axios(options)
         } catch (error) {
@@ -66,7 +68,8 @@ let getProductIds = (credentials, params) => {
                   accept: 'application/json',
                   'x-vtex-api-appkey': credentials.apiKey,
                   'x-vtex-api-apptoken': credentials.password
-                }
+                },
+                timeout: 60000
             };
             response = await axios(options)
         } catch (error) {
@@ -96,7 +99,8 @@ let getProduct = (credentials, productId) => {
                   accept: 'application/json',
                   'x-vtex-api-appkey': credentials.apiKey,
                   'x-vtex-api-apptoken': credentials.password
-                }
+                },
+                timeout: 60000
             };
             response = await axios(options)
         } catch (error) {
@@ -123,16 +127,43 @@ let getVariations = (credentials, productId) => {
                   accept: 'application/json',
                   'x-vtex-api-appkey': credentials.apiKey,
                   'x-vtex-api-apptoken': credentials.password
-                }
+                },
+                timeout: 60000
             };
             response = await axios(options)
         } catch (error) {
-            console.log(error.response.data);
+            console.log('No se pudo obtener las variaciones');
         }
         if(response && response.data){
             return resolve(response.data);
         }
         resolve(undefined);
+    });
+}
+
+let getBrand = (credentials, brandId) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: `https://${credentials.shopName}.vtexcommercestable.com.br/api/catalog_system/pvt/brand/${brandId}`,
+                headers: {
+                  'content-type': 'application/json',
+                  accept: 'application/json',
+                  'x-vtex-api-appkey': credentials.apiKey,
+                  'x-vtex-api-apptoken': credentials.password
+                },
+                timeout: 60000
+            };
+            response = await axios(options)
+        } catch (error) {
+            console.log(error);
+        }
+        if(response && response.data){
+            return resolve(response.data.name);
+        }
+        resolve('');
     });
 }
 
@@ -148,7 +179,8 @@ let getSku = (credentials, skuId) => {
                   accept: 'application/json',
                   'x-vtex-api-appkey': credentials.apiKey,
                   'x-vtex-api-apptoken': credentials.password
-                }
+                },
+                timeout: 60000
             };
             response = await axios(options)
         } catch (error) {
