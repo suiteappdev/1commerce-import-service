@@ -28,12 +28,21 @@ let getProducts = (credentials, listing) => {
                 password: credentials.password,
                 version: credentials.version
             }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,title,body_html,published_at,variants,vendor,images,options`, true);
-            
+
+            let totalRecords = await services.Shopify.count({
+                shopName: credentials.shopName,
+                apiKey: credentials.apiKey,
+                password: credentials.password,
+                version: credentials.version
+            }, 'count');
+
+            let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
+
             let rs = {
-                totalRecords :null,
-                pagination : response.pagination  || null,
-                pagesCount : null ,
-                data : response.products || []
+                totalRecords: totalRecords.count || null,
+                pagination: response.pagination || null,
+                pagesCount: count,
+                data: response.products || []
             }
 
             return resolve(rs);
