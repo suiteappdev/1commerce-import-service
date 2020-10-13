@@ -29,8 +29,8 @@ let getProductsIds = (credentials, listing) => {
       });
       let productIds = [];
       let total = 0;
-      let from = ((listing.pagination.page - 1 ) * 10 + 1);
-      let to = listing.pagination.page * 10;
+      let from = ((listing.pagination.page - 1 ) * listing.pagination.pageSize + 1);
+      let to = listing.pagination.page * listing.pagination.pageSize;
 
       if (categories.length > 0) {
         for (const category of categories) {
@@ -54,32 +54,56 @@ let getProductsIds = (credentials, listing) => {
   });
 }
 
+let getPagination = (credentials, listing) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let data = await getProductsIds(credentials, listing);
+      let count = Math.ceil(data.total / listing.pagination.pageSize);
+      let rs = {
+        totalRecords: data.total,
+        pagesCount: count,
+      }
+		  return resolve(rs);
+
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 let getProducts = (credentials, listing) => {
   return new Promise(async (resolve, reject) => {
     try {
       let data = await getProductsIds(credentials, listing);
       let products = [];
+      console.log(data.productIds.length);
       if (data.productIds.length > 0) {
         for (const element of data.productIds) {
-          let product = await services.Vtex.getProduct({
-            shopName: credentials.shopName,
-            apiKey: credentials.apiKey,
-            password: credentials.password
-          }, element.productId);
-
           let variation = await services.Vtex.getVariations({
             shopName: credentials.shopName,
             apiKey: credentials.apiKey,
             password: credentials.password
           }, element.productId);
 
-          if (product && variation) {
+          if (variation) {
+            let product = await services.Vtex.getProduct({
+              shopName: credentials.shopName,
+              apiKey: credentials.apiKey,
+              password: credentials.password
+            }, element.productId);
+
+            let brand = await services.Vtex.getBrand({
+              shopName: credentials.shopName,
+              apiKey: credentials.apiKey,
+              password: credentials.password
+            }, product.BrandId);
+
             product.width = variation ? variation.skus[0].measures.width : 0;
             product.height = variation ? variation.skus[0].measures.height : 0;
             product.length = variation ? variation.skus[0].measures.length : 0;
             product.weight = variation ? variation.skus[0].measures.weight : 0;
             product.price = variation ? variation.skus[0].bestPrice : 0;
-            product.Brand = credentials.shopName;
+            product.Brand = brand;
             products.push(product);
           }
         }
@@ -165,4 +189,4 @@ let getImages = (credentials, listing) => {
   });
 }
 
-module.exports = { init, getProducts, getVariations, getImages };
+module.exports = { init, getPagination, getProducts, getVariations, getImages };
