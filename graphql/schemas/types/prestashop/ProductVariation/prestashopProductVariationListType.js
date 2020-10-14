@@ -1,13 +1,16 @@
 const {
     GraphQLObjectType,
-    GraphQLList
+    GraphQLList,
+    GraphQLInt
   } = require('graphql');
   
-  const PrestashopProductVariationType = require('./prestashopProductVariation.type');
+  const PrestashopProductVType = require('./prestashopProductV.type');
   const PrestashopProductVariationListType = new GraphQLObjectType({
     name: 'PrestashopProductVariationListType',
     fields: () => ({
-      data: { type: new GraphQLList(PrestashopProductVariationType) },
+      totalRecords: { type: GraphQLInt },
+      pagesCount: { type: GraphQLInt },
+      data: { type: new GraphQLList(PrestashopProductVType) },
     })
   });
   

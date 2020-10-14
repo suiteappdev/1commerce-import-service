@@ -21,11 +21,9 @@ let getProducts = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
             let response = await services.Prestashop.getData(credentials,listing);
+            let count = await services.Prestashop.getCount(credentials);
             let tax_rules = await services.Prestashop.getIdTaxes(credentials);
             let taxes = await services.Prestashop.getTaxes(credentials);
-            // console.log(id_tax);
-            
-                // let id_tax=tax_rules.find(tr => tr.tax_rules_group == id_attr).id_tax;
                 
                 for (let i = 0; i < response.products.length; i++) {
                     let array_id_images=response.products[i].associations.images;
@@ -81,9 +79,9 @@ let getProducts = (credentials, listing) => {
             });
             
             let rs = {
-                totalRecords :listing.pagination.pageSize,
+                totalRecords :count.products.length,
                 pagination : response.pagination  || null,
-                pagesCount : Math.ceil((listing.pagination.pageSize / listing.pagination.pageSize)) ,
+                pagesCount : Math.ceil((count.products.length / listing.pagination.pageSize)) ,
                 data : response.products || []
             }
             return resolve(rs);
@@ -94,32 +92,54 @@ let getProducts = (credentials, listing) => {
     });
 }
 
-let getVariations = (credentials, productId,attributes) => {
+let getVariations = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
-
-            let variations = await services.Prestashop.getCombinations(credentials,productId);
-            let quantities = await services.Prestashop.getQuantities(credentials,productId);
+            let variations=[];
+            let combinations;
+            let external_id;
+            let products = await services.Prestashop.getData(credentials,listing);
+            let quantities = await services.Prestashop.getQuantities(credentials);
             let attributes = await services.Prestashop.getAttributes(credentials);
+            products=products.products;
 
-            if (variations) {
-                for (let index = 0; index < variations.length; index++) {
-                    let id_attr=variations[index].associations.product_option_values[0].id;
-                    let attr=attributes.product_option_values.find(a => a.id == id_attr);
-                    let id_variation=variations[index].id;
-                    let quantity=quantities.find(q => q.id_product_attribute == id_variation).quantity;
+            if (products) {
+                for (let index = 0; index < products.length; index++) {
                     
-                    variations[index].quantity=quantity;
+                    let variations_product=[];
+                    external_id=products[index].id;
+                    combinations = await services.Prestashop.getCombinations(credentials, products[index].id);
                     
-                    if(attr.id_attribute_group=='3'){
-                        variations[index].talla='';
-                    }else{
-                        variations[index].talla=attr.name;
+                    if (combinations) {
+                        for (let index = 0; index < combinations.length; index++) {
+                            let id_attr=combinations[index].associations.product_option_values[0].id;
+                            let attr=attributes.product_option_values.find(a => a.id == id_attr);
+                            let id_variation=combinations[index].id;
+                            let quantity=quantities.find(q => q.id_product_attribute == id_variation).quantity;
+                            
+                            combinations[index].quantity=quantity;
+                            
+                            if(attr.id_attribute_group=='3'){
+                                combinations[index].talla='';
+                            }else{
+                                combinations[index].talla=attr.name;
+                            }
+                            variations_product.push(combinations[index]);
+                        }
+
                     }
-                    
+                    let obj={
+                        external_id:external_id,
+                        reference: products[index].reference,
+                        variations:variations_product
+                    }
+                    variations.push(obj);
+ 
                 }
-
+                
                 let rs = {
+                    totalRecords: listing.pageSize,
+                    pagesCount: Math.ceil((listing.pagination.pageSize / listing.pagination.pageSize)),
                     data : variations || []
                 }
                 return resolve(rs);

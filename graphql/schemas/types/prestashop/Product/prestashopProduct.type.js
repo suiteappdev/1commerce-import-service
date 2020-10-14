@@ -22,7 +22,7 @@ const {
           return obj.id.toString();
       }},  
       reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-        return obj.reference
+        return obj.reference ? obj.reference.trim() : "";
       }}, //Referencia del Producto  
       description:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
         return stripHtml(obj.description)

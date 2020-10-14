@@ -15,6 +15,7 @@ let init = async (app, locals) => {
 
             locals.services.Prestashop = {
                 getData,
+                getCount,
                 getIdTaxes,
                 getTaxes,
                 getImages,
@@ -38,10 +39,12 @@ let init = async (app, locals) => {
 let getData = (credentials, limits) => {
     return new Promise(async (resolve, reject) => {
         let response;
+        let amount=limits.pagination.pageSize;
+        let limit=((limits.pagination.page-1)*amount)+1;
         try {
             const options = {
                 method: 'get',
-                url: credentials.url+`/api/products?display=full&limit=${limits.pagination.page},${limits.pagination.pageSize}`,
+                url: credentials.url+`/api/products?display=full&limit=${limit},${amount}`,
                 headers: {
                     'Io-Format':'JSON'
                 },
@@ -61,6 +64,33 @@ let getData = (credentials, limits) => {
         resolve(null);
     });
 }
+let getCount = (credentials, limits) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: credentials.url+`/api/products?display=full`,
+                headers: {
+                    'Io-Format':'JSON'
+                },
+                auth:{
+                    username:credentials.apiKey
+                }
+            };
+            response = await axios(options).catch(e => reject(e));
+        } catch (error) {
+            console.log(error);
+        }
+                
+        if(response && response.data){
+            return resolve(response.data);
+        }
+
+        resolve(null);
+    });
+}
+
 
 let getTaxes = (credentials) => {
         return new Promise(async (resolve, reject) => {
@@ -138,14 +168,14 @@ let getImages = (credentials,id) => {
 });
 }
 
-let getCombinations = (credentials,id) => {
+let getCombinations = (credentials,product_id) => {
     return new Promise(async (resolve, reject) => {
         let response;
         
         try {
             const options = {
                 method: 'get',
-                url: credentials.url+`/api/combinations/?display=full&filter[id_product]=${id}`,
+                url: credentials.url+`/api/combinations/?display=full&&filter[id_product]=${product_id}`,
                 headers: {
                     'Io-Format':'JSON'
                 },
@@ -159,7 +189,6 @@ let getCombinations = (credentials,id) => {
             console.log(error);
         }
         if(response && response.data){
-            
             return resolve(response.data.combinations);
         }
 
@@ -193,13 +222,13 @@ let getAttributes = (credentials,id) => {
 });
 }
 
-let getQuantities = (credentials,id) => {
+let getQuantities = (credentials) => {
     return new Promise(async (resolve, reject) => {
         let response;
         try {
             const options = {
                 method: 'get',
-                url: credentials.url+`/api/stock_availables/?filter[id_product]=${id}&display=[id_product_attribute,quantity]`,
+                url: credentials.url+`/api/stock_availables/?display=[id_product_attribute,quantity]`,
                 headers: {
                     'Io-Format':'JSON'
                 },
