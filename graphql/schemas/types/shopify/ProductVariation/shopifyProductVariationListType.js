@@ -1,14 +1,19 @@
 const {
   GraphQLObjectType,
-  GraphQLList
+  GraphQLInt,
+  GraphQLList,
+  GraphQLString
 } = require('graphql');
 
-const ShopifyProductVariationType = require('./shopifyProductVariation.type');
+const ShopifyProductVType = require('./shopifyProductV.type');
 const ShopifyProductVariationListType = new GraphQLObjectType({
   name: 'ShopifyProductVariationListType',
   fields: () => ({
-    data: { type: new GraphQLList(ShopifyProductVariationType) },
-  })
+    totalRecords: { type: GraphQLInt },
+    pagesCount: { type: GraphQLInt },
+    pagination : { type: GraphQLString },
+    data: { type: new GraphQLList(ShopifyProductVType) },
+  }),
 });
 
 module.exports = ShopifyProductVariationListType;

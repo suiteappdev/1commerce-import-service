@@ -1,25 +1,25 @@
-const {
-  GraphQLString,
-} = require('graphql');
 const { getImages } = require('../../../../controllers/Shopify.controller');
 const { getToken, validate}  = require('../../../../util/auth.util');
-const shopifyImageListType  = require('../../types/shopify/ProductImages/shopifyImageListType');
+const shopifyProductImageListType  = require('../../types/shopify/ProductImages/shopifyImageListType');
+const ListingInput = require('../../types/pagination/listingInput');
 
-const ShopifyProductImageQuery = {
-  type:  shopifyImageListType,
-  args: { productId: { type: GraphQLString } },
-  resolve: (_, { productId }, context) => {
+const ShopifyProductImageListQuery = {
+  type:  shopifyProductImageListType,
+  args: { listing: { type: ListingInput } },
+  resolve: (_, { listing }, context) => {
     let token = getToken(context.req);
     let credentials = validate(token);
+    
     delete credentials.iat;
     
     if(!credentials){
       throw new Error("Auth token error");
     }
+    
     context.req = credentials;
     
-    return getImages(credentials, productId);
+    return getImages(credentials, listing);
   }
 };
   
-module.exports = ShopifyProductImageQuery;
+module.exports = ShopifyProductImageListQuery;
