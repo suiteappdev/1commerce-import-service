@@ -13,8 +13,7 @@ let init = (app, locals) => {
     locals.controllers.Shopify = {
         getProducts,
         getVariations,
-        getImages,
-        getTax
+        getImages
     }
 
     logger.info("Initialization finished.");
