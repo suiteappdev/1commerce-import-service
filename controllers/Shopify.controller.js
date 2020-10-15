@@ -24,7 +24,7 @@ let getPagination = (credentials, listing) => {
         try {
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
-                apiKey: credentials.consumerSecret,
+                apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
             }, 'count');
@@ -48,14 +48,14 @@ let getProducts = (credentials, listing) => {
         try {
             let response = await services.Shopify.getData({
                 shopName: credentials.shopName,
-                apiKey: credentials.consumerSecret,
+                apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
             }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,title,body_html,published_at,variants,vendor,options`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
-                apiKey: credentials.consumerSecret,
+                apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
             }, 'count');
@@ -82,14 +82,14 @@ let getVariations = (credentials, listing) => {
         try {
             let response = await services.Shopify.getData({
                 shopName: credentials.shopName,
-                apiKey: credentials.consumerSecret,
+                apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
             }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,variants,options`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
-                apiKey: credentials.consumerSecret,
+                apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
             }, 'count');
@@ -115,14 +115,14 @@ let getImages = (credentials, listing) => {
         try {
             let response = await services.Shopify.getData({
                 shopName: credentials.shopName,
-                apiKey: credentials.consumerSecret,
+                apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
             }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,images`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
-                apiKey: credentials.consumerSecret,
+                apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
             }, 'count');
