@@ -76,7 +76,6 @@ let getProducts = (credentials, listing) => {
     try {
       let data = await getProductsIds(credentials, listing);
       let products = [];
-      console.log(data.productIds.length);
       if (data.productIds.length > 0) {
         for (const element of data.productIds) {
           let variation = await services.Vtex.getVariations({
