@@ -40,7 +40,7 @@ let getData = (credentials, limits) => {
     return new Promise(async (resolve, reject) => {
         let response;
         let amount=limits.pagination.pageSize;
-        let limit=((limits.pagination.page-1)*amount)+1;
+        let limit=((limits.pagination.page-1)*amount);
         try {
             const options = {
                 method: 'get',
