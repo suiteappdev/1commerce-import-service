@@ -12,7 +12,7 @@ let ShopifyProductVariationType = new GraphQLObjectType({
       return obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0
     }},
     talla:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-      let option = obj.options.find(o => o.name.toLowerCase() === "size" || o.name.toLowerCase() === "talla" || o.name.toLowerCase() === 'tamaño');
+      let option = obj.options.find(o => o.name.toLowerCase() === "size");
       const size = option && option.values.some(option => option === obj.option1) ? obj.option1 : null;
       return size ? size : 'Único'
     }},
