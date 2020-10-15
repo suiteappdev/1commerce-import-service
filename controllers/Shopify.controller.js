@@ -13,7 +13,8 @@ let init = (app, locals) => {
     locals.controllers.Shopify = {
         getProducts,
         getVariations,
-        getImages
+        getImages,
+        getTax
     }
 
     logger.info("Initialization finished.");
@@ -46,6 +47,13 @@ let getPagination = (credentials, listing) => {
 let getProducts = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
+            let tax = await services.Shopify.getCountry({
+                shopName: credentials.shopName,
+                apiKey: credentials.apiKey,
+                password: credentials.password,
+                version: credentials.version
+            }, 'countries', `?fields=name,tax,tax_name`, true);
+
             let response = await services.Shopify.getData({
                 shopName: credentials.shopName,
                 apiKey: credentials.consumerSecret,
@@ -62,11 +70,16 @@ let getProducts = (credentials, listing) => {
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
 
+            let products = response.products ? response.products.map(p => {
+                p.tax = tax.country;
+                return p;
+            }) : []
+
             let rs = {
                 totalRecords: totalRecords.count || null,
                 pagination: response.pagination || null,
                 pagesCount: count,
-                data: response.products || []
+                data: products
             }
 
             return resolve(rs);
@@ -142,5 +155,6 @@ let getImages = (credentials, listing) => {
         }
     });
 }
+
 
 module.exports = { init, getPagination, getProducts, getVariations, getImages};
