@@ -16,7 +16,8 @@ let init = async (app, locals) => {
             locals.services.Shopify = {
                 getData,
                 requestProduct,
-                count
+                count,
+                getCountry
             };
 
             logger.info(`shopify service done.`);
@@ -85,6 +86,17 @@ let requestProduct = (credentials, collection, productId, params) => {
 let count = (credentials, collection) => {
     return new Promise(async (resolve, reject) => {
         let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/products/${collection}.json`).catch(e => console.log("ERR", e) && reject(e))
+        if(response && response.data){
+            return resolve(response.data);
+        }
+
+        resolve(null);
+    });
+}
+
+let getCountry = (credentials, collection, params) => {
+    return new Promise(async (resolve, reject) => {
+        let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/${collection}/126309466211.json${params ? params : ''}`).catch(e => console.log("ERR", e) && reject(e))
         if(response && response.data){
             return resolve(response.data);
         }
