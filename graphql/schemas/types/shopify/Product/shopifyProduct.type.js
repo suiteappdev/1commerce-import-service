@@ -45,9 +45,11 @@ let ShopifyProductType = new GraphQLObjectType({
         return obj.variants[0].price ? parseInt(obj.variants[0].price == "" ? 0 : obj.variants[0].price) : 0
       }
     },
-    tax: {type: ShopifyTaxType, resolve: (obj, args, context, info) => {
-      return obj.variants[0].taxable ? obj.tax : {};
-    }},
+    tax: {
+      type: ShopifyTaxType, resolve: (obj, args, context, info) => {
+        return null
+      }
+    },
     manufacturer: {
       type: GraphQLString, resolve: (obj, args, context, info) => {
         return obj.vendor;

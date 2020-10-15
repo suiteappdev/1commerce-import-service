@@ -8,10 +8,10 @@ let ShopifyTaxType = new GraphQLObjectType({
     name: 'ShopifyTaxType',
     fields: () => ({
       name:{ type:GraphQLString, resolve :(obj, args, context, info)=>{
-        return obj.tax_name || '';
+        return obj.name;
       }},
       rate:{type:GraphQLInt, resolve :(obj, args, context, info)=>{
-        return parseInt(obj.tax * 100) || 0;
+        return parseInt(obj.rate);
       }}
     }),
 });
