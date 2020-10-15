@@ -5,11 +5,12 @@ const {
   const { getVariations } = require('../../../../controllers/Prestashop.controller');
   const { getToken, validate}  = require('../../../../util/auth.util');
   const PrestashopProductVariationListType  = require('../../types/prestashop/ProductVariation/prestashopProductVariationListType');
+  const ListingInput = require('../../types/pagination/listingInput');
 
   const PrestashopProductVariationQuery = {
     type:  PrestashopProductVariationListType,
-    args: { productId: { type: GraphQLInt } },
-    resolve: (_, { productId }, context) => {
+    args: { listing: { type: ListingInput } },
+    resolve: (_, { listing }, context) => {
       let token = getToken(context.req);
       let credentials = validate(token);
       delete credentials.iat;
@@ -19,7 +20,7 @@ const {
       }
       context.req = credentials;
       
-      return getVariations(credentials, productId);
+      return getVariations(credentials, listing);
     }
   };
     
