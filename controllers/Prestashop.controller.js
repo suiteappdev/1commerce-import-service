@@ -101,7 +101,28 @@ let getVariations = (credentials, listing) => {
             let products = await services.Prestashop.getData(credentials,listing);
             let quantities = await services.Prestashop.getQuantities(credentials);
             let attributes = await services.Prestashop.getAttributes(credentials);
+            let tax_rules = await services.Prestashop.getIdTaxes(credentials);
+            let taxes = await services.Prestashop.getTaxes(credentials);
+
             products=products.products;
+
+            for (let index = 0; index < taxes.taxes.length; index++) {
+                for (let i = 0; i < products.length; i++) {
+                    let id_tax=tax_rules.find(tr => tr.tax_rules_group = products[i].id_tax_rules_group).id_tax;
+                    if((taxes.taxes[index].id)==id_tax){
+                        products[i].tax={
+                            name:taxes.taxes[index].name,
+                            rate:taxes.taxes[index].rate
+                        }
+                    }else{
+                        products[i].tax={
+                            name:null,
+                            rate:'0'
+                        }
+                    };
+                }
+            }
+            
 
             if (products) {
                 for (let index = 0; index < products.length; index++) {
@@ -111,20 +132,25 @@ let getVariations = (credentials, listing) => {
                     combinations = await services.Prestashop.getCombinations(credentials, products[index].id);
                     
                     if (combinations) {
-                        for (let index = 0; index < combinations.length; index++) {
-                            let id_attr=combinations[index].associations.product_option_values[0].id;
+                        for (let i = 0; i < combinations.length; i++) {
+                            let id_attr=combinations[i].associations.product_option_values[0].id;
                             let attr=attributes.product_option_values.find(a => a.id == id_attr);
-                            let id_variation=combinations[index].id;
+                            let id_variation=combinations[i].id;
                             let quantity=quantities.find(q => q.id_product_attribute == id_variation).quantity;
                             
-                            combinations[index].quantity=quantity;
+                            combinations[i].quantity=quantity;
+                            combinations[i].tax=products[index].tax;
+                            if(combinations[i].price==0){
+                                combinations[i].price=products[index].price;
+                            }
+                            
                             
                             if(attr.id_attribute_group=='3'){
-                                combinations[index].talla='';
+                                combinations[i].talla='';
                             }else{
-                                combinations[index].talla=attr.name;
+                                combinations[i].talla=attr.name;
                             }
-                            variations_product.push(combinations[index]);
+                            variations_product.push(combinations[i]);
                         }
 
                     }
