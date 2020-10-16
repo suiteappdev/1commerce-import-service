@@ -15,6 +15,10 @@ let ShopifyProductVType = new GraphQLObjectType({
       return obj.id
     }},
     variations:{ type:new GraphQLList(ShopifyProductVariationType), resolve:(obj, args, context, info)=>{      
+      if (!obj.variants || obj.variants.length === 0) {
+        return [{}]
+      }
+
       return obj.variants.map(v => {
         v.options = obj.options;
         return v;
