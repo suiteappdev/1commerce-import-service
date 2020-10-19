@@ -46,12 +46,14 @@ let getPagination = (credentials, listing) => {
 let getProducts = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let tax = await services.Shopify.getCountry({
+            let data = await services.Shopify.getCountry({
                 shopName: credentials.shopName,
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'countries', `?fields=name,tax,tax_name`, true);
+            }, 'countries', `?fields=name,tax,tax_name`);
+
+            let tax = data.countries.find(c => c.name.toLowerCase() === 'colombia');
 
             let response = await services.Shopify.getData({
                 shopName: credentials.shopName,
@@ -70,7 +72,7 @@ let getProducts = (credentials, listing) => {
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
 
             let products = response.products ? response.products.map(p => {
-                p.tax = tax.country;
+                p.tax = tax ? tax : {};
                 return p;
             }) : []
 

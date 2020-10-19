@@ -5,7 +5,7 @@ const {
   GraphQLInt,
   GraphQLFloat
 } = require('graphql');
-
+const vtexTaxType = require('./vtexTaxType');
 const stripHtml = require("string-strip-html");
 
 let VtexProductType = new GraphQLObjectType({
@@ -32,11 +32,14 @@ let VtexProductType = new GraphQLObjectType({
     price:{ type:GraphQLInt, resolve : (obj, args, context, info)=>{
       return obj.price;
     }}, 
-    tax:{ type:GraphQLInt, resolve : (obj, args, context, info)=>{
+    tax: {type: vtexTaxType, resolve: (obj, args, context, info) => {
       return obj.tax;
     }},
     manufacturer: { type:GraphQLString, resolve : (obj, args, context, info)=>{
       return obj.Brand;
+    }},
+    textLink:{ type: GraphQLString, resolve:(obj, args, context, info)=>{
+      return obj.textLink
     }},
     width:{ type:GraphQLFloat, resolve:(obj, args, context, info)=>{
       return obj.width;

@@ -97,12 +97,16 @@ let getProducts = (credentials, listing) => {
               password: credentials.password
             }, product.BrandId);
 
+            let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
             product.width = variation ? variation.skus[0].measures.width : 0;
             product.height = variation ? variation.skus[0].measures.height : 0;
             product.length = variation ? variation.skus[0].measures.length : 0;
             product.weight = variation ? variation.skus[0].measures.weight : 0;
             product.price = variation ? variation.skus[0].bestPrice : 0;
+            product.tax = variation ? {tax: variation.skus[0].taxAsInt, name: ''} : {};
+            product.color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
             product.Brand = brand;
+            product.textLink = product.LinkId.split('-').join(' ') + ' ' + color.replace('.png','').split('_')[1];
             products.push(product);
           }
         }
@@ -138,6 +142,7 @@ let getVariations = (credentials, listing) => {
           }
         }
       }
+
       let count = Math.ceil(data.total / listing.pagination.pageSize);
       let rs = {
         totalRecords: data.total,
