@@ -42,7 +42,7 @@ let ShopifyProductType = new GraphQLObjectType({
     },
     price: {
       type: GraphQLInt, resolve: (obj, args, context, info) => {
-        return obj.variants[0].compare_at_price ? obj.variants[0].compare_at_price : 0
+        return obj.variants[0].compare_at_price ? obj.variants[0].compare_at_price : obj.variants[0].price ? obj.variants[0].price : 0
       }
     },
     tax: {type: ShopifyTaxType, resolve: (obj, args, context, info) => {

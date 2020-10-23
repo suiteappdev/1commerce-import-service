@@ -9,7 +9,7 @@ let ShopifyProductVariationType = new GraphQLObjectType({
   name: 'ShopifyProductVariationType',
   fields: () => ({
     price:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
-      return obj.compare_at_price ? obj.compare_at_price : 0
+      return obj.compare_at_price ? obj.compare_at_price : obj.price ? obj.price : 0
     }},
     talla:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       let option = obj.options ? obj.options.find(o => o.name.toLowerCase() === "size" || o.name.toLowerCase() === "talla" || o.name.toLowerCase() === 'tamaño') : undefined;
