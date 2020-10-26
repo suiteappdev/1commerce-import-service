@@ -96,13 +96,12 @@ let getProducts = (credentials, listing) => {
               apiKey: credentials.apiKey,
               password: credentials.password
             }, product.BrandId);
-
             let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
             product.width = variation ? variation.skus[0].measures.width : 0;
             product.height = variation ? variation.skus[0].measures.height : 0;
             product.length = variation ? variation.skus[0].measures.length : 0;
             product.weight = variation ? variation.skus[0].measures.weight : 0;
-            product.price = variation ? variation.skus[0].bestPrice : 0;
+            product.price = variation ? variation.skus[0].bestPrice / 100 : 0;
             product.tax = variation ? {tax: variation.skus[0].taxAsInt, name: ''} : {};
             product.color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
             product.Brand = brand;
