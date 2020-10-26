@@ -99,13 +99,13 @@ let WooCommerceProductType = new GraphQLObjectType({
 
 
           if(!obj.variations || obj.variations.length === 0){
-            let iva = parseInt(obj.tax.rate * 100) || 0;
             let price = parseInt(obj.price == "" ? 0 : obj.price);
+            
             let defaultVariation = {
                 sku:obj.sku,
                 ean13:obj.ean13 || '',
                 upc:obj.upc || '', 
-                price:(obj.tax_status === "taxable") ? Math.ceil(price/ (1+(iva/100))) : price ,
+                price:price,
                 gender:getGender(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
                 talla:'único', //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
                 stock_quantity:obj.stock_quantity || 0
