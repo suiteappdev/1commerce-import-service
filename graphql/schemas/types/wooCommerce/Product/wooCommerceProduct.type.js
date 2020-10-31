@@ -18,9 +18,6 @@ let WooCommerceProductType = new GraphQLObjectType({
         return obj.id.toString();
       }},
       reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-        if(obj.sku === 'CM021401'){
-          console.log(obj)
-        }
         return obj.sku
       }}, //Referencia del Producto
       description:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
@@ -33,10 +30,11 @@ let WooCommerceProductType = new GraphQLObjectType({
         return obj.status == "publish" ? true : false
       }}, //Estado del Producto
       price:{ type:GraphQLInt, resolve : (obj, args, context, info)=>{
-        return obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0
+        let price = parseInt(obj.price == "" ? 0 : obj.price);
+        return  (obj.tax_status === "taxable") ? Math.ceil(price / (1+(obj.tax.rate/100))) : price ;
       }}, 
       tax:{ type:WoocommerceTaxType, resolve : (obj, args, context, info)=>{
-        return obj.tax;
+        return obj.tax || {};
       }},
       manufacturer:{ type:GraphQLString, resolve : (obj, args, context, info)=>{
         if(obj.brands){
@@ -99,11 +97,13 @@ let WooCommerceProductType = new GraphQLObjectType({
 
 
           if(!obj.variations || obj.variations.length === 0){
+            let price = parseInt(obj.price == "" ? 0 : obj.price);
+            
             let defaultVariation = {
                 sku:obj.sku,
                 ean13:obj.ean13 || '',
                 upc:obj.upc || '', 
-                price:obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0,
+                price:price,
                 gender:getGender(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
                 talla:'único', //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
                 stock_quantity:obj.stock_quantity || 0
