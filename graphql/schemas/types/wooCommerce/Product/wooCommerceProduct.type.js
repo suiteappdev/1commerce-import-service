@@ -30,10 +30,8 @@ let WooCommerceProductType = new GraphQLObjectType({
         return obj.status == "publish" ? true : false
       }}, //Estado del Producto
       price:{ type:GraphQLInt, resolve : (obj, args, context, info)=>{
-        let iva = parseInt(obj.tax.rate * 100) || 0;
         let price = parseInt(obj.price == "" ? 0 : obj.price);
-
-        return  (obj.tax_status === "taxable") ? Math.ceil(price / (1+(iva/100))) : price ;
+        return  (obj.tax_status === "taxable") ? Math.ceil(price / (1+(obj.tax.rate/100))) : price ;
       }}, 
       tax:{ type:WoocommerceTaxType, resolve : (obj, args, context, info)=>{
         return obj.tax || {};

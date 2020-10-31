@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+  <Consulta>
+  <NombreConexion>10.148.2.187</NombreConexion>
+  <IdCia>1</IdCia>
+  <IdProveedor>SIESA</IdProveedor>
+  <IdConsulta>t350</IdConsulta>
+  <Usuario>jairc</Usuario>
+  <Clave>password</Clave> 
+  <Parametros> 
+    <p_cia>1</p_cia> 
+    <p_id_co>01</p_id_co>
+    <p_id_tipo_docto>NI</p_id_tipo_docto>
+    <p_consec_docto>10</p_consec_docto>
+  </Parametros>
+</Consulta>

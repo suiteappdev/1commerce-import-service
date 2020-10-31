@@ -5,114 +5,66 @@
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const { response } = require('express');
+const fs = require('fs');
+const path = require('path');
 
-//Pasamos el obj con las credenciales del api rest woocommerce
-//la url es el endpoint del servicio rest del woocomerce
-//las credenciales y la version del api
+let load = (request, data)=>{
+    try {
+        let xml = fs.readFileSync(path.join(__dirname, 'xml','siesa', request), 'utf8').toString();
 
-/*
-Shopify
+        Object.keys(data).forEach((k)=>{
+            xml = xml.replace(`{{${k}}}`, data[k]);
+        });
 
-Clave API
-9e8877c5de8113efcbb21754fee5183a
+        return xml;
 
-Contraseña
-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
+    } catch (e) {
+        console.log(`El archivo xml non existe : ${e.message}`);        
+    }
+}
 
-Url
-https://9e8877c5de8113efcbb21754fee5183a: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@openhouseg.myshopify.com/admin/api/2020-07/orders.json
+let getParams = async ()=>{
+    let body = load('parametros.xml', {});
 
-Secret
-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
-
-
-*/
-
-let token = jwt.sign({
-    apiKey: "vtexappkey-speedoco-LBCIYP",
-    password : "EPUTATWIOQVJGMHNPEBBTBBPJXLLSBRHOMYOBOVYDAZEFIHSBVZZMXTCNEKCIKQMYNVUNTMBJDXTCXJAPSJWBSVQSWAWDSQSKNFSMNFIJYQIAAAPUJNPBTKGRFCRSPXQ",
-    shopName : 'speedoco'
-}, 'secret');
-// console.log(token)
-//esta es la query
-const query = `
-            {
-                ShopifyProductListQuery{
-                name
-                description
-                reference
-                descriptionShort
-                active
-                price
-                
-                mainCategory {
-                    id
-                    name
-                    description
-                    parent
-                    active
-                    url
-                    level
-                    createdAt
-                    updateAt
-                    dafiti
-                    mercadolibre
-                    linio
-                }
-                categories{
-                    id
-                    name
-                    description
-                    parent
-                    active
-                    url
-                    level
-                    createdAt
-                    updateAt
-                    dafiti
-                    mercadolibre
-                    linio
-                }
-                gender
-                mainColor
-                width
-                height
-                weight
-                length
-                images{
-                    file
-                    position
-                    cover
-                    src
-                }
-                variations{
-                    quantity
-                    reference
-                    talla
-                    upc
-                    price
-                    ean13
-                }
-                }
-            }
-  `
-
-  //aca se lanza el request al microservicio devuelve error si falla la autenticacion
-let getData = async ()=>{
     const options = {
-        method: 'GET',
-        url: 'https://speedoco.vtexcommercestable.com.br/api/catalog/pvt/stockkeepingunitkit',
-        params: {skuId: '131'},
+        method: 'POST',
+        url: 'http://wscnadar.siesacloud.com:8043/WSUNOEE/WSUNOEE.asmx',
         headers: {
-          'content-type': 'application/json',
-          accept: 'application/json',
-          'x-vtex-api-appkey': 'vtexappkey-speedoco-LBCIYP',
-          'x-vtex-api-apptoken': 'EPUTATWIOQVJGMHNPEBBTBBPJXLLSBRHOMYOBOVYDAZEFIHSBVZZMXTCNEKCIKQMYNVUNTMBJDXTCXJAPSJWBSVQSWAWDSQSKNFSMNFIJYQIAAAPUJNPBTKGRFCRSPXQ'
-        }
-      };
+           'Content-Type': 'text/xml',
+            SOAPAction: 'http://tempuri.org/LeerEsquemaParametros'
+        },
+        body : body
+    }
+
     let response = await axios(options).catch(e => console.log(e))
 
     console.log(response)
 }
 
-getData();
+let getConnection = async ()=>{
+    let body = load('connection.xml', {
+        name : '10.148.2.187',
+        type : 'SQL',
+        db : 'UnoEE_Cnadar_Real',
+        user : 'Cnadar',
+        password : 'Cnadar$12$%',
+        host : '10.148.2.187',
+        connection : 16
+    });
+
+    const options = {
+        method: 'POST',
+        url: 'http://wscnadar.siesacloud.com:8043/WSUNOEE/WFConexion.aspx',
+        headers: {
+           'Content-Type': 'text/xml',
+            SOAPAction: 'http://tempuri.org/CrearConexionXML'
+        },
+        body : body
+    }
+
+    let response = await axios(options).catch(e => console.log(e))
+
+    console.log(response)
+}
+
+getParams();
