@@ -99,7 +99,7 @@ let getVariations = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,variants,options`, true);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,title,variants,options`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
