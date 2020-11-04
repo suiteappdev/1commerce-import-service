@@ -13,7 +13,8 @@ let init = (app, locals) => {
     locals.controllers.Shopify = {
         getProducts,
         getVariations,
-        getImages
+        getImages,
+        getDiscount
     }
 
     logger.info("Initialization finished.");
@@ -46,7 +47,7 @@ let getPagination = (credentials, listing) => {
 let getProducts = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await services.Shopify.getCountry({
+            let data = await services.Shopify.getData({
                 shopName: credentials.shopName,
                 apiKey: credentials.apiKey,
                 password: credentials.password,
@@ -55,7 +56,7 @@ let getProducts = (credentials, listing) => {
 
             let tax = data.countries.find(c => c.name.toLowerCase() === 'colombia');
 
-            let response = await services.Shopify.getData({
+            let response = await services.Shopify.getProducts({
                 shopName: credentials.shopName,
                 apiKey: credentials.apiKey,
                 password: credentials.password,
@@ -94,7 +95,7 @@ let getProducts = (credentials, listing) => {
 let getVariations = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let response = await services.Shopify.getData({
+            let response = await services.Shopify.getProducts({
                 shopName: credentials.shopName,
                 apiKey: credentials.apiKey,
                 password: credentials.password,
@@ -127,7 +128,7 @@ let getVariations = (credentials, listing) => {
 let getImages = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let response = await services.Shopify.getData({
+            let response = await services.Shopify.getProducts({
                 shopName: credentials.shopName,
                 apiKey: credentials.apiKey,
                 password: credentials.password,
@@ -157,5 +158,26 @@ let getImages = (credentials, listing) => {
     });
 }
 
+let getDiscount = (credentials) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let moment = require('moment')
+            let response = await services.Shopify.getData({
+                shopName: credentials.shopName,
+                apiKey: credentials.apiKey,
+                password: credentials.password,
+                version: credentials.version
+            }, 'price_rules', `?ends_at_min=`+ moment().format());
+            let priceRule = response.price_rules.find(r =>
+                moment(r.starts_at).format('YYYY/MM/DD') <= moment().add(1, 'days').format('YYYY/MM/DD') &&
+                moment(r.ends_at).format('YYYY/MM/DD') >= moment().format('YYYY/MM/DD')
+            )
+            return resolve(priceRule);
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages};
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getDiscount};
