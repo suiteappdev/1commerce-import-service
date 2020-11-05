@@ -18,6 +18,8 @@ let init = async (app, locals) => {
                 getCount,
                 getIdTaxes,
                 getTaxes,
+                getDiscounts,
+                getDiscountNames,
                 getImages,
                 getCombinations,
                 getAttributes,
@@ -116,6 +118,57 @@ let getTaxes = (credentials) => {
     
             resolve(null);
     });
+}
+
+let getDiscounts = (credentials) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: credentials.url+`/api/specific_prices?display=[id,id_specific_price_rule,id_product,reduction,reduction_type,from,to]`,
+                headers: {
+                    'Io-Format':'JSON'
+                },
+                auth:{
+                    username:credentials.apiKey
+                }
+            };
+            response = await axios(options).catch(e => reject(e));
+        } catch (error) {
+            console.log(error);
+        }
+        if(response && response.data){
+            return resolve(response.data.specific_prices);
+        }
+
+        resolve(null);
+});
+}
+let getDiscountNames = (credentials) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: credentials.url+`/api/specific_price_rules?display=full`,
+                headers: {
+                    'Io-Format':'JSON'
+                },
+                auth:{
+                    username:credentials.apiKey
+                }
+            };
+            response = await axios(options).catch(e => reject(e));
+        } catch (error) {
+            console.log(error);
+        }
+        if(response && response.data){
+            return resolve(response.data.specific_price_rules);
+        }
+
+        resolve(null);
+});
 }
 
 let getIdTaxes = (credentials) => {
