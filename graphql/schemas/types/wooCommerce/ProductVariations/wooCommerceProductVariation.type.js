@@ -2,7 +2,11 @@ const {
     GraphQLObjectType,
     GraphQLString,
     GraphQLInt,
+    GraphQLList
 } = require('graphql');
+
+const moment = require('moment');
+const WoocommerceDiscountType =  require('../Product/wooCommerceDiscountType');
 
 let WooCommerceProductVariationType = new GraphQLObjectType({
   name: 'WooCommerceProductVariationType',
@@ -18,9 +22,9 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
         if(size.length > 0)
           return size[0].option;
         else
-          return null;
+          return 'única';
       }else{
-        return obj.talla;
+        return obj.talla || 'única';
       }
     }}, //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
     quantity:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
@@ -28,7 +32,22 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
     }},
     reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       return obj.sku
-    }}
+    }},
+    discount: {type: new GraphQLList(WoocommerceDiscountType),resolve:(obj, args, context, info)=>{
+      let disc = [];
+      
+      if (obj.date_on_sale_from && obj.date_on_sale_to) {
+        disc = [{
+          name: obj.name || null,
+          from: moment(obj.date_on_sale_from).format('YYYY/MM/DD'),
+          to: moment(obj.date_on_sale_to).format('YYYY/MM/DD'),
+          type: 'C',
+          value: parseInt(obj.regular_price) - parseInt(obj.sale_price)
+        }]
+      }
+
+      return disc
+    }},
   }),
 });
 
