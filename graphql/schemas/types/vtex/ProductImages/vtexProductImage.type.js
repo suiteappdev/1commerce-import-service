@@ -8,7 +8,7 @@ let VtexProductImageType = new GraphQLObjectType({
   name: 'VtexProductImageType',
   fields: () => ({
     file : { type: GraphQLString, resolve : (obj, args, context, info)=>{
-    return `${obj.ImageName}${path.extname(obj.ImageUrl)}`;
+    return obj.ImageUrl.split('/')[6];
     }},
     src : { type: GraphQLString , resolve : (obj, args, context, info)=>{
       return obj.ImageUrl;

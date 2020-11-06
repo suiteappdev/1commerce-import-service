@@ -30,7 +30,7 @@ let VtexProductType = new GraphQLObjectType({
       return obj.IsActive;
     }},
     price:{ type:GraphQLInt, resolve : (obj, args, context, info)=>{
-      let iva = parseInt(obj.tax.tax * 100) || 0;
+      let iva = parseInt(obj.tax.tax) || 0;
       return iva !== 0 ? Math.ceil(obj.price / (1+(iva/100))) : obj.price;
     }}, 
     tax: {type: vtexTaxType, resolve: (obj, args, context, info) => {

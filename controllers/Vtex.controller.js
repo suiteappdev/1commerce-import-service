@@ -102,7 +102,7 @@ let getProducts = (credentials, listing) => {
             product.length = variation ? variation.skus[0].measures.length : 0;
             product.weight = variation ? variation.skus[0].measures.weight : 0;
             product.price = variation ? variation.skus[0].bestPrice / 100 : 0;
-            product.tax = variation ? {tax: variation.skus[0].taxAsInt, name: ''} : {};
+            product.tax = variation ? {tax: variation.skus[0].taxAsInt != 0 ? variation.skus[0].taxAsInt : 19 , name: 'iva'} : {};
             product.color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
             product.Brand = brand;
             product.textLink = product.LinkId.split('-').join(' ') + ' ' + color.replace('.png','').split('_')[1];

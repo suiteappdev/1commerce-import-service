@@ -23,7 +23,7 @@ let ShopifyProductVariationType = new GraphQLObjectType({
       return obj.sku ? obj.sku : ''
     }},
     ean13:{ type:GraphQLFloat, resolve:(obj, args, context, info)=>{
-      return obj.barcode ? parseFloat(obj.barcode) : 0
+      return obj.barcode ? obj.barcode : '0'
     }}
   }),
 });
