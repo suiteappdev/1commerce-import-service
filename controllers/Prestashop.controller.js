@@ -93,6 +93,7 @@ let getProducts = (credentials, listing) => {
 }
 
 let getVariations = (credentials, listing) => {
+  const moment = require('moment');
     return new Promise(async (resolve, reject) => {
         try {
             let variations=[];
@@ -103,6 +104,8 @@ let getVariations = (credentials, listing) => {
             let attributes = await services.Prestashop.getAttributes(credentials);
             let tax_rules = await services.Prestashop.getIdTaxes(credentials);
             let taxes = await services.Prestashop.getTaxes(credentials);
+            let discounts = await services.Prestashop.getDiscounts(credentials);
+            let discount_names = await services.Prestashop.getDiscountNames(credentials);
 
             products=products.products;
 
@@ -126,7 +129,20 @@ let getVariations = (credentials, listing) => {
 
             if (products) {
                 for (let index = 0; index < products.length; index++) {
-                    
+                    let discount=[];
+                    let disc=discounts.find(d => d.id_product == products[index].id);
+                    if(disc){
+                        disc.name=discount_names.find(dn => dn.id == disc.id_specific_price_rule);
+                        products[index].discount={
+                            name:disc.name?disc.name.name:'',
+                            from: moment(disc.from).format('YYYY/MM/DD HH:mm:ss'),
+                            to:moment(disc.to).format('YYYY/MM/DD HH:mm:ss'),
+                            type:disc.reduction_type === 'percentage' ? 'P' : 'C',
+                            value:disc.reduction*100
+                        };
+
+                        discount.push(products[index].discount);
+                    }
                     let variations_product=[];
                     external_id=products[index].id;
                     combinations = await services.Prestashop.getCombinations(credentials, products[index].id);
@@ -156,13 +172,13 @@ let getVariations = (credentials, listing) => {
                     }
                     let obj={
                         external_id:external_id,
+                        discount: discount,
                         reference: products[index].reference,
                         variations:variations_product
                     }
                     variations.push(obj);
  
                 }
-                
                 let rs = {
                     totalRecords: listing.pageSize,
                     pagesCount: Math.ceil((listing.pagination.pageSize / listing.pagination.pageSize)),

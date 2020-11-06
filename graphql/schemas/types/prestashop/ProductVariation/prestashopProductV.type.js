@@ -5,6 +5,7 @@ const {
 } = require('graphql');
 
 const PrestashopProductVariationType = require('./prestashopProductVariation.type');
+const PrestashopDiscountType = require('./prestashopDiscount.type');
 let PrestashopProductVType = new GraphQLObjectType({
   name: 'PrestashopProductVType',
   fields: () => ({
@@ -16,6 +17,9 @@ let PrestashopProductVType = new GraphQLObjectType({
     }},
     variations:{ type:new GraphQLList(PrestashopProductVariationType), resolve:(obj, args, context, info)=>{      
       return obj.variations
+    }},
+    discount: {type: new GraphQLList(PrestashopDiscountType),resolve: async (obj, args, context, info)=>{
+      return obj.discount;
     }},
   }),
 });
