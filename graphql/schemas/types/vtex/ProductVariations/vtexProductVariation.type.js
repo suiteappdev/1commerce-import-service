@@ -8,7 +8,7 @@ let VtexProductVariationType = new GraphQLObjectType({
   name: 'VtexProductVariationType',
   fields: () => ({
     price:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
-      return obj.bestPrice ? (obj.bestPrice / 100) : 0;
+      return obj.listPrice !== 0 ? (obj.listPrice / 100) : (obj.bestPrice / 100);
     }},
     talla:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       return obj.dimensions.Talla && obj.dimensions.Talla !== '' ? obj.dimensions.Talla : 'único';
