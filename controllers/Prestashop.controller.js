@@ -133,7 +133,12 @@ let getVariations = (credentials, listing) => {
                 
                 for (let index = 0; index < products.length; index++) {
                     let discount=[];
-                    let disc=discounts.find(d => d.id_product == products[index].id);
+                    let disc=discounts.filter(d => d.id_product == products[index].id);
+                    if(disc.length>1){
+                        disc=disc.sort((a,b) => b.from.localeCompare(a.from));
+                        disc.length = 1;
+                    }
+                    disc=disc[0];
                     if(disc){
                         disc.name=discount_names.find(dn => dn.id == disc.id_specific_price_rule);
                         products[index].discount={
