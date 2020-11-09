@@ -44,7 +44,7 @@ let getProducts = (credentials, listing) => {
             let WooCommerce = new services.WooCommerceRestApi(credentials);
             let response = await WooCommerce.get("products", { per_page: listing.pagination.pageSize, page: listing.pagination.page });
             let tax = await WooCommerce.get("taxes");
-
+            
             let findTax = (taxClass, taxes)=>{
                 return tax.data.filter((c) => c.name.toLowerCase() === taxClass.toLowerCase());
             }
@@ -71,12 +71,12 @@ let getProducts = (credentials, listing) => {
     });
 }
 
-let getVariations = (credentials, productId) => {
+let getVariations = (credentials, pro) => {
     return new Promise(async (resolve, reject) => {
         try {
 
             let WooCommerce = new services.WooCommerceRestApi(credentials);
-            let products = await WooCommerce.get(`products/${productId}/variations`);
+            let products = await WooCommerce.get(`products/${pro.id}/variations`);
 
             if (products && products.data) {
                 return resolve(products.data);

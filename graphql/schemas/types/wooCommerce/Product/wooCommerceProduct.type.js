@@ -8,8 +8,11 @@ const {
 const WooCommerceProductVariationType = require('../ProductVariations/wooCommerceProductVariation.type');
 const WooCommerceImageProductType = require('../ProductImages/WooCommerceProductImage.type');
 const WoocommerceTaxType =  require('./WooCommerceTaxType');
+const WoocommerceDiscountType =  require('./wooCommerceDiscountType');
 const stripHtml = require("string-strip-html");
 const { getVariations, getCategories, getTax } = require('../../../../../controllers/WooCommerce.controller');
+const moment = require('moment');
+
 let WooCommerceProductType = new GraphQLObjectType({
   name: 'WooCommerceProductType',
     fields: () => ({
@@ -33,6 +36,21 @@ let WooCommerceProductType = new GraphQLObjectType({
         let price = parseInt(obj.price == "" ? 0 : obj.price);
         return  (obj.tax_status === "taxable") ? Math.ceil(price / (1+(obj.tax.rate/100))) : price ;
       }}, 
+      discount: {type: new GraphQLList(WoocommerceDiscountType),resolve:(obj, args, context, info)=>{
+        let disc = [];
+      
+        if (obj.date_on_sale_from && obj.date_on_sale_to) {
+          disc = [{
+            name: obj.name,
+            from: moment(obj.date_on_sale_from).format('YYYY/MM/DD'),
+            to: moment(obj.date_on_sale_to).format('YYYY/MM/DD'),
+            type: 'C',
+            value: parseInt(obj.sale_price) - parseInt(obj.regular_price)
+          }]
+        }
+
+        return disc
+      }},
       tax:{ type:WoocommerceTaxType, resolve : (obj, args, context, info)=>{
         return obj.tax || {};
       }},
@@ -112,7 +130,7 @@ let WooCommerceProductType = new GraphQLObjectType({
             return [defaultVariation];
           }
 
-        return getVariations(context.req, obj.id);
+        return getVariations(context.req, obj);
       }},
     }),
 });
