@@ -14,7 +14,9 @@ let init = async (app, locals) => {
                 getProduct,
                 getVariations,
                 getSku,
-                getBrand
+                getBrand,
+                getEan,
+                getQuantity
             };
 
             logger.info(`vtex service done.`);
@@ -188,6 +190,58 @@ let getSku = (credentials, skuId) => {
         }
         if(response && response.data){
             return resolve(response.data);
+        }
+        resolve(undefined);
+    });
+}
+
+let getEan = (credentials, skuId) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: `https://${credentials.shopName}.vtexcommercestable.com.br/api/catalog/pvt/stockkeepingunit/${skuId}/ean`,
+                headers: {
+                  'content-type': 'application/json',
+                  accept: 'application/json',
+                  'x-vtex-api-appkey': credentials.apiKey,
+                  'x-vtex-api-apptoken': credentials.password
+                },
+                timeout: 60000
+            };
+            response = await axios(options)
+        } catch (error) {
+            console.log(error);
+        }
+        if(response && response.data){
+            return resolve(response.data);
+        }
+        resolve(undefined);
+    });
+}
+
+let getQuantity = (credentials, skuId) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: `https://${credentials.shopName}.vtexcommercestable.com.br/api/logistics/pvt/inventory/skus/${skuId}`,
+                headers: {
+                  'content-type': 'application/json',
+                  accept: 'application/json',
+                  'x-vtex-api-appkey': credentials.apiKey,
+                  'x-vtex-api-apptoken': credentials.password
+                },
+                timeout: 60000
+            };
+            response = await axios(options)
+        } catch (error) {
+            console.log(error);
+        }
+        if(response && response.data){
+            return resolve(response.data.balance[0]);
         }
         resolve(undefined);
     });

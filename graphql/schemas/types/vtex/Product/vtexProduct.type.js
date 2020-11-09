@@ -24,7 +24,7 @@ let VtexProductType = new GraphQLObjectType({
       return stripHtml(obj.Description);
     }},
     descriptionShort:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-      return stripHtml(obj.DescriptionShort);
+      return stripHtml(obj.MetaTagDescription);
     }},
     active:{ type:GraphQLBoolean, resolve:(obj, args, context, info)=>{
       return obj.IsActive;
