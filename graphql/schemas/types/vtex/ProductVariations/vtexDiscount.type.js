@@ -4,8 +4,8 @@ const {
   GraphQLFloat
 } = require('graphql');
 
-let ShopifyDiscountType = new GraphQLObjectType({
-  name: 'ShopifyDiscountType',
+let VtexDiscountType = new GraphQLObjectType({
+  name: 'VtexDiscountType',
   fields: () => ({
     name:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       return obj.name
@@ -25,4 +25,4 @@ let ShopifyDiscountType = new GraphQLObjectType({
   }),
 });
 
-module.exports = ShopifyDiscountType;
+module.exports = VtexDiscountType;

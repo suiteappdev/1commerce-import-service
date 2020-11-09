@@ -13,7 +13,9 @@ let init = (app, locals) => {
     locals.controllers.Vtex = {
       getProducts,
       getVariations,
-      getImages
+      getImages,
+      getEan,
+      getQuantity
     }
 
     logger.info("Initialization finished.");
@@ -194,4 +196,36 @@ let getImages = (credentials, listing) => {
   });
 }
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages };
+let getEan = (credentials, skuId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let ean = await services.Vtex.getEan({
+        shopName: credentials.shopName,
+        apiKey: credentials.apiKey,
+        password: credentials.password
+      }, skuId);
+      return resolve(ean && ean.length > 0 ? ean[0] : '');
+
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+let getQuantity = (credentials, skuId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let balance = await services.Vtex.getQuantity({
+        shopName: credentials.shopName,
+        apiKey: credentials.apiKey,
+        password: credentials.password
+      }, skuId);
+      return resolve(balance ? balance.totalQuantity - balance.reservedQuantity : 0);
+
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getEan, getQuantity };
