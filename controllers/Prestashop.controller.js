@@ -24,7 +24,8 @@ let getProducts = (credentials, listing) => {
             let count = await services.Prestashop.getCount(credentials);
             let tax_rules = await services.Prestashop.getIdTaxes(credentials);
             let taxes = await services.Prestashop.getTaxes(credentials);
-                
+
+            if(response.products){
                 for (let i = 0; i < response.products.length; i++) {
                     let array_id_images=response.products[i].associations.images;
                     let id_images=[];
@@ -77,7 +78,7 @@ let getProducts = (credentials, listing) => {
 
                 
             });
-            
+        }
             let rs = {
                 totalRecords :count.products.length,
                 pagination : response.pagination  || null,
@@ -107,27 +108,29 @@ let getVariations = (credentials, listing) => {
             let discounts = await services.Prestashop.getDiscounts(credentials);
             let discount_names = await services.Prestashop.getDiscountNames(credentials);
 
-            products=products.products;
+            if(products.products){
 
-            for (let index = 0; index < taxes.taxes.length; index++) {
-                for (let i = 0; i < products.length; i++) {
-                    let id_tax=tax_rules.find(tr => tr.tax_rules_group = products[i].id_tax_rules_group).id_tax;
-                    if((taxes.taxes[index].id)==id_tax){
-                        products[i].tax={
-                            name:taxes.taxes[index].name,
-                            rate:taxes.taxes[index].rate
-                        }
-                    }else{
-                        products[i].tax={
-                            name:null,
-                            rate:'0'
-                        }
-                    };
+                products=products.products;
+
+                for (let index = 0; index < taxes.taxes.length; index++) {
+                    for (let i = 0; i < products.length; i++) {
+                        let id_tax=tax_rules.find(tr => tr.tax_rules_group = products[i].id_tax_rules_group).id_tax;
+                        if((taxes.taxes[index].id)==id_tax){
+                            products[i].tax={
+                                name:taxes.taxes[index].name,
+                                rate:taxes.taxes[index].rate
+                            }
+                        }else{
+                            products[i].tax={
+                                name:null,
+                                rate:'0'
+                            }
+                        };
+                    }
                 }
-            }
-            
+                
 
-            if (products) {
+                
                 for (let index = 0; index < products.length; index++) {
                     let discount=[];
                     let disc=discounts.find(d => d.id_product == products[index].id);
@@ -177,17 +180,19 @@ let getVariations = (credentials, listing) => {
                         variations:variations_product
                     }
                     variations.push(obj);
- 
-                }
-                let rs = {
-                    totalRecords: listing.pageSize,
-                    pagesCount: Math.ceil((listing.pagination.pageSize / listing.pagination.pageSize)),
-                    data : variations || []
-                }
-                return resolve(rs);
-            }
 
-            resolve([])
+                }
+            }
+            
+            let rs = {
+                totalRecords: listing.pageSize,
+                pagesCount: Math.ceil((listing.pagination.pageSize / listing.pagination.pageSize)),
+                data : variations || []
+            }
+            
+            return resolve(rs);
+            
+
 
         } catch (error) {
             reject(error);
