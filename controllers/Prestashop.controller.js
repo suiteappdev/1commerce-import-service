@@ -142,7 +142,7 @@ let getVariations = (credentials, listing) => {
                     if(disc){
                         disc.name=discount_names.find(dn => dn.id == disc.id_specific_price_rule);
                         products[index].discount={
-                            name:disc.name?disc.name.name:'',
+                            name:products[index].name ? products[index].name:'',
                             from: moment(disc.from).format('YYYY/MM/DD HH:mm:ss'),
                             to:moment(disc.to).format('YYYY/MM/DD HH:mm:ss'),
                             type:disc.reduction_type === 'percentage' ? 'P' : 'C',
