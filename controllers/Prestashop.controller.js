@@ -32,13 +32,9 @@ let getProducts = (credentials, listing) => {
                     response.products[i].images={};
                     if(array_id_images){
                         for (let index = 0; index < array_id_images.length; index++) {
-                            let id_img_digits = [];
                             let id_img=array_id_images[index].id;
                             let file=id_img+'.jpg';
-                            for(let j = 0; j < id_img.length; j++){
-                                id_img_digits.push(id_img.substr(j, 1));
-                            }
-                            let src=credentials.url+`/img/p/${id_img_digits.join('/')}/${id_img}.jpg`;                      
+                            let src=credentials.url+`/${id_img}-extra_large_default/${response.products[i].link_rewrite}.jpg`;                      
                             let obj={        
                                 file,
                                 src
