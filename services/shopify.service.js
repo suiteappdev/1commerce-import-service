@@ -41,10 +41,10 @@ let getProducts = (credentials, collection, params, includePagination) => {
             console.log(error);
         }
         
-        if(includePagination){
+        if(includePagination && response.headers['link']){
             let page_info;
             let next;
-    
+
             if(response.headers['link'].split(',').length === 1){
                 next = response.headers['link'].replace('; rel="next"','').replace('<', '').replace('>', '');
             }else{

@@ -220,7 +220,8 @@ let getQuantity = (credentials, skuId) => {
         apiKey: credentials.apiKey,
         password: credentials.password
       }, skuId);
-      return resolve(balance ? balance.totalQuantity - balance.reservedQuantity : 0);
+      let total = balance ? balance.totalQuantity - balance.reservedQuantity : 0
+      return resolve(total < 0 ? 0 : total);
 
     } catch (error) {
       reject(error);
