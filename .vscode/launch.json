@@ -15,6 +15,12 @@
             "request": "launch",
             "name": "playground-debug",
             "program": "${workspaceFolder}/sailsPlayground.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "pub-sub",
+            "program": "${workspaceFolder}/pubsub.js"
         }
     ]
 }
