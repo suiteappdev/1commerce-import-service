@@ -2,13 +2,22 @@ const fs = require('fs');
 const cors = require('cors');
 const morgan = require("morgan");
 const bodyParser = require('body-parser');
-const { graphqlHTTP } = require('express-graphql');
+
 const CONTROLLER_DIR = `${__dirname}/controllers/`;
 const SERVICE_DIR = `${__dirname}/services/`;
 const ROUTE_DIR = `${__dirname}/routes/`;
-const { publicGraph } = require('./graphql/schemas/');
+const MODELS_DIR = `${__dirname}/models/`;
 
 const utilMiddleware = require('./util/middleware.util');
+
+const { ApolloServer, gql}  = require('apollo-server-express');
+const { graphiqlExpress }  = require('apollo-server-express');
+
+const http = require('http');
+const { execute, subscribe } = require('graphql');
+const { PubSub } = require('graphql-subscriptions');
+const { SubscriptionServer } = require('subscriptions-transport-ws');
+const { publicGraph } = require('./graphql/schemas/');
 
 let getControllers = ()=>{
     return new Promise((resolve, reject)=>{
@@ -46,22 +55,42 @@ let getRoutes= ()=>{
     }); 
 }
 
+let getModels= ()=>{
+    return new Promise((resolve, reject)=>{
+        fs.readdir(`${MODELS_DIR}`, (err, items) => {
+            if(err){
+                return reject(err);
+            }
+
+            resolve(items.filter( (js)=>js.match('.js') ) );
+        });   
+    }); 
+}
+
 
 let boot = async (app) =>{
     let controllers = await getControllers();
     let services = await getServices();
+    let models = await getModels();
     let routes = await getRoutes();
+    let Models = {};
 
     return new Promise(async (resolve, reject)=>{
         try{
            
             app.use(cors());
-            app.use(bodyParser.json());
             app.use(morgan("dev"));
+            app.use(bodyParser.json());
 
             for(s in services){
                 let service = require(`${SERVICE_DIR}${services[s]}`);
                 await service.init(app, app.locals);
+            }
+
+            for(m in models){
+                let model = require(`${MODELS_DIR}${models[m]}`);
+                Models[model.modelName] = model;
+                app.models = Models;
             }
 
             for(c in controllers){
@@ -72,14 +101,29 @@ let boot = async (app) =>{
             for(r in routes){
                 app.use('/api/',  require(`${ROUTE_DIR}${routes[r]}`));
             }
-            app.use(
-                '/graphql',
-                graphqlHTTP((req, res, params)=>({
-                    schema: publicGraph,
-                    graphiql: true,
-                    context: { req }
-                })),
-            );
+
+            const apolloServer = new ApolloServer({ schema: publicGraph, playground : true,
+                subscriptions: {
+                onConnect: (connectionParams, webSocket)=>{
+                    console.log('Client connected');
+                }},
+                context: ({ req }) => {
+                    let db = app.models;
+                    return  {
+                        req,
+                        db
+                    }
+                }
+            });
+
+            apolloServer.applyMiddleware({ app });
+            
+            const httpServer = http.createServer(app);
+            apolloServer.installSubscriptionHandlers(httpServer);
+
+            app.httpServer = httpServer;
+            app.publicGraph = publicGraph
+
 
             app.locals.mainController = {
                 returnError: returnError,
