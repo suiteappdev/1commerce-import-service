@@ -47,7 +47,7 @@ let saveBatchOrders = (data) => {
                 let order =  await models.Order.findOne({ oc_referencia: orderIndex.oc_referencia });
 
                 if(order){
-                    if(order.estado == orderIndex.estado){
+                    if(order.estado != orderIndex.estado){
                         let statusIndex = parseInt(orderIndex.estado);
                         await models.Order.updateOne({oc_referencia: orderIndex.oc_referencia}, orderIndex);
                         

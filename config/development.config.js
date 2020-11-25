@@ -10,7 +10,7 @@ module.exports = {
         onTick : async (controllers)=>{
             const moment = require('moment');
             
-            let ini = moment().format('YYYYMMDD');
+            let ini = moment().subtract(15, 'd').format('YYYYMMDD');
             let end = moment().format('YYYYMMDD');
 
             let orders = await controllers.Siesa.getBatchOrders(ini, end);
