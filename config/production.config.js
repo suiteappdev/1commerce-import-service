@@ -1,3 +1,4 @@
+const { pubsub }  = require('../services/pubsub.service') ;
 module.exports = {
     JWT_SECRET : '123455688',
     auth_header : '-api-key',
@@ -7,13 +8,16 @@ module.exports = {
         schedule : '*/1 * * * *',
         module : ['controllers'],
         onTick : async (controllers)=>{
-            let orders = await controllers.Siesa.getBatchOrders();
+            const moment = require('moment');
+            
+            let ini = moment().subtract(15, 'd').format('YYYYMMDD');
+            let end = moment().format('YYYYMMDD');
+
+            let orders = await controllers.Siesa.getBatchOrders(ini, end);
 
             if(orders && orders.length > 0){
-                let newOrders = await controllers.Siesa.saveBatchOrders(orders);
+                await controllers.Siesa.saveBatchOrders(orders);
             }
-
-            console.log("running and injecting module every 5 minutes", orders);
         }
     }]
 }
