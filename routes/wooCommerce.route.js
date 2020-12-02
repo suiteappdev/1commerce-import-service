@@ -12,8 +12,11 @@ router.get('/woocommerce/products', async (req, res)=>{
 });
 
 router.get('/hook/woocommerce/:identifier', async (req, res)=>{
-    mainController = req.app.locals.mainController;
-    res.json({ test : 'test' });
+    let identifier = req.params.identifier;
+    let data = req.body;
+    data.identifier = identifier;
+    
+    res.json(data);
 });
 
 module.exports = router;
