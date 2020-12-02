@@ -55,23 +55,9 @@ let getRoutes= ()=>{
     }); 
 }
 
-let getModels= ()=>{
-    return new Promise((resolve, reject)=>{
-        fs.readdir(`${MODELS_DIR}`, (err, items) => {
-            if(err){
-                return reject(err);
-            }
-
-            resolve(items.filter( (js)=>js.match('.js') ) );
-        });   
-    }); 
-}
-
-
 let boot = async (app) =>{
     let controllers = await getControllers();
     let services = await getServices();
-    let models = await getModels();
     let routes = await getRoutes();
 
     return new Promise(async (resolve, reject)=>{
