@@ -73,7 +73,6 @@ let boot = async (app) =>{
     let services = await getServices();
     let models = await getModels();
     let routes = await getRoutes();
-    let Models = {};
 
     return new Promise(async (resolve, reject)=>{
         try{
@@ -85,12 +84,6 @@ let boot = async (app) =>{
             for(s in services){
                 let service = require(`${SERVICE_DIR}${services[s]}`);
                 await service.init(app, app.locals);
-            }
-
-            for(m in models){
-                let model = require(`${MODELS_DIR}${models[m]}`);
-                Models[model.modelName] = model;
-                app.models = Models;
             }
 
             for(c in controllers){
@@ -108,10 +101,8 @@ let boot = async (app) =>{
                     console.log('Client connected');
                 }},
                 context: ({ req }) => {
-                    let db = app.models;
                     return  {
                         req,
-                        db
                     }
                 }
             });
