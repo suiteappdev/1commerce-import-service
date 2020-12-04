@@ -34,9 +34,11 @@ let VtexProductVType = new GraphQLObjectType({
       if (!obj.skus || obj.skus.length === 0) {
         return [{dimensions: {Talla: 'único'}}]
       }
+      let sku = obj.skus.find(sku => sku.available === true);
+      let price = sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice;
       return obj.skus.map(sku => {
         if (sku.available === false) {
-          sku.bestPrice = 0;
+          sku.bestPrice = price;
         }
         return sku;
       })
