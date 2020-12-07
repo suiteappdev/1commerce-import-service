@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm start"
+    "start": "node app.js"
   },
   "author": "1Commerce",
   "license": "ISC",
@@ -28,7 +28,6 @@
     "jsonwebtoken": "^8.5.1",
     "log4js": "^0.6.37",
     "moment": "^2.29.1",
-    "mongoose": "^5.10.15",
     "morgan": "^1.9.1",
     "shopify-api-node": "^3.4.4",
     "string-strip-html": "^4.5.0",

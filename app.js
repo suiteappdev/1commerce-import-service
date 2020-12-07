@@ -18,7 +18,7 @@ app.config = config;
     })
 
     if (isReady) {
-        app.httpServer.listen(/*process.env.PORT || */9000, function () {
+        app.httpServer.listen(process.env.PORT || 9000, function () {
             console.log(`[${process.env.NODE_ENV || 'development'}] - 1commerce-import-service on PORT ${(process.env.PORT || 443)}`);
             app.config.cron.map((c)=>c.job.start());
         });
