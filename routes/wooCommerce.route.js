@@ -11,4 +11,13 @@ router.get('/woocommerce/products', async (req, res)=>{
     res.status(200).json(products);
 });
 
+router.post('/hook/woocommerce/:identifier', async (req, res)=>{
+    let identifier = req.params.identifier;
+    let data = req.body || {};
+    data.identifier = identifier;
+    console.log("data", data);
+    
+    res.json(data);
+});
+
 module.exports = router;
