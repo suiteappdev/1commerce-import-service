@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const stripHtml = require("string-strip-html");
 const { pubsub }  = require('../services/pubsub.service') ;
+const { SHOPIFY_PRODUCT_CREATED }  = require('../graphql/schemas/suscriptions/events');
 
 router.post('/shopify/createproduct/:identifier', async (req, res)=>{
     let identifier = req.params.identifier;
@@ -12,7 +13,7 @@ router.post('/shopify/createproduct/:identifier', async (req, res)=>{
 });
 
 function transformProduct(obj) {
-  let iva = parseInt(obj.tax.tax * 100) || 0;
+  // let iva = parseInt(obj.tax.tax * 100) || 0;
   let price = obj.variants[0].compare_at_price ? obj.variants[0].compare_at_price : obj.variants[0].price ? obj.variants[0].price : 0;
   let data = {
     name: obj.title,
@@ -21,7 +22,7 @@ function transformProduct(obj) {
     description: stripHtml(obj.body_html || obj.title),
     descriptionShort: stripHtml(obj.body_html || obj.title),
     active: obj.published_at != '' ? true : false,
-    price: obj.variants[0].taxable ? Math.ceil(price / (1+(iva/100))) : price,
+    price: price,
     // tax: obj.variants[0].taxable ? obj.tax : {},
     manufacturer: obj.vendor,
     width: obj.dimensions ? parseInt(obj.dimensions.width == "" ? 0 : obj.dimensions.width) : 0,
