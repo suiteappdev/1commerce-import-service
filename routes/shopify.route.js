@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const stripHtml = require("string-strip-html");
 const { pubsub }  = require('../services/pubsub.service') ;
-const { SHOPIFY_PRODUCT_CREATED }  = require('../graphql/schemas/suscriptions/events');
+const { SHOPIFY_PRODUCT_CREATED }  = require('../graphql/schemas/subscriptions/events');
 
 router.post('/shopify/createproduct/:identifier', async (req, res)=>{
     let identifier = req.params.identifier;
     let data = transformProduct(req.body) || {};
     data.identifier = identifier;
-    pubsub.publish(SHOPIFY_PRODUCT_CREATED, { ProductCreated: data });
+    pubsub.publish(SHOPIFY_PRODUCT_CREATED, { ShopifyProductCreated: data });
     res.json(data);
 });
 

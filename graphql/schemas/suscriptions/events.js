@@ -1,3 +1,0 @@
-module.exports = {
-  SHOPIFY_PRODUCT_CREATED : 'SHOPIFY_PRODUCT_CREATED'
-}
