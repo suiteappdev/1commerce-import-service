@@ -5,8 +5,8 @@ const {
   GraphQLID
 } = require('graphql');
 
-const ShopifyProductCreatedTyPe = new GraphQLObjectType({  
-  name: "ShopifyProductCreatedTyPe",
+const ShopifyProductsTyPe = new GraphQLObjectType({  
+  name: "ShopifyProductsTyPe",
   fields: () => ({
     productId: { type: new GraphQLNonNull(GraphQLID) },
     key: { type: new GraphQLNonNull(GraphQLString) },
@@ -14,4 +14,4 @@ const ShopifyProductCreatedTyPe = new GraphQLObjectType({
   })
 })
 
-module.exports = { ShopifyProductCreatedTyPe };
+module.exports = { ShopifyProductsTyPe };
