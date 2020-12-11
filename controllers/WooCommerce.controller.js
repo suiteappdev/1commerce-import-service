@@ -16,7 +16,8 @@ let init = (app, locals) => {
         getProducts,
         getVariations,
         getImages,
-        getPagination
+        getPagination,
+        getProductId
     }
 
     logger.info("Initialization finished.");
@@ -90,6 +91,26 @@ let getVariations = (credentials, pro) => {
     });
 }
 
+let getProductId = (credentials, pro) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+            let products = await WooCommerce.get(`products/${pro.id}`);
+
+            if (products && products.data) {
+                return resolve(products.data);
+            }
+
+            resolve([])
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+
 let getImages = (credentials, productId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -109,4 +130,4 @@ let getImages = (credentials, productId) => {
 }
 
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages };
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId };

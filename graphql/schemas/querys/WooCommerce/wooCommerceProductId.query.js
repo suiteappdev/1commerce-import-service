@@ -1,4 +1,4 @@
-const { getProductId } = require('../../../../controllers/Shopify.controller');
+const { getProductId } = require('../../../../controllers/WooCommerce.controller');
 const { getToken, validate}  = require('../../../../util/auth.util');
 const WooCommerceProductIdType  = require('../../types/woocommerce/ProductId/woocommerceProductId.type');
 const {

@@ -1,13 +1,13 @@
 const { GraphQLObjectType } = require('graphql');
-const shopifyProductCreated = require('./Shopify/shopifyProductCreated');
-const woocommerceProductCreated = require('./Woocommerce/woocommerceProductCreated');
+const ShopifyProducts = require('./Shopify/shopifyProducts');
+const WoocommerceProducts = require('./Woocommerce/woocommerceProducts');
 
 const Subscription = new GraphQLObjectType({
   name: 'RootSubscription',
   description: 'Root Subscription',
   fields: {
-    ShopifyProductCreated: shopifyProductCreated,
-    WoocommerceProductCreated: woocommerceProductCreated,
+    ShopifyProducts,
+    WoocommerceProducts
   }
 });
 
