@@ -1,5 +1,6 @@
 const { GraphQLObjectType } = require('graphql');
 const ShopifyProducts = require('./Shopify/shopifyProducts');
+const WoocommerceProducts = require('./Woocommerce/woocommerceProducts');
 const VtexProducts = require('./Vtex/vtexProducts');
 
 
@@ -8,7 +9,8 @@ const Subscription = new GraphQLObjectType({
   description: 'Root Subscription',
   fields: {
     ShopifyProducts: ShopifyProducts,
-    VtexProducts: VtexProducts
+    VtexProducts: VtexProducts,
+    WoocommerceProducts
   }
 });
 

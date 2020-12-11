@@ -1,22 +1,16 @@
 var express = require('express');
 var router = express.Router();
+const { pubsub }  = require('../services/pubsub.service');
+const { WOOCOMMERCE_PRODUCT_CREATED }  = require('../graphql/schemas/subscriptions/events');
 
-router.get('/woocommerce/products', async (req, res)=>{
-    mainController = req.app.locals.mainController;
-
-    let products = await req.app.locals.controllers.WooCommerce.getProducts(req, res).catch((e)=>{
-        return mainController.returnError(res, 500, 0);
-    });
-
-    res.status(200).json(products);
-});
-
-router.post('/hook/woocommerce/:identifier', async (req, res)=>{
-    let identifier = req.params.identifier;
-    let data = req.body || {};
-    data.identifier = identifier;
-    console.log("data", data);
-    
+router.post('/hook/woocommerce/:key', async (req, res)=>{
+    let key = req.params.key;
+    let data = {
+      productId: req.body.id,
+      key,
+      channel: 'woocommerce'
+    };
+    pubsub.publish(WOOCOMMERCE_PRODUCT_CREATED, { WoocommerceProductCreated: data });
     res.json(data);
 });
 
