@@ -10,8 +10,7 @@ router.post('/created_product/woocommerce/:key', async (req, res)=>{
       key,
       channel: 'woocommerce'
     };
-    console.log("wooCommerc hook body", data);
-    pubsub.publish(WOOCOMMERCE_PRODUCTS, { WoocommerceProductCreated: data });
+    pubsub.publish(WOOCOMMERCE_PRODUCTS, { WoocommerceProducts: data });
     res.json(data);
 });
 
