@@ -1,6 +1,6 @@
 const { getProductId } = require('../../../../controllers/WooCommerce.controller');
 const { getToken, validate}  = require('../../../../util/auth.util');
-const WooCommerceProductIdType  = require('../../types/woocommerce/ProductId/woocommerceProductId.type');
+const WooCommerceProductIdType  = require('../../types/wooCommerce/ProductId/woocommerceProductId.type');
 const {
   GraphQLString
 } = require('graphql');
