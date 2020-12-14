@@ -269,9 +269,12 @@ let getProductId = (credentials, productId) => {
         product.color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
         product.Brand = brand;
         product.textLink = product.LinkId.split('-').join(' ') + ' ' + color.replace('.png','').split('_')[1];
+        product.name = product.Name;
         product.skus = variation.skus;
         product.Images = getSku.Images.length > 0 ? getSku.Images : [];
         return resolve(product);
+      } else {
+        return reject('No se pudo obtener las variaciones');
       }
     } catch (error) {
       reject(error);
