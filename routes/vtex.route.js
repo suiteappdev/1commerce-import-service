@@ -7,7 +7,7 @@ router.post('/vtex/products/:key', async (req, res)=>{
   let key = req.params.key;
   console.log(req.body);
   let data = {
-    productId: 'hola mundo',
+    productId: req.body.ProductId,
     key,
     channel: 'vtex'
   };
