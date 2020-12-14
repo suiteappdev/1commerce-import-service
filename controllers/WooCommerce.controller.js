@@ -91,12 +91,12 @@ let getVariations = (credentials, pro) => {
     });
 }
 
-let getProductId = (credentials, pro) => {
+let getProductId = (credentials, id) => {
     return new Promise(async (resolve, reject) => {
         try {
 
             let WooCommerce = new services.WooCommerceRestApi(credentials);
-            let products = await WooCommerce.get(`products/${pro.id}`);
+            let products = await WooCommerce.get(`products/${id}`);
 
             if (products && products.data) {
                 return resolve(products.data);

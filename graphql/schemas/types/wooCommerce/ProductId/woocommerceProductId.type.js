@@ -11,13 +11,7 @@ let  WooCommerceProductIdType = new GraphQLObjectType({
   fields: () => ({
     product: {type: WooCommerceProductType, resolve: (obj, args, context, info) => {
       return obj;
-    }},
-    productVariations: {type: WooCommerceProductVariationType, resolve: (obj, args, context, info) => {
-      return obj;
-    }},
-    productImages: {type: WooCommerceProductImageType, resolve: (obj, args, context, info) => {
-      return obj;
-    }},
+    }}
   }),
 });
 
