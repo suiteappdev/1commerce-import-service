@@ -15,7 +15,8 @@ let init = (app, locals) => {
       getVariations,
       getImages,
       getEan,
-      getQuantity
+      getQuantity,
+      getProductId
     }
 
     logger.info("Initialization finished.");
@@ -229,4 +230,53 @@ let getQuantity = (credentials, skuId) => {
   });
 }
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getEan, getQuantity };
+let getProductId = (credentials, productId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let variation = await services.Vtex.getVariations({
+        shopName: credentials.shopName,
+        apiKey: credentials.apiKey,
+        password: credentials.password
+      }, productId);
+
+      if (variation) {
+        let product = await services.Vtex.getProduct({
+          shopName: credentials.shopName,
+          apiKey: credentials.apiKey,
+          password: credentials.password
+        }, productId);
+
+        let brand = await services.Vtex.getBrand({
+          shopName: credentials.shopName,
+          apiKey: credentials.apiKey,
+          password: credentials.password
+        }, product.BrandId);
+
+        let getSku = await services.Vtex.getSku({
+          shopName: credentials.shopName,
+          apiKey: credentials.apiKey,
+          password: credentials.password
+        }, productId);
+        let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
+        let sku = variation.skus.find(sku => sku.available === true);
+        let price = sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice;
+        product.width = variation ? sku.measures.width : 0;
+        product.height = variation ? sku.measures.height : 0;
+        product.length = variation ? sku.measures.length : 0;
+        product.weight = variation ? sku.measures.weight : 0;
+        product.price = variation ? price / 100 : 0;
+        product.tax = variation ? {tax: sku.taxAsInt != 0 ? sku.taxAsInt : 19 , name: 'iva'} : {};
+        product.color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
+        product.Brand = brand;
+        product.textLink = product.LinkId.split('-').join(' ') + ' ' + color.replace('.png','').split('_')[1];
+        product.skus = variation.skus;
+        product.Images = getSku.Images.length > 0 ? getSku.Images : [];
+        return resolve(product);
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getEan, getQuantity, getProductId };

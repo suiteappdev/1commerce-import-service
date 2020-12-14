@@ -8,8 +8,8 @@ const Subscription = new GraphQLObjectType({
   name: 'RootSubscription',
   description: 'Root Subscription',
   fields: {
-    ShopifyProducts: ShopifyProducts,
-    VtexProducts: VtexProducts,
+    ShopifyProducts,
+    VtexProducts,
     WoocommerceProducts
   }
 });
