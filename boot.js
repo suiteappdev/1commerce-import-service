@@ -90,7 +90,8 @@ let boot = async (app) =>{
                     return  {
                         req,
                     }
-                }
+                },
+                introspection:true
             });
 
             apolloServer.applyMiddleware({ app });
