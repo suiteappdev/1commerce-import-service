@@ -44,6 +44,8 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
           type: 'C',
           value: parseInt(obj.regular_price) - parseInt(obj.sale_price)
         }]
+      }else{
+        return obj.discount;
       }
 
       return disc
