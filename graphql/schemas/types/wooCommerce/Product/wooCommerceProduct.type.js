@@ -116,6 +116,18 @@ let WooCommerceProductType = new GraphQLObjectType({
 
           if(!obj.variations || obj.variations.length === 0){
             let price = parseInt(obj.price == "" ? 0 : obj.price);
+
+            let disc = [];
+              
+            if (obj.date_on_sale_from && obj.date_on_sale_to) {
+              disc = [{
+                name: obj.name || null,
+                from: moment(obj.date_on_sale_from).format('YYYY/MM/DD'),
+                to: moment(obj.date_on_sale_to).format('YYYY/MM/DD'),
+                type: 'C',
+                value: parseInt(obj.regular_price) - parseInt(obj.sale_price)
+              }]
+            }
             
             let defaultVariation = {
                 sku:obj.sku,
@@ -124,9 +136,10 @@ let WooCommerceProductType = new GraphQLObjectType({
                 price:price,
                 gender:getGender(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
                 talla:'único', //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
-                stock_quantity:obj.stock_quantity || 0
+                stock_quantity:obj.stock_quantity || 0,
+                discount : disc
             }
-            
+        
             return [defaultVariation];
           }
 
