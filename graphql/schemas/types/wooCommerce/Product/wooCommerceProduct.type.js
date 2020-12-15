@@ -45,7 +45,7 @@ let WooCommerceProductType = new GraphQLObjectType({
             from: moment(obj.date_on_sale_from).format('YYYY/MM/DD'),
             to: moment(obj.date_on_sale_to).format('YYYY/MM/DD'),
             type: 'C',
-            value:  parseInt(obj.sale_price) - parseInt(obj.regular_price)
+            value:  parseInt(obj.regular_price) - parseInt(obj.sale_price)
           }]
         }
 
@@ -125,7 +125,7 @@ let WooCommerceProductType = new GraphQLObjectType({
                   from: moment(obj.date_on_sale_from).format('YYYY/MM/DD'),
                   to: moment(obj.date_on_sale_to).format('YYYY/MM/DD'),
                   type: 'C',
-                  value: parseInt(obj.sale_price) - parseInt(obj.regular_price)
+                  value: parseInt(obj.regular_price) - parseInt(obj.sale_price)
                 }]
             }
 
