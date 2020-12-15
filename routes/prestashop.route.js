@@ -21,7 +21,7 @@ router.post('/prestashop/updateproduct/:key', async (req, res)=>{
     key,
     channel: 'prestashop'
   };
-  pubsub.publish(PRESTASHOP_PRODUCTS, { ShopifyProducts: data });
+  pubsub.publish(PRESTASHOP_PRODUCTS, { PrestashopProducts: data });
   res.json(data);
 });
 
