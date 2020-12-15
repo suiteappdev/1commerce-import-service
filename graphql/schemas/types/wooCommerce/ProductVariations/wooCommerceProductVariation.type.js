@@ -34,7 +34,19 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
       return obj.sku
     }},
     discount: {type: new GraphQLList(WoocommerceDiscountType),resolve:(obj, args, context, info)=>{
-      return obj.discount
+      let disc = [];
+      
+      if (obj.date_on_sale_from && obj.date_on_sale_to) {
+        disc = [{
+          name: obj.name || null,
+          from: moment(obj.date_on_sale_from).format('YYYY/MM/DD'),
+          to: moment(obj.date_on_sale_to).format('YYYY/MM/DD'),
+          type: 'C',
+          value: parseInt(obj.regular_price) - parseInt(obj.sale_price)
+        }]
+      }
+
+      return disc
     }},
   }),
 });
