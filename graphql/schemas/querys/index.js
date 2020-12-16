@@ -18,6 +18,7 @@ const VtexProductId = require('./Vtex/vtexProductId.query');
 
 const PrestashopProducts = require('./Prestashop/prestashopProduct.query.js');
 const PrestashopProductVariation = require('./Prestashop/prestashopProductVariation.query');
+const PrestashopProductId = require('./Prestashop/prestashopProductId.query');
 
 module.exports = {
     public: {
@@ -37,6 +38,7 @@ module.exports = {
         VtexProductImage,
         VtexProductId,
         PrestashopProducts,
-        PrestashopProductVariation
+        PrestashopProductVariation,
+        PrestashopProductId
     }
 }

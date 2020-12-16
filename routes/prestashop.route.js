@@ -4,9 +4,10 @@ const { pubsub }  = require('../services/pubsub.service');
 const { PRESTASHOP_PRODUCTS }  = require('../graphql/schemas/subscriptions/events');
 
 router.post('/prestashop/createproduct/:key', async (req, res)=>{
+  console.log(req.body);
   let key = req.params.key;
   let data = {
-    productId: req.body.id,
+    productId: req.body.id_product,
     key,
     channel: 'prestashop'
   };
@@ -15,9 +16,10 @@ router.post('/prestashop/createproduct/:key', async (req, res)=>{
 });
 
 router.post('/prestashop/updateproduct/:key', async (req, res)=>{
+  console.log(req.body);
   let key = req.params.key;
   let data = {
-    productId: req.body.id,
+    productId: req.body.id_product,
     key,
     channel: 'prestashop'
   };
