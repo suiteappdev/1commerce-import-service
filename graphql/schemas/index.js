@@ -1,7 +1,6 @@
 const { GraphQLObjectType, GraphQLSchema } = require('graphql');
 const { public } = require('./querys/index');
-const { Mutation } = require('./querys/Siesa/mutations/create-order.mutation');
-const rootSubscription  = require('./querys/Siesa/subscriptions/orders.subscription');
+const { Subscription }  = require('./subscriptions/index');
 
 const PublicRootQuery = new GraphQLObjectType({
     name: 'PublicQuery',
@@ -11,8 +10,7 @@ const PublicRootQuery = new GraphQLObjectType({
 module.exports = {
     publicGraph: new GraphQLSchema({
       query: PublicRootQuery,
-      mutation : Mutation,
-      subscription : rootSubscription
+      subscription : Subscription
     })
 };
   

@@ -16,7 +16,8 @@ let init = (app, locals) => {
         getProducts,
         getVariations,
         getImages,
-        getPagination
+        getPagination,
+        getProductId
     }
 
     logger.info("Initialization finished.");
@@ -90,6 +91,38 @@ let getVariations = (credentials, pro) => {
     });
 }
 
+let getProductId = (credentials, id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+            let products = await WooCommerce.get(`products/${id}`);
+
+            let tax = await WooCommerce.get("taxes");
+            
+            let findTax = (taxClass, taxes)=>{
+                return tax.data.filter((c) => c.name.toLowerCase() === taxClass.toLowerCase());
+            }
+
+            let tx = findTax(products.data.tax_class, tax);
+
+            if(!tx || tx.length == 0){
+                products.data.tax = tax.data.filter(t=>t.class === 'standard')[0];
+            }
+
+            if (products && products.data) {
+                return resolve(products.data);
+            }
+
+            resolve([])
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+
 let getImages = (credentials, productId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -109,4 +142,4 @@ let getImages = (credentials, productId) => {
 }
 
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages };
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId };
