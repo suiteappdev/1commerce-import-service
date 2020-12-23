@@ -1,4 +1,0 @@
-module.exports = {
-    ORDER_CREATED : 'ORDER_CREATED',
-    ORDER_STATUS_CHANGED : 'ORDER_STATUS_CHANGED',
-}

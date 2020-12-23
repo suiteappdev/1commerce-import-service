@@ -14,7 +14,8 @@ let init = (app, locals) => {
         getProducts,
         getVariations,
         getImages,
-        getDiscount
+        getDiscount,
+        getProductId
     }
 
     logger.info("Initialization finished.");
@@ -180,4 +181,33 @@ let getDiscount = (credentials) => {
     });
 }
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getDiscount};
+let getProductId = (credentials, productId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = await services.Shopify.getData({
+                shopName: credentials.shopName,
+                apiKey: credentials.apiKey,
+                password: credentials.password,
+                version: credentials.version
+            }, 'countries', `?fields=name,tax,tax_name`);
+
+            let tax = data.countries.find(c => c.name.toLowerCase() === 'colombia');
+
+            let resultProduct = await services.Shopify.getProductId({
+                shopName: credentials.shopName,
+                apiKey: credentials.apiKey,
+                password: credentials.password,
+                version: credentials.version
+            }, 'products', productId, `?fields=id,title,body_html,published_at,variants,vendor,options,images`);
+            let product = resultProduct.product ? resultProduct.product : {};
+            product.tax = tax ? tax : {};
+
+            return resolve(product);
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getDiscount, getProductId};
