@@ -252,13 +252,13 @@ let getProductId = (credentials, productId) => {
           password: credentials.password
         }, product.BrandId);
 
+        let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
+        let sku = variation.skus.find(sku => sku.available === true);
         let getSku = await services.Vtex.getSku({
           shopName: credentials.shopName,
           apiKey: credentials.apiKey,
           password: credentials.password
-        }, productId);
-        let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
-        let sku = variation.skus.find(sku => sku.available === true);
+        }, sku.sku);
         let price = sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice;
         product.width = variation ? sku.measures.width : 0;
         product.height = variation ? sku.measures.height : 0;
