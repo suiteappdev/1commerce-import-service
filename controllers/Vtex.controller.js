@@ -239,43 +239,41 @@ let getProductId = (credentials, productId) => {
         password: credentials.password
       }, productId);
 
-      if (variation) {
-        let product = await services.Vtex.getProduct({
-          shopName: credentials.shopName,
-          apiKey: credentials.apiKey,
-          password: credentials.password
-        }, productId);
+      let product = await services.Vtex.getProduct({
+        shopName: credentials.shopName,
+        apiKey: credentials.apiKey,
+        password: credentials.password
+      }, productId);
 
-        let brand = await services.Vtex.getBrand({
-          shopName: credentials.shopName,
-          apiKey: credentials.apiKey,
-          password: credentials.password
-        }, product.BrandId);
-
-        let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
-        let sku = variation.skus.find(sku => sku.available === true);
-        let getSku = await services.Vtex.getSku({
+      let brand = await services.Vtex.getBrand({
+        shopName: credentials.shopName,
+        apiKey: credentials.apiKey,
+        password: credentials.password
+      }, product.BrandId);
+      let getSku = [];
+      let price = 0;
+      let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0].replace('.png','').split('_')[1] : '';
+      let sku = variation ? variation.skus.find(sku => sku.available === true) : undefined;
+      if (sku) {
+        getSku = await services.Vtex.getSku({
           shopName: credentials.shopName,
           apiKey: credentials.apiKey,
           password: credentials.password
         }, sku.sku);
-        let price = sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice;
-        product.width = variation ? sku.measures.width : 0;
-        product.height = variation ? sku.measures.height : 0;
-        product.length = variation ? sku.measures.length : 0;
-        product.weight = variation ? sku.measures.weight : 0;
-        product.price = variation ? price / 100 : 0;
-        product.tax = variation ? {tax: sku.taxAsInt != 0 ? sku.taxAsInt : 19 , name: 'iva'} : {};
-        product.color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
-        product.Brand = brand;
-        product.textLink = product.LinkId.split('-').join(' ') + ' ' + color.replace('.png','').split('_')[1];
-        product.name = product.Name;
-        product.skus = variation.skus;
-        product.Images = getSku.Images.length > 0 ? getSku.Images : [];
-        return resolve(product);
-      } else {
-        return reject('No se pudo obtener las variaciones');
+        price = sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice;
       }
+      product.width = variation ? sku.measures.width : 0;
+      product.height = variation ? sku.measures.height : 0;
+      product.length = variation ? sku.measures.length : 0;
+      product.weight = variation ? sku.measures.weight : 0;
+      product.price = variation ? price / 100 : 0;
+      product.tax = variation ? {tax: sku.taxAsInt != 0 ? sku.taxAsInt : 19 , name: 'iva'} : {};
+      product.Brand = brand;
+      product.textLink = product.LinkId.split('-').join(' ') + ' ' + color;
+      product.Images = variation && getSku.Images.length > 0 ? getSku.Images : [];
+      product.name = product.Name;
+      product.skus = variation ? variation.skus : [];
+      return resolve(product);
     } catch (error) {
       reject(error);
     }
