@@ -11,7 +11,7 @@ let vtexTaxType = new GraphQLObjectType({
       return obj.name || '';
     }},
     rate:{type:GraphQLInt, resolve :(obj, args, context, info)=>{
-      return obj.tax;
+      return obj.tax || 0;
     }}
   }),
 });

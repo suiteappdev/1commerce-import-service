@@ -18,8 +18,8 @@ let VtexProductVType = new GraphQLObjectType({
     }},
     discount: {type: new GraphQLList(VtexDiscountType),resolve: async (obj, args, context, info)=>{
       let disc = [];
-      let sku = obj.skus.find(sku => sku.available === true);
-      if (sku.listPrice !== 0) {
+      let sku = obj.skus.length > 0 ? obj.skus.find(sku => sku.available === true) : undefined;
+      if (sku && sku.listPrice !== 0) {
         disc = [{
           name: obj.name,
           from: moment().format('YYYY/MM/DD HH:mm:ss'),
@@ -32,16 +32,17 @@ let VtexProductVType = new GraphQLObjectType({
     }},
     variations:{ type:new GraphQLList(VtexProductVariationType), resolve:(obj, args, context, info)=>{ 
       if (!obj.skus || obj.skus.length === 0) {
-        return [{dimensions: {Talla: 'único'}}]
+        return []
+      } else {
+        let sku = obj.skus.find(sku => sku.available === true);
+        let price = sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice;
+        return obj.skus.map(sku => {
+          if (sku.available === false) {
+            sku.bestPrice = price;
+          }
+          return sku;
+        })
       }
-      let sku = obj.skus.find(sku => sku.available === true);
-      let price = sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice;
-      return obj.skus.map(sku => {
-        if (sku.available === false) {
-          sku.bestPrice = price;
-        }
-        return sku;
-      })
     }},
   }),
 });
