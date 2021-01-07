@@ -252,7 +252,7 @@ let getProductId = (credentials, productId) => {
       }, product.BrandId);
       let getSku = [];
       let price = 0;
-      let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0].replace('.png','').split('_')[1] : '';
+      let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0].replace('.png','').split('_')[1] : 'Multicolor';
       let sku = variation ? variation.skus.find(sku => sku.available === true) : undefined;
       if (sku) {
         getSku = await services.Vtex.getSku({
