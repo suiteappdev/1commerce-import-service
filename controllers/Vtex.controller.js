@@ -143,6 +143,8 @@ let getVariations = (credentials, listing) => {
 
           if (variation) {
             variations.push(variation);
+          } else {
+            variations.push({productId: element.productId, skus: []})
           }
         }
       }
