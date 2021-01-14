@@ -80,6 +80,12 @@ let getVariations = (credentials, pro) => {
             let products = await WooCommerce.get(`products/${pro.id}/variations`);
 
             if (products && products.data) {
+                let rs = products.data.filter((p)=>p.weight);
+
+                if(rs.length > 0){
+                    console.log(rs);
+                }
+
                 return resolve(products.data);
             }
 
