@@ -20,6 +20,9 @@ let WooCommerceProductType = new GraphQLObjectType({
       externalId: { type: GraphQLString,  resolve:(obj, args, context, info)=>{
         return obj.id.toString();
       }},
+      simple: { type: GraphQLBoolean,  resolve:(obj, args, context, info)=>{
+        return obj.type == 'simple' ? true : false;
+      }},
       reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
         return obj.sku
       }}, //Referencia del Producto
@@ -85,8 +88,37 @@ let WooCommerceProductType = new GraphQLObjectType({
       images:{ type:new GraphQLList(WooCommerceImageProductType), resolve:(obj, args, context, info)=>{
         return obj.images
       }},
-      variations:{ type:new GraphQLList(WooCommerceProductVariationType), resolve:(obj, args, context, info)=>{
-          let getGender = (p)=>{
+      color:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
+      if(( obj.attributes &&  obj.attributes.length > 0 )){
+        let attrs = obj.attributes;
+        let color = attrs.filter(o=>(o.name.toLowerCase() === 'color' || o.name.toLowerCase() === 'color_primario'));
+
+        if(color.length > 0)
+          return color[0] ? color[0].options[0] : null;
+        else
+          return null;
+      }else{
+        return obj.color || null;
+      }
+    }},
+    product_weight:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
+      if(( obj.attributes &&  obj.attributes.length > 0 )){
+        let attrs = obj.attributes;
+        let weight = attrs.filter(o=>(o.name.toLowerCase() === 'peso_producto'));
+
+        if(weight.length > 0)
+          return weight[0] ? weight[0].options[0] : null;
+        else
+          return null;
+      }else{
+        return null;
+      }
+    } },
+    quantity:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
+      return obj.stock_quantity || 0
+    }},
+    variations:{ type:new GraphQLList(WooCommerceProductVariationType), resolve:(obj, args, context, info)=>{
+        let getGender = (p)=>{
             if(( p.attributes &&  p.attributes.length > 0 )){
               let attrs = obj.attributes;
               let gender = attrs.filter(o=>(o.name.toLowerCase() === 'gender' || o.name.toLowerCase() === 'genero' || o.name === 'Género'));
@@ -113,6 +145,20 @@ let WooCommerceProductType = new GraphQLObjectType({
             return 'único';
           }
 
+          let getweight = (p)=>{
+            if(( obj.attributes &&  obj.attributes.length > 0 )){
+              let attrs = obj.attributes;
+              let weight = attrs.filter(o=>(o.name.toLowerCase() === 'weight' || o.name.toLowerCase() === 'peso_producto'));
+      
+              if(weight.length > 0)
+                return weight[0] ? weight[0].option : null;
+              else
+                return null;
+            }else{
+              return  null;
+            }
+          }
+
 
           if(!obj.variations || obj.variations.length === 0){
             let price = parseInt(obj.price == "" ? 0 : obj.price);
@@ -137,6 +183,7 @@ let WooCommerceProductType = new GraphQLObjectType({
                 gender:getGender(obj), //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
                 talla:'único', //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
                 stock_quantity:obj.stock_quantity || 0,
+                weight : getweight(obj),
                 discount : disc
             }
         

@@ -60,6 +60,8 @@ let getProducts = (credentials, listing) => {
                 return p;
             });
 
+            console.log(results);
+
             resolve({
                 totalRecords : (response.headers['x-wp-total']),
                 pagesCount : parseInt(response.headers['x-wp-totalpages']),
@@ -80,6 +82,12 @@ let getVariations = (credentials, pro) => {
             let products = await WooCommerce.get(`products/${pro.id}/variations`);
 
             if (products && products.data) {
+                let rs = products.data.filter((p)=>p.weight);
+
+                if(rs.length > 0){
+                    console.log(rs);
+                }
+
                 return resolve(products.data);
             }
 
