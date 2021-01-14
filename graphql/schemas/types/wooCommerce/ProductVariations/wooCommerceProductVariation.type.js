@@ -26,7 +26,33 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
       }else{
         return obj.talla || 'única';
       }
-    }}, //Género para el cual aplica el producto (Masculino, Femenino, Unisex, Niños, Niñas)
+    }},
+    color:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
+      if(( obj.attributes &&  obj.attributes.length > 0 )){
+        let attrs = obj.attributes;
+        let color = attrs.filter(o=>(o.name.toLowerCase() === 'color' || o.name.toLowerCase() === 'color_primario'));
+
+        if(color.length > 0)
+          return color[0] ? color[0].option : null;
+        else
+          return null;
+      }else{
+        return obj.color || null;
+      }
+    }},
+    weight:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
+      if(( obj.attributes &&  obj.attributes.length > 0 )){
+        let attrs = obj.attributes;
+        let weight = attrs.filter(o=>(o.name.toLowerCase() === 'weight' || o.name.toLowerCase() === 'peso_producto'));
+
+        if(weight.length > 0)
+          return weight[0] ? weight[0].option : null;
+        else
+          return null;
+      }else{
+        return obj.weight || null;
+      }
+    }},
     quantity:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
       return obj.stock_quantity || 0
     }},
