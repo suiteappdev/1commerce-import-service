@@ -60,6 +60,8 @@ let getProducts = (credentials, listing) => {
                 return p;
             });
 
+            console.log(results);
+
             resolve({
                 totalRecords : (response.headers['x-wp-total']),
                 pagesCount : parseInt(response.headers['x-wp-totalpages']),
