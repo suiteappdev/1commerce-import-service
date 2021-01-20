@@ -17,18 +17,7 @@ let VtexProductVType = new GraphQLObjectType({
       return obj.productId
     }},
     discount: {type: new GraphQLList(VtexDiscountType),resolve: async (obj, args, context, info)=>{
-      let disc = [];
-      let sku = obj.skus.length > 0 ? obj.skus.find(sku => sku.available === true) : undefined;
-      if (sku && sku.listPrice !== 0) {
-        disc = [{
-          name: obj.name,
-          from: moment().format('YYYY/MM/DD HH:mm:ss'),
-          to: moment().add(7, 'days').format('YYYY/MM/DD HH:mm:ss'),
-          type: 'C',
-          value: (sku.listPrice - sku.bestPrice)/100,
-        }]
-      }
-      return disc
+      return obj.discounts
     }},
     variations:{ type:new GraphQLList(VtexProductVariationType), resolve:(obj, args, context, info)=>{ 
       if (!obj.skus || obj.skus.length === 0) {

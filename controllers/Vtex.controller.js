@@ -128,23 +128,125 @@ let getProducts = (credentials, listing) => {
   });
 }
 
+let getPromotions = (credentials) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const benefits = await services.Vtex.getBenefits({
+        shopName: credentials.shopName,
+        apiKey: credentials.apiKey,
+        password: credentials.password
+      });
+      const result = [];
+      if (benefits && benefits.length > 0) {
+        for (const benefit of benefits) {
+          const promotion = await services.Vtex.getPromotionById({
+            shopName: credentials.shopName,
+            apiKey: credentials.apiKey,
+            password: credentials.password
+          }, benefit);
+          if (promotion) {
+            result.push(promotion);
+          }
+        }
+      }
+		  return resolve(result);
+
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+let existProductColletion = (productId, colletions) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let exist = false;
+      let discount = [];
+     
+      for (const collection of colletions) {
+        exist = collection.products.some(item => item.ProductId == productId);
+        if (exist) {
+          discount.push({
+            name: collection.name,
+            from: collection.from,
+            to: collection.to,
+            type: 'P',
+            value: collection.value,
+          })
+        }
+      }
+		  return resolve(discount);
+
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+let getProductsColletion = (credentials, collectionId, promotion) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const moment = require('moment');
+      let dataItems = [];
+      let result = await services.Vtex.getProductIdsColletion({
+        shopName: credentials.shopName,
+        apiKey: credentials.apiKey,
+        password: credentials.password
+      }, 1, collectionId);
+
+      if (result) {
+        dataItems = dataItems.concat(result.Data);
+        let page = result.Page + 1;
+        while (page <= result.TotalPage) {
+          const dat = await services.Vtex.getProductIdsColletion({
+            shopName: credentials.shopName,
+            apiKey: credentials.apiKey,
+            password: credentials.password
+          }, page, collectionId);
+          page += 1;
+          dataItems = dataItems.concat(dat.Data);
+        }
+      }
+		  return resolve({
+        name: promotion.name,
+        from: moment(promotion.beginDateUtc).format('YYYY/MM/DD HH:mm:ss'),
+        to: moment(promotion.endDateUtc).format('YYYY/MM/DD HH:mm:ss'),
+        value: promotion.percentualDiscountValue,
+        products: dataItems
+      });
+
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 let getVariations = (credentials, listing) => {
   return new Promise(async (resolve, reject) => {
     try {
       let data = await getProductsIds(credentials, listing);
       let variations = [];
       if (data.productIds.length > 0) {
+        const promotions = await getPromotions(credentials);
+        let colletions = [];
+        for (const promot of promotions) {
+          const result = await getProductsColletion(credentials, promot.collectionId, promot); 
+          if (result) {
+            colletions.push(result);
+          }
+        }
         for (const element of data.productIds) {
           let variation = await services.Vtex.getVariations({
             shopName: credentials.shopName,
             apiKey: credentials.apiKey,
             password: credentials.password
           }, element.productId);
-
           if (variation) {
+            const discounts = await existProductColletion(element.productId, colletions);
+            variation.discounts = discounts;
             variations.push(variation);
           } else {
-            variations.push({productId: element.productId, skus: []})
+            variations.push({productId: element.productId, skus: [], discounts: []})
           }
         }
       }
@@ -252,18 +354,30 @@ let getProductId = (credentials, productId) => {
         apiKey: credentials.apiKey,
         password: credentials.password
       }, product.BrandId);
+
       let getSku = [];
       let price = 0;
+      let discounts = [];
       let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0].replace('.png','').split('_')[1] : 'Multicolor';
       let sku = variation ? variation.skus.find(sku => sku.available === true) : undefined;
       if (sku) {
+        let colletions = [];
+        const promotions = await getPromotions(credentials);
         getSku = await services.Vtex.getSku({
           shopName: credentials.shopName,
           apiKey: credentials.apiKey,
           password: credentials.password
         }, sku.sku);
         price = sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice;
+        for (const promot of promotions) {
+          const result = await getProductsColletion(credentials, promot.collectionId, promot); 
+          if (result) {
+            colletions.push(result);
+          }
+        }
+        discounts = await existProductColletion(productId, colletions);
       }
+
       product.width = variation ? sku.measures.width : 0;
       product.height = variation ? sku.measures.height : 0;
       product.length = variation ? sku.measures.length : 0;
@@ -275,6 +389,7 @@ let getProductId = (credentials, productId) => {
       product.Images = variation && getSku.Images.length > 0 ? getSku.Images : [];
       product.name = product.Name;
       product.skus = variation ? variation.skus : [];
+      product.discounts = discounts;
       return resolve(product);
     } catch (error) {
       reject(error);
