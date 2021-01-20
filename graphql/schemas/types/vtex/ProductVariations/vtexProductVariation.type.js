@@ -24,6 +24,9 @@ let VtexProductVariationType = new GraphQLObjectType({
     ean13:{ type:GraphQLString, resolve: async(obj, args, context, info)=>{
       let ean = obj.sku ? await getEan(context.req, obj.sku) : '';
       return ean;
+    }},
+    skuId: { type:GraphQLString, resolve: async(obj, args, context, info)=>{
+      return obj.sku;
     }}
   }),
 });
