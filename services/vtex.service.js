@@ -16,7 +16,10 @@ let init = async (app, locals) => {
                 getSku,
                 getBrand,
                 getEan,
-                getQuantity
+                getQuantity,
+                getBenefits,
+                getPromotionById,
+                getProductIdsColletion
             };
 
             logger.info(`vtex service done.`);
@@ -243,6 +246,101 @@ let getQuantity = (credentials, skuId) => {
         if(response && response.data){
             return resolve(response.data.balance[0]);
         }
+        resolve(undefined);
+    });
+}
+
+let getBenefits = (credentials) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: `https://${credentials.shopName}.vtexcommercestable.com.br/api/rnb/pvt/benefits/calculatorconfiguration`,
+                headers: {
+                  'content-type': 'application/json',
+                  accept: 'application/json',
+                  'x-vtex-api-appkey': credentials.apiKey,
+                  'x-vtex-api-apptoken': credentials.password
+                },
+                timeout: 60000
+            };
+            response = await axios(options)
+        } catch (error) {
+            console.log(error);
+        }
+        if(response.data && response.data.items.length > 0){
+            let result = [];
+            response.data.items.map(item => {
+                if (item.isActive === true) {
+                    result.push(item.idCalculatorConfiguration);
+                }
+            });
+            return resolve(result);
+        }
+        resolve(undefined);
+    });
+}
+
+let getPromotionById = (credentials, promotionId) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: `https://${credentials.shopName}.vtexcommercestable.com.br/api/rnb/pvt/calculatorconfiguration/${promotionId}`,
+                headers: {
+                  'content-type': 'application/json',
+                  accept: 'application/json',
+                  'x-vtex-api-appkey': credentials.apiKey,
+                  'x-vtex-api-apptoken': credentials.password
+                },
+                timeout: 60000
+            };
+            response = await axios(options)
+        } catch (error) {
+            console.log(error);
+        }
+        if(response.data && response.data.collections.length > 0){
+            const promotion = response.data
+            const result = {
+                name: promotion.name,
+                beginDateUtc: promotion.beginDateUtc,
+                endDateUtc: promotion.endDateUtc,
+                percentualDiscountValue: promotion.percentualDiscountValue,
+                collectionId: promotion.collections[0].id
+            }
+            return resolve(result);
+        }
+        resolve(undefined);
+    });
+}
+
+let getProductIdsColletion = (credentials, page, collectionId) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: `https://${credentials.shopName}.vtexcommercestable.com.br/api/catalog/pvt/collection/${collectionId}/products`,
+                params: {page: page, pageSize: 50, Active: 'true', Visible: 'true'},
+                headers: {
+                  'content-type': 'application/json',
+                  accept: 'application/json',
+                  'x-vtex-api-appkey': credentials.apiKey,
+                  'x-vtex-api-apptoken': credentials.password
+                },
+                timeout: 60000
+            };
+            response = await axios(options)
+        } catch (error) {
+            console.log(error);
+        }
+        
+        if(response && response.data.TotalRows > 0){
+            return resolve(response.data);
+        }
+
         resolve(undefined);
     });
 }
