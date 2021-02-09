@@ -60,7 +60,6 @@ let getProducts = (credentials, listing) => {
                 return p;
             });
 
-            console.log(results);
 
             resolve({
                 totalRecords : (response.headers['x-wp-total']),
@@ -82,7 +81,7 @@ let getVariations = (credentials, pro) => {
             let products = await WooCommerce.get(`products/${pro.id}/variations`);
 
             if (products && products.data) {
-                let rs = products.data.filter((p)=>p.weight);
+                let rs = products.data.filter((p)=>p.reference == 'EVUFM812-XL');
 
                 if(rs.length > 0){
                     console.log(rs);
