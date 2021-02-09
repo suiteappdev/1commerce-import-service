@@ -18,7 +18,7 @@ const WooCommerceProductVariationQuery = {
     }
     context.req = credentials;
     
-    return getVariations(credentials, productId);
+    return getVariations(credentials, {id : productId});
   }
 };
   
