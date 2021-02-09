@@ -124,7 +124,8 @@ let WooCommerceProductType = new GraphQLObjectType({
       return obj.stock_quantity || 0
     }},
     variations:{ type:new GraphQLList(WooCommerceProductVariationType), resolve:(obj, args, context, info)=>{
-        let getGender = (p)=>{
+      
+      let getGender = (p)=>{
             if(( p.attributes &&  p.attributes.length > 0 )){
               let attrs = obj.attributes;
               let gender = attrs.filter(o=>(o.name.toLowerCase() === 'gender' || o.name.toLowerCase() === 'genero' || o.name === 'Género'));
@@ -195,6 +196,8 @@ let WooCommerceProductType = new GraphQLObjectType({
         
             return [defaultVariation];
           }
+
+
 
         return getVariations(context.req, obj);
       }},
