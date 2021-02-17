@@ -94,17 +94,14 @@ let WooCommerceProductType = new GraphQLObjectType({
             return []
           }
       }},
-      color:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-      if(( obj.attributes &&  obj.attributes.length > 0 )){
+      color:{ type:new GraphQLList(GraphQLString), resolve:(obj, args, context, info)=>{
+        if(obj.sku =='EVSC8F114' ){
+          console.log(obj);
+        }
+        if(( obj.attributes &&  obj.attributes.length > 0 )){
         let attrs = obj.attributes;
-        let color = attrs.filter(o=>(o.name.toLowerCase() === 'color' || o.name.toLowerCase() === 'color_primario'));
-
-        if(color.length > 0)
-          return color[0] ? (color[0].option || color[0].options[0]) : null;
-        else
-          return null;
-      }else{
-        return obj.color || null;
+        let color = attrs.filter(o=>(o.name.toLowerCase() === 'color' || o.name.toLowerCase() === 'color_primario'))[0];
+        return color.options ? color.options : [color.option];
       }
     }},
     product_weight:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
