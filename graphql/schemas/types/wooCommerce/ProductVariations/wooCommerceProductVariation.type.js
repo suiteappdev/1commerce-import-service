@@ -47,6 +47,13 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
         return obj.weight || null;
       }
     }},
+    size:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
+      if(( obj.attributes &&  obj.attributes.length > 0 )){
+        let attrs = obj.attributes;
+        let size = attrs.filter(o=>(o.name.toLowerCase() === 'tamano'))[0];
+        return size.options ? size.options : size.option;
+      }
+    }},
     quantity:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
       return obj.stock_quantity || 0
     }},
