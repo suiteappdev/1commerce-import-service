@@ -95,9 +95,6 @@ let WooCommerceProductType = new GraphQLObjectType({
           }
       }},
       color:{ type:new GraphQLList(GraphQLString), resolve:(obj, args, context, info)=>{
-        if(obj.sku =='EVSC8F114' ){
-          console.log(obj);
-        }
         if(( obj.attributes &&  obj.attributes.length > 0 )){
         let attrs = obj.attributes;
         let color = attrs.filter(o=>(o.name.toLowerCase() === 'color' || o.name.toLowerCase() === 'color_primario'))[0];
