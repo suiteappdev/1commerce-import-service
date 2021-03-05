@@ -94,13 +94,20 @@ let WooCommerceProductType = new GraphQLObjectType({
             return []
           }
       }},
-      color:{ type:new GraphQLList(GraphQLString), resolve:(obj, args, context, info)=>{
+    color:{ type:new GraphQLList(GraphQLString), resolve:(obj, args, context, info)=>{
         if(( obj.attributes &&  obj.attributes.length > 0 )){
         let attrs = obj.attributes;
         let color = attrs.filter(o=>(o.name.toLowerCase() === 'color' || o.name.toLowerCase() === 'color_primario'))[0];
         return color.options ? color.options : [color.option];
       }
     }},
+  size:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
+      if(( obj.attributes &&  obj.attributes.length > 0 )){
+      let attrs = obj.attributes;
+      let size = attrs.filter(o=>(o.name.toLowerCase() === 'size'))[0];
+      return size.options ? size.options : [size.option];
+    }
+  }},
     product_weight:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       if(( obj.attributes &&  obj.attributes.length > 0 )){
         let attrs = obj.attributes;

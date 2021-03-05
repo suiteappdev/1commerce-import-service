@@ -10,6 +10,7 @@ router.post('/updated_product/woocommerce/:key', async (req, res)=>{
     key,
     channel: 'woocommerce'
   };
+
   pubsub.publish(WOOCOMMERCE_PRODUCTS, { WoocommerceProducts: data });
   res.end();
 });
