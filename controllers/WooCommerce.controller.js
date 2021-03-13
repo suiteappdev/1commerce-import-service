@@ -79,18 +79,23 @@ let getVariations = (credentials, pro) => {
 
             let WooCommerce = new services.WooCommerceRestApi(credentials);
             let products = await WooCommerce.get(`products/${pro.id}/variations`);
-
-            if (products && products.data) {
-                let rs = products.data.filter((p)=>p.reference == 'EVUFM812-XL');
-
-                if(rs.length > 0){
-                    console.log(rs);
-                }
-
-                return resolve(products.data);
+            let tax = await WooCommerce.get("taxes");
+            
+            let findTax = (taxClass, taxes)=>{
+                return tax.data.filter((c) => c.name.toLowerCase() === taxClass.toLowerCase());
             }
 
-            resolve([])
+            let results = products.data.map((p)=>{
+                let tx = findTax(p.tax_class, tax);
+
+                if(!tx || tx.length == 0){
+                    p.tax = tax.data.filter(t=>t.class === 'standard')[0]
+                }
+
+                return p;
+            });
+
+            resolve(results)
 
         } catch (error) {
             reject(error);
