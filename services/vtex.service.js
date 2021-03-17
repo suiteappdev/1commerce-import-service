@@ -19,7 +19,8 @@ let init = async (app, locals) => {
                 getQuantity,
                 getBenefits,
                 getPromotionById,
-                getProductIdsColletion
+                getProductIdsColletion,
+                getSpecification
             };
 
             logger.info(`vtex service done.`);
@@ -341,6 +342,32 @@ let getProductIdsColletion = (credentials, page, collectionId) => {
             return resolve(response.data);
         }
 
+        resolve(undefined);
+    });
+}
+
+let getSpecification = (credentials, productId) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: `https://${credentials.shopName}.vtexcommercestable.com.br/api/catalog_system/pvt/products/${productId}/specification`,
+                headers: {
+                  'content-type': 'application/json',
+                  accept: 'application/json',
+                  'x-vtex-api-appkey': credentials.apiKey,
+                  'x-vtex-api-apptoken': credentials.password
+                },
+                timeout: 60000
+            };
+            response = await axios(options)
+        } catch (error) {
+            console.log(error);
+        }
+        if(response && response.data){
+            return resolve(response.data);
+        }
         resolve(undefined);
     });
 }
