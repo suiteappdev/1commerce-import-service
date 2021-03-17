@@ -397,4 +397,30 @@ let getProductId = (credentials, productId) => {
   });
 }
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getEan, getQuantity, getProductId };
+let getSpecification = (credentials, productId) => {
+  return new Promise(async (resolve, reject) => {
+    const stripHtml = require("string-strip-html");
+    try {
+      let data = await services.Vtex.getSpecification({
+        shopName: credentials.shopName,
+        apiKey: credentials.apiKey,
+        password: credentials.password
+      }, productId);
+      let specification = '';
+      if (data && data.length > 0) {
+        for (const element of data) {
+          if (element.Name === 'Caracteristicas' && element.Value[0]) {
+            specification += `\n\n<strong>Caracteristicas</strong>\n${stripHtml(element.Value[0]).replace(/\n\n/g, "\n")}`
+          } else if(element.Name === 'Cuidados del producto' && element.Value[0]){
+            specification += `\n\n<strong>Cuidados del producto</strong>\n${stripHtml(element.Value[0]).replace(/\n\n/g, "\n")}`
+          }
+        }
+      }
+      return resolve(specification);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getEan, getQuantity, getProductId, getSpecification };

@@ -7,6 +7,7 @@ const {
 } = require('graphql');
 const vtexTaxType = require('./vtexTaxType');
 const stripHtml = require("string-strip-html");
+const { getSpecification } = require('../../../../../controllers/Vtex.controller');
 
 let VtexProductType = new GraphQLObjectType({
   name: 'VtexProductType',
@@ -20,8 +21,9 @@ let VtexProductType = new GraphQLObjectType({
     reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       return obj.RefId;
     }},
-    description:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-      return stripHtml(obj.Description);
+    description:{ type:GraphQLString, resolve: async(obj, args, context, info)=>{
+      const specification = await getSpecification(context.req, obj.Id);
+      return stripHtml(obj.Description) + specification;
     }},
     descriptionShort:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       return stripHtml(obj.MetaTagDescription);
