@@ -2,7 +2,8 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLNonNull,
-  GraphQLID
+  GraphQLID,
+  GraphQLBoolean
 } = require('graphql');
 
 const ShopifyProductsTyPe = new GraphQLObjectType({  
@@ -10,7 +11,8 @@ const ShopifyProductsTyPe = new GraphQLObjectType({
   fields: () => ({
     productId: { type: new GraphQLNonNull(GraphQLID) },
     key: { type: new GraphQLNonNull(GraphQLString) },
-    channel: { type: new GraphQLNonNull(GraphQLString) }
+    channel: { type: new GraphQLNonNull(GraphQLString) },
+    discount: { type: new GraphQLNonNull(GraphQLBoolean) }
   })
 })
 
