@@ -13,7 +13,7 @@ router.post('/updated_product/woocommerce/:key/:separate_product_by_color', asyn
   };
 
   pubsub.publish(WOOCOMMERCE_PRODUCTS, { WoocommerceProducts: data });
-  res.end();
+  res.status(200).end();
 });
 
 module.exports = router;
