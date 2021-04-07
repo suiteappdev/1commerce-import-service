@@ -60,6 +60,9 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
     reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       return obj.sku
     }},
+    variationId : { type:GraphQLString, resolve:(obj, args, context, info)=>{
+      return obj.id
+    }},
     discount: {type: new GraphQLList(WoocommerceDiscountType),resolve:(obj, args, context, info)=>{
       let disc = [];
       
