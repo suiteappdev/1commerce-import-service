@@ -5451,3 +5451,12 @@
 [2021-04-07 11:35:24.507] [INFO] VtexController - Initialization finished.
 [2021-04-07 11:35:24.508] [INFO] WooCommerceController - Initialization started.
 [2021-04-07 11:35:24.508] [INFO] WooCommerceController - Initialization finished.
+[2021-04-07 11:41:20.612] [INFO] logger - Initialization finished.
+[2021-04-07 11:41:20.612] [INFO] PrestashopController - Initialization started.
+[2021-04-07 11:41:20.613] [INFO] PrestashopController - Initialization finished.
+[2021-04-07 11:41:20.613] [INFO] ShopifyController - Initialization started.
+[2021-04-07 11:41:20.613] [INFO] ShopifyController - Initialization finished.
+[2021-04-07 11:41:20.614] [INFO] VtexController - Initialization started.
+[2021-04-07 11:41:20.614] [INFO] VtexController - Initialization finished.
+[2021-04-07 11:41:20.615] [INFO] WooCommerceController - Initialization started.
+[2021-04-07 11:41:20.615] [INFO] WooCommerceController - Initialization finished.
