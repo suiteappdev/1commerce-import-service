@@ -21,9 +21,6 @@ const ShopifyCustomerType = new GraphQLObjectType({
     dni: { type:GraphQLString, resolve :(obj, args, context, info)=>{
       return obj.company;
     }},
-    mobilecountry: { type:GraphQLString, resolve :(obj, args, context, info)=>{
-      return obj.country;
-    }},
     mobile: { type:GraphQLString, resolve :(obj, args, context, info)=>{
       return obj.phone;
     }},

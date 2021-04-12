@@ -7,6 +7,7 @@ const {
 
 const ShopifyCustomerType = require('./shopifyCustomer.type');
 const ShopifyAddressType = require('./shopifyAddress.type');
+const ShopifyItemType = require('./shopifyItem.type');
 
 let ShopifyOrderIdType = new GraphQLObjectType({
   name: 'ShopifyOrderIdType',
@@ -26,6 +27,9 @@ let ShopifyOrderIdType = new GraphQLObjectType({
     paymentId: {type: GraphQLString, resolve: (obj, args, context, info) => {
       return obj.number
     }},
+    createdAt: {type: GraphQLString, resolve: (obj, args, context, info) => {
+      return obj.created_at
+    }},
     customer: {type: ShopifyCustomerType, resolve: (obj, args, context, info) => {
       const customer = obj.customer;
       customer.phone = obj.billing_address.phone.trim().replace(/\s+/g, '');
@@ -36,12 +40,8 @@ let ShopifyOrderIdType = new GraphQLObjectType({
     address: {type: ShopifyAddressType, resolve: (obj, args, context, info) => {
       return obj.shipping_address;
     }},
-    items: {type: new GraphQLList(GraphQLString), resolve:(obj, args, context, info)=>{
-      const items = [];
-      obj.line_items.forEach(item => {
-        items.push(item.product_id);
-      });
-      return items
+    items: {type: new GraphQLList(ShopifyItemType), resolve:(obj, args, context, info)=>{
+      return obj.line_items
     }}
   }),
 });
