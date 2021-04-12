@@ -18,8 +18,8 @@ let ShopifyOrderIdType = new GraphQLObjectType({
     channel: {type: GraphQLString, resolve: (obj, args, context, info) => {
       return 'shopify'
     }},
-    totalOrder: {type: GraphQLInt, resolve: (obj, args, context, info) => {
-      return Math.ceil(obj.current_total_price);
+    totalShipping: {type: GraphQLInt, resolve: (obj, args, context, info) => {
+      return obj.shipping_lines.length > 0 ? Math.ceil(obj.shipping_lines[0].price) : 0;
     }},
     paymentMethod: {type: GraphQLString, resolve: (obj, args, context, info) => {
       return obj.gateway
@@ -36,8 +36,8 @@ let ShopifyOrderIdType = new GraphQLObjectType({
     customer: {type: ShopifyCustomerType, resolve: (obj, args, context, info) => {
       const customer = obj.customer;
       customer.phone = obj.billing_address.phone.trim().replace(/\s+/g, '');
-      customer.country = obj.billing_address.country;
-      customer.company = obj.billing_address.company;
+      customer.country = obj.billing_address.country.trim();
+      customer.company = obj.billing_address.company.trim();
       return customer;
     }},
     address: {type: ShopifyAddressType, resolve: (obj, args, context, info) => {
