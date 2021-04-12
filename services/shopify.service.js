@@ -1,4 +1,3 @@
-let fs = require('fs');
 let logger;
 const axios = require('axios');
 
@@ -18,7 +17,8 @@ let init = async (app, locals) => {
                 requestProduct,
                 count,
                 getData,
-                getProductId
+                getProductId,
+                getOrderId
             };
 
             logger.info(`shopify service done.`);
@@ -113,6 +113,16 @@ let getProductId = (credentials, collection, productId, params) => {
             return resolve(response.data);
         }
 
+        resolve(null);
+    });
+}
+
+let getOrderId = (credentials, collection, productId) => {
+    return new Promise(async (resolve, reject) => {
+        let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/${collection}/${productId}.json`).catch(e => console.log("ERR", e) && reject(e))
+        if(response && response.data){
+            return resolve(response.data);
+        }
         resolve(null);
     });
 }

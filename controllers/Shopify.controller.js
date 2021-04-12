@@ -15,7 +15,8 @@ let init = (app, locals) => {
         getVariations,
         getImages,
         getDiscount,
-        getProductId
+        getProductId,
+        getOrderId
     }
 
     logger.info("Initialization finished.");
@@ -199,7 +200,7 @@ let getProductId = (credentials, productId) => {
                 password: credentials.password,
                 version: credentials.version
             }, 'products', productId, `?fields=id,title,body_html,published_at,variants,vendor,options,images`);
-            let product = resultProduct.product ? resultProduct.product : {};
+            let product = resultProduct ? resultProduct.product : {};
             product.tax = tax ? tax : {};
 
             return resolve(product);
@@ -210,4 +211,22 @@ let getProductId = (credentials, productId) => {
     });
 }
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getDiscount, getProductId};
+let getOrderId = (credentials, orderId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let resultOrder = await services.Shopify.getOrderId({
+                shopName: credentials.shopName,
+                apiKey: credentials.apiKey,
+                password: credentials.password,
+                version: credentials.version
+            }, 'orders', orderId);
+            let order = resultOrder ? resultOrder.order : {};
+            return resolve(order);
+
+        } catch (error) {
+            reject(error.message);
+        }
+    });
+}
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getDiscount, getProductId, getOrderId};
