@@ -50,7 +50,7 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
     size:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       if(( obj.attributes &&  obj.attributes.length > 0 )){
         let attrs = obj.attributes;
-        let size = attrs.filter(o=>(o.name.toLowerCase() === 'tamano'))[0];
+        let size = attrs.filter(o=>(o.name.toLowerCase() === 'tamano' || o.name.toLowerCase() == "peso_producto" ))[0];
         return size.options ? size.options : size.option;
       }
     }},
@@ -59,6 +59,9 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
     }},
     reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       return obj.sku
+    }},
+    variationId : { type:GraphQLString, resolve:(obj, args, context, info)=>{
+      return obj.id
     }},
     discount: {type: new GraphQLList(WoocommerceDiscountType),resolve:(obj, args, context, info)=>{
       let disc = [];
