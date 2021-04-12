@@ -29,6 +29,7 @@ router.post('/updated_order/woocommerce/:key', async (req, res)=>{
   pubsub.publish(WOOCOMMERCE_ORDERS, { WoocommerceOrder: data });
 
   res.status(200).end();
+  
 });
 
 

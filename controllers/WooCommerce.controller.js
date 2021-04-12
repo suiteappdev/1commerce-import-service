@@ -153,5 +153,24 @@ let getImages = (credentials, productId) => {
     });
 }
 
+let getOrderId = (credentials, orderId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId };
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+            let order = await WooCommerce.get(`orders/${orderId}`);
+           
+            if (order && order.data) {
+                return resolve({ data: order });
+            }
+
+            resolve({ data: [] })
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId, getOrderId };
