@@ -27,6 +27,9 @@ let ShopifyOrderIdType = new GraphQLObjectType({
     paymentId: {type: GraphQLString, resolve: (obj, args, context, info) => {
       return obj.number
     }},
+    status: {type: GraphQLString, resolve: (obj, args, context, info) => {
+      return obj.financial_status
+    }},
     createdAt: {type: GraphQLString, resolve: (obj, args, context, info) => {
       return obj.created_at
     }},
