@@ -18,6 +18,9 @@ const ShopifyAddressType = new GraphQLObjectType({
     city: { type:GraphQLString, resolve :(obj, args, context, info)=>{
       return obj.city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }},
+    region: { type:GraphQLString, resolve :(obj, args, context, info)=>{
+      return obj.province.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }},
     notes: { type:GraphQLString, resolve :(obj, args, context, info)=>{
       return obj.address2;
     }},
