@@ -27,6 +27,9 @@ let ShopifyOrderIdType = new GraphQLObjectType({
     paymentId: {type: GraphQLString, resolve: (obj, args, context, info) => {
       return obj.number
     }},
+    createdAt: {type: GraphQLString, resolve: (obj, args, context, info) => {
+      return obj.created_at
+    }},
     customer: {type: ShopifyCustomerType, resolve: (obj, args, context, info) => {
       const customer = obj.customer;
       customer.phone = obj.billing_address.phone.trim().replace(/\s+/g, '');
