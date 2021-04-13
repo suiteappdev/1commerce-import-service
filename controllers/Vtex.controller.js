@@ -16,7 +16,8 @@ let init = (app, locals) => {
       getImages,
       getEan,
       getQuantity,
-      getProductId
+      getProductId,
+      getOrderId
     }
 
     logger.info("Initialization finished.");
@@ -423,4 +424,19 @@ let getSpecification = (credentials, productId) => {
   });
 }
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getEan, getQuantity, getProductId, getSpecification };
+let getOrderId = (credentials, orderId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let order = await services.Vtex.getOrderId({
+        shopName: credentials.shopName,
+        apiKey: credentials.apiKey,
+        password: credentials.password
+      }, orderId);
+      return resolve(order);
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getEan, getQuantity, getProductId, getSpecification, getOrderId };

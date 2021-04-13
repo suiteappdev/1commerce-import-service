@@ -4,19 +4,19 @@ const {
   GraphQLInt
 } = require('graphql');
 
-const ShopifyItemType = new GraphQLObjectType({
-  name: 'ShopifyItemType',
+const VtexItemType = new GraphQLObjectType({
+  name: 'VtexItemType',
   fields: () => ({
     skuId:{ type:GraphQLString, resolve :(obj, args, context, info)=>{
-      return obj.sku;
+      return obj.id;
     }},
     quantity:{ type:GraphQLInt, resolve :(obj, args, context, info)=>{
       return obj.quantity;
     }},
     price: {type: GraphQLInt, resolve: (obj, args, context, info) => {
-      return Math.ceil(obj.price);
+      return Math.ceil(obj.price / 100);
     }}
   }),
 });
 
-module.exports = ShopifyItemType;
+module.exports = VtexItemType;
