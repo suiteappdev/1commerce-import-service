@@ -28,7 +28,7 @@ let VtexOrderIdType = new GraphQLObjectType({
       return obj.sequence
     }},
     status: {type: GraphQLString, resolve: (obj, args, context, info) => {
-      return obj.status
+      return obj.status === 'payment-approved' || obj.status === 'handling' ? 'paid' : obj.status;
     }},
     createdAt: {type: GraphQLString, resolve: (obj, args, context, info) => {
       return obj.creationDate
