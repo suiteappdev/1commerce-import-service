@@ -26,7 +26,7 @@ router.post('/updated_order/woocommerce/:key', async (req, res)=>{
     channel: 'woocommerce',
   };
 
-  pubsub.publish(WOOCOMMERCE_ORDERS, { WoocommerceOrder: data });
+  pubsub.publish(WOOCOMMERCE_ORDERS, { WoocommerceOrders: data });
 
   res.status(200).end();
   

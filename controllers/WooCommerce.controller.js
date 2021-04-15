@@ -161,7 +161,7 @@ let getOrderId = (credentials, orderId) => {
             let order = await WooCommerce.get(`orders/${orderId}`);
            
             if (order && order.data) {
-                return resolve({ data: order });
+                return resolve(order.data);
             }
 
             resolve({ data: [] })

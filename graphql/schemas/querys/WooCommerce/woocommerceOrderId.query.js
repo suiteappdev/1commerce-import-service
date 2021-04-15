@@ -12,9 +12,11 @@ const WoocommerceOrderIdQuery = {
     let token = getToken(context.req);
     let credentials = validate(token);
     delete credentials.iat;
+
     if(!credentials){
       throw new Error("Auth token error");
     }
+    
     context.req = credentials;
     
     return getOrderId(credentials, orderId);

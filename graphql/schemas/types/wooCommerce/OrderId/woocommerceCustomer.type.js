@@ -13,7 +13,7 @@ const WoocommerceCustomerType = new GraphQLObjectType({
       return 'confirmed';
     }},
     fullName: { type:GraphQLString, resolve :(obj, args, context, info)=>{
-      return obj.first_name + ' ' + obj.last_name;
+      return obj.customer;
     }},
     dniType: { type:GraphQLString, resolve :(obj, args, context, info)=>{
       return 'CC';
