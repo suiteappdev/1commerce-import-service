@@ -3,6 +3,7 @@ const WooCommerceProduct = require('./WooCommerce/wooCommerceProduct.query');
 const WooCommerceProductVariation = require('./WooCommerce/wooCommerceProductVariation.query');
 const WooCommerceProductImage = require('./WooCommerce/wooCommerceProductImage.query');
 const WooCommerceProductId = require('./WooCommerce/wooCommerceProductId.query');
+const WooCommerceOrderId = require('./WooCommerce/woocommerceOrderId.query');
 
 const ShopifyPagination = require('./Shopify/shopifyPagination.query');
 const ShopifyProducts = require('./Shopify/shopifyProduct.query.js');
@@ -29,6 +30,7 @@ module.exports = {
         WooCommerceProductVariation,
         WooCommerceProductImage,
         WooCommerceProductId,
+        WooCommerceOrderId,
         ShopifyPagination,
         ShopifyProducts,
         ShopifyProductVariation,
