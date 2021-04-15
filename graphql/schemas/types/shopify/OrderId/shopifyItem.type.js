@@ -15,6 +15,9 @@ const ShopifyItemType = new GraphQLObjectType({
     }},
     price: {type: GraphQLInt, resolve: (obj, args, context, info) => {
       return Math.ceil(obj.price);
+    }},
+    discount: {type: GraphQLInt, resolve: (obj, args, context, info) => {
+      return Math.ceil(obj.total_discount);
     }}
   }),
 });
