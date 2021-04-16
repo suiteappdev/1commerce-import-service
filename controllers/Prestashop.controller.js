@@ -129,7 +129,7 @@ let getVariations = (credentials, listing) => {
                 
                 for (let index = 0; index < products.length; index++) {
                     let discount=[];
-                    let disc=discounts.filter(d => d.id_product == products[index].id);
+                    let disc=discounts.filter(d => (d.id_product == products[index].id)&&(moment(moment(d.to).valueOf()).isSameOrAfter(moment().valueOf())));
                     if(disc.length>1){
                         disc=disc.sort((a,b) => b.from.localeCompare(a.from));
                         disc.length = 1;
@@ -256,7 +256,7 @@ let getProductId = (credentials, productId) => {
                 });
 
                 let discount=[];
-                let disc=discounts.filter(d => d.id_product == product.id);
+                let disc=discounts.filter(d => (d.id_product == product.id)&&(moment(moment(d.to).valueOf()).isSameOrAfter(moment().valueOf())));
                 if(disc.length>1){
                     disc=disc.sort((a,b) => b.from.localeCompare(a.from));
                     disc.length = 1;
