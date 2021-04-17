@@ -13,6 +13,12 @@ const WoocommerceItemType = new GraphQLObjectType({
     quantity:{ type:GraphQLInt, resolve :(obj, args, context, info)=>{
       return obj.quantity;
     }},
+    price: {type: GraphQLInt, resolve: (obj, args, context, info) => {
+      return Math.ceil(obj.total);
+    }},
+    discount: {type: GraphQLInt, resolve: (obj, args, context, info) => {
+      return Math.ceil(obj.discount_total);
+    }}
   }),
 });
 
