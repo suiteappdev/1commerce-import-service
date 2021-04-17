@@ -15,6 +15,9 @@ const VtexItemType = new GraphQLObjectType({
     }},
     price: {type: GraphQLInt, resolve: (obj, args, context, info) => {
       return Math.ceil(obj.price / 100);
+    }},
+    discount: {type: GraphQLInt, resolve: (obj, args, context, info) => {
+      return Math.ceil(obj.price / 100) - Math.ceil(obj.sellingPrice / 100);
     }}
   }),
 });
