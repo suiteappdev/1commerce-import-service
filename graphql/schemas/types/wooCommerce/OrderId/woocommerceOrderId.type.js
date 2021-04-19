@@ -25,7 +25,7 @@ let WoocommerceOrderIdType = new GraphQLObjectType({
       return obj.payment_method
     }},
     paymentId: {type: GraphQLString, resolve: (obj, args, context, info) => {
-      return obj.transaction_id
+      return obj.number
     }},
     createdAt: {type: GraphQLString, resolve: (obj, args, context, info) => {
       return obj.date_created
