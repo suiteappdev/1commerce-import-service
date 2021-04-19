@@ -17,7 +17,7 @@ router.post('/updated_product/woocommerce/:key/:separate_product_by_color', asyn
   res.status(200).end();
 });
 
-router.post('/updated_order/woocommerce/:key', async (req, res)=>{
+router.post('/created_order/woocommerce/:key', async (req, res)=>{
   let key = req.params.key;
 
   let data = {

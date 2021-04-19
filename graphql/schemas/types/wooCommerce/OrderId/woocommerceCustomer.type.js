@@ -19,7 +19,7 @@ const WoocommerceCustomerType = new GraphQLObjectType({
       return 'CC';
     }},
     dni: { type:GraphQLString, resolve :(obj, args, context, info)=>{
-      return obj.company;
+      return obj.dni || 0;
     }},
     mobilecountry: { type:GraphQLString, resolve :(obj, args, context, info)=>{
       return obj.country;
