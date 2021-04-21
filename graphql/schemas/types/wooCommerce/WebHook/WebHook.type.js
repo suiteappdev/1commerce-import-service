@@ -11,6 +11,9 @@ const {
   let WoocommerceWebHookType = new GraphQLObjectType({
     name: 'WoocommerceWebHookType',
     fields: () => ({
+      id: {type: GraphQLString, resolve: (obj, args, context, info) => {
+        return obj.id
+      }},
       name: {type: GraphQLString, resolve: (obj, args, context, info) => {
         return obj.name
       }},
@@ -23,7 +26,7 @@ const {
       status: {type: WebHookStatus, resolve: (obj, args, context, info) => {
         return obj.status
       }},
-      version: {type: GraphQLString, resolve: (obj, args, context, info) => {
+      version: {type: GraphQLString, resolve: (obj, args, context, info) => { 
         return obj.version
       }}
     }),

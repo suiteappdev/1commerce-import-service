@@ -18,7 +18,8 @@ let init = (app, locals) => {
         getImages,
         getPagination,
         getProductId,
-        addWebhook
+        addWebhook,
+        updateWebhook
     }
 
     logger.info("Initialization finished.");
@@ -203,8 +204,29 @@ let addWebhook = (credentials, webhook) => {
     });
 }
 
+let updateWebhook = (credentials,webhookId, webhook) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            credentials.queryStringAuth = true;
+            credentials.verifySsl =  false;
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+              
+            let response = await WooCommerce.put(`webhooks/${webhookId}`, { status :  webhook.status });
+           
+            if (response && response.data) {
+                return resolve(response.data);
+            }
+
+            resolve({});
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
 
 
 
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId, getOrderId, addWebhook };
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId, getOrderId, addWebhook, updateWebhook };

@@ -3,7 +3,7 @@ const {
   GraphQLID
 } = require('graphql');
 
-const { addWebhook } = require('../../../controllers/WooCommerce.controller');
+const { addWebhook, updateWebhook } = require('../../../controllers/WooCommerce.controller');
 const { getToken, validate}  = require('../../../util/auth.util');
 
 const WoocommerceWebHookType = require('../types/wooCommerce/WebHook/WebHook.type');
@@ -44,11 +44,28 @@ const mutations = new GraphQLObjectType({
         description: "update a woocommerce webhook entry",
         type: WoocommerceWebHookType,
         args: {
-            bookmarkId: {type: GraphQLID},
+            webhookId: {type: GraphQLID},
             input: {type: WebHookInputType}
         },
         resolve: async (root, args, context) => {
-            return {};
+          let token = getToken(context.req);
+          
+          if(!token){
+            throw new Error("Auth error token no provided");
+          }
+
+          let credentials = validate(token);
+
+          if(!credentials){
+            throw new Error("Invalid credential data");
+          }
+
+          delete credentials.iat;
+          context.req = credentials;
+          
+          let webhook = await updateWebhook(credentials, args.webhookId, args.input);
+            
+          return webhook;
         }
     },
     deleteWoocommerceWebHook: {
