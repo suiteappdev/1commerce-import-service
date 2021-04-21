@@ -17,7 +17,8 @@ let init = (app, locals) => {
         getVariations,
         getImages,
         getPagination,
-        getProductId
+        getProductId,
+        addWebhook
     }
 
     logger.info("Initialization finished.");
@@ -181,5 +182,29 @@ let getOrderId = (credentials, orderId) => {
     });
 }
 
+let addWebhook = (credentials, webhook) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            credentials.queryStringAuth = true;
+            credentials.verifySsl =  false;
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+              
+            let response = await WooCommerce.post("webhooks", webhook);
+           
+            if (response && response.data) {
+                return resolve(response.data);
+            }
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId, getOrderId };
+            resolve({});
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+
+
+
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId, getOrderId, addWebhook };
