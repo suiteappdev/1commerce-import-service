@@ -31,7 +31,7 @@ let getPagination = (credentials, listing) => {
             credentials.queryStringAuth = true;
             credentials.verifySsl =  false;
             let WooCommerce = new services.WooCommerceRestApi(credentials);
-            let response = await WooCommerce.get("products", { per_page: listing.pagination.pageSize, page: listing.pagination.page });
+            let response = await WooCommerce.get(`products`, { per_page: listing.pagination.pageSize, page: listing.pagination.page });
             
             resolve({
                 totalRecords : (response.headers['x-wp-total']),

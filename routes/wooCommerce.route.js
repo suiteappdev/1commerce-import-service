@@ -32,5 +32,21 @@ router.post('/created_order/woocommerce/:key', async (req, res)=>{
   
 });
 
+router.post('/updated_order/woocommerce/:key', async (req, res)=>{
+  let key = req.params.key;
+
+  let data = {
+    orderId: req.body.id,
+    key,
+    channel: 'woocommerce',
+  };
+
+  pubsub.publish(WOOCOMMERCE_ORDERS, { WoocommerceOrders: data });
+
+  res.status(200).end();
+  
+});
+
+
 
 module.exports = router;
