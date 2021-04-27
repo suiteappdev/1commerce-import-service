@@ -22,6 +22,7 @@ const VtexOrderId = require('./Vtex/vtexOrderId.query');
 const PrestashopProducts = require('./Prestashop/prestashopProduct.query.js');
 const PrestashopProductVariation = require('./Prestashop/prestashopProductVariation.query');
 const PrestashopProductId = require('./Prestashop/prestashopProductId.query');
+const PrestashopOrderId = require('./Prestashop/prestashopOrderId.query');
 
 module.exports = {
     public: {
@@ -45,6 +46,7 @@ module.exports = {
         VtexOrderId,
         PrestashopProducts,
         PrestashopProductVariation,
-        PrestashopProductId
+        PrestashopProductId,
+        PrestashopOrderId
     }
 }

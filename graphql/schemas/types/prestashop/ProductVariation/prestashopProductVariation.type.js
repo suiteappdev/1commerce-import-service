@@ -23,6 +23,9 @@ let PrestashopProductVariationType = new GraphQLObjectType({
     }},
     reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       return obj.reference ? obj.reference.trim() : "";
+    }},
+    skuId: { type:GraphQLString, resolve: async(obj, args, context, info)=>{
+      return obj.id;
     }}
   }),
 });
