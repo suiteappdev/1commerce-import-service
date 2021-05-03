@@ -11,7 +11,8 @@ let init = (app, locals) => {
 
     locals.controllers = locals.controllers || {}
     locals.controllers.Prestashop = {
-        getProducts
+        getProducts,
+        getOrderId
     }
 
     logger.info("Initialization finished.");
@@ -316,4 +317,27 @@ let getProductId = (credentials, productId) => {
     });
 }
 
-module.exports = { init, getProducts, getVariations, getProductId};
+let getOrderId = (credentials, orderId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let order = await services.Prestashop.getOrderId(credentials,orderId);
+            if (order){
+                let customer = await services.Prestashop.getCustomer(credentials,order.id_customer);
+                let status = await services.Prestashop.getStatus(credentials,order.current_state);
+                let address = await services.Prestashop.getAddress(credentials,order.id_address_delivery);
+                let country = await services.Prestashop.getCountry(credentials,address.id_country);
+                let state = await services.Prestashop.getState(credentials,address.id_state);
+                order.customer = customer;
+                order.status = status;
+                order.address = address;
+                order.address.country = country;
+                order.address.state = state;
+            }
+            return resolve(order);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+module.exports = { init, getProducts, getVariations, getProductId, getOrderId};
