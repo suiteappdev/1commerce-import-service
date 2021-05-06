@@ -43,7 +43,7 @@ let ShopifyProductType = new GraphQLObjectType({
     price: {
       type: GraphQLInt, resolve: (obj, args, context, info) => {
         let iva = parseInt(obj.tax.tax * 100) || 0;
-        let price = obj.variants[0].compare_at_price ? obj.variants[0].compare_at_price : obj.variants[0].price ? obj.variants[0].price : 0;
+        let price = obj.variants[0].compare_at_price && parseInt(obj.variants[0].compare_at_price) !== 0 ? obj.variants[0].compare_at_price : obj.variants[0].price ? obj.variants[0].price : 0;
         return obj.variants[0].taxable ? Math.ceil(price / (1+(iva/100))) : price;
       }
     },
