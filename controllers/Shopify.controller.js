@@ -73,8 +73,9 @@ let getProducts = (credentials, listing) => {
             }, 'count');
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
-
-            let products = response.products ? response.products.map(p => {
+            const resultProducts = productsColor(response.products);            
+            
+            let products = response.products ? resultProducts.map(p => {
                 p.tax = tax ? tax : {};
                 return p;
             }) : []
@@ -112,12 +113,13 @@ let getVariations = (credentials, listing) => {
             }, 'count');
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
+            const resultProducts = variantsColor(response.products);
 
             let rs = {
                 totalRecords: totalRecords.count || null,
                 pagination: response.pagination || null,
                 pagesCount: count,
-                data: response.products || []
+                data: resultProducts || []
             }
             resolve(rs)
             
@@ -135,7 +137,7 @@ let getImages = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,images`, true);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,images,options`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
@@ -145,12 +147,12 @@ let getImages = (credentials, listing) => {
             }, 'count');
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
-
+            const resultProducts = imageColor(response.products);
             let rs = {
                 totalRecords: totalRecords.count || null,
                 pagination: response.pagination || null,
                 pagesCount: count,
-                data: response.products || []
+                data: resultProducts || []
             }
             resolve(rs)
 
@@ -160,8 +162,79 @@ let getImages = (credentials, listing) => {
     });
 }
 
+let productsColor = (products) => {
+    let resultProducts = [];
+    for (let product of products) {
+        let option = product.options.find(o => o.name.toLowerCase() === "color");
+        if (option && option.values.length > 1) {
+            const ref = product.id;
+            for (const value of option.values) {
+                resultProducts.push({
+                    ...product,
+                    id: ref + '-' + value.replace(/\s/g, '')
+                });
+            }
+        } else {
+            resultProducts.push(product);
+        }
+    }
+    return resultProducts;
+}
+
+let variantsColor = (products) => {
+    let resultProducts = [];
+    for (let product of products) {
+        let option = product.options.find(o => o.name.toLowerCase() === "color");
+        if (option && option.values.length > 1) {
+            const ref = product.id;
+            for (const value of option.values) {
+                let variants = [];
+                for (const variant of product.variants) {
+                    if (variant.title.includes(value)) {
+                        variants.push(variant);
+                    }
+                }
+                resultProducts.push({
+                    ...product,
+                    id: ref + '-' + value.replace(/\s/g, ''),
+                    variants: variants.length > 0 ? variants : product.variants
+                });
+            }
+        } else {
+            resultProducts.push(product);
+        }
+    }
+    return resultProducts;
+}
+
+let imageColor = (products) => {
+    let resultProducts = [];
+    for (let product of products) {
+        let option = product.options.find(o => o.name.toLowerCase() === "color");
+        if (option && option.values.length > 1) {
+            const ref = product.id;
+            for (const value of option.values) {
+                let images = [];
+                for (const img of product.images) {
+                    if (img.src.includes(value)) {
+                        images.push(img);
+                    }
+                }
+                resultProducts.push({
+                    ...product,
+                    id: ref + '-' + value.replace(/\s/g, ''),
+                    images: images.length > 0 ? images : product.images
+                });
+            }
+        } else {
+            resultProducts.push(product);
+        }
+    }
+    return resultProducts;
+}
+
 let getDiscount = (credentials) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
         try {
             let moment = require('moment')
             let response = await services.Shopify.getData({
@@ -177,7 +250,7 @@ let getDiscount = (credentials) => {
             return resolve(priceRule);
 
         } catch (error) {
-            reject(error);
+            resolve(null);
         }
     });
 }
@@ -203,12 +276,47 @@ let getProductId = (credentials, productId) => {
             let product = resultProduct ? resultProduct.product : {};
             product.tax = tax ? tax : {};
 
-            return resolve(product);
+            const resultProducts = productColor(product);            
 
+            let rs = {
+                data: resultProducts
+            }
+            return resolve(rs);
         } catch (error) {
             reject(error);
         }
     });
+}
+
+let productColor = (product) => {
+    let resultProducts = [];
+    let option = product.options.find(o => o.name.toLowerCase() === "color");
+    if (option && option.values.length > 1) {
+        const ref = product.id;
+        for (const value of option.values) {
+            let variants = [];
+            let images = [];
+            for (const variant of product.variants) {
+                if (variant.title.includes(value)) {
+                    variants.push(variant);
+                }
+            }
+            for (const img of product.images) {
+                if (img.src.includes(value)) {
+                    images.push(img);
+                }
+            }
+            resultProducts.push({
+                ...product,
+                id: ref + '-' + value.replace(/\s/g, ''),
+                variants: variants.length > 0 ? variants : product.variants,
+                images: images.length > 0 ? images : product.images
+            });
+        }
+    } else {
+        resultProducts.push(product);
+    }
+    return resultProducts;
 }
 
 let getOrderId = (credentials, orderId) => {

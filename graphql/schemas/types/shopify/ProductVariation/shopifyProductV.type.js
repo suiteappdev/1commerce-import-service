@@ -19,7 +19,7 @@ let ShopifyProductVType = new GraphQLObjectType({
     }},
     discount: {type: new GraphQLList(ShopifyDiscountType),resolve: async (obj, args, context, info)=>{
       let disc = [];
-      if (obj.variants[0].compare_at_price) {
+      if (obj.variants[0].compare_at_price && parseInt(obj.variants[0].compare_at_price) !== 0 && obj.variants[0].compare_at_price !== obj.variants[0].price) {
         disc = [{
           name: obj.title,
           from: moment().format('YYYY/MM/DD HH:mm:ss'),

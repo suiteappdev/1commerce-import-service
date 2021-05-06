@@ -96,8 +96,8 @@ let count = (credentials, collection) => {
 }
 
 let getData = (credentials, collection, params) => {
-    return new Promise(async (resolve, reject) => {
-        let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/${collection}.json${params ? params : ''}`).catch(e => console.log("ERR", e) && reject(e))
+    return new Promise(async (resolve) => {
+        let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/${collection}.json${params ? params : ''}`).catch(e => resolve(null))
         if(response && response.data){
             return resolve(response.data);
         }
