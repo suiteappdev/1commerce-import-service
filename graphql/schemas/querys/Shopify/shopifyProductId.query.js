@@ -1,6 +1,6 @@
 const { getProductId } = require('../../../../controllers/Shopify.controller');
 const { getToken, validate}  = require('../../../../util/auth.util');
-const ShopifyProductIdType  = require('../../types/shopify/ProductId/shopifyProductId.type');
+const ShopifyProductIdType  = require('../../types/shopify/ProductId/shopifyProductIdListType');
 const {
   GraphQLString
 } = require('graphql');

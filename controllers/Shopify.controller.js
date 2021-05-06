@@ -276,12 +276,47 @@ let getProductId = (credentials, productId) => {
             let product = resultProduct ? resultProduct.product : {};
             product.tax = tax ? tax : {};
 
-            return resolve(product);
+            const resultProducts = productColor(product);            
 
+            let rs = {
+                data: resultProducts
+            }
+            return resolve(rs);
         } catch (error) {
             reject(error);
         }
     });
+}
+
+let productColor = (product) => {
+    let resultProducts = [];
+    let option = product.options.find(o => o.name.toLowerCase() === "color");
+    if (option && option.values.length > 1) {
+        const ref = product.id;
+        for (const value of option.values) {
+            let variants = [];
+            let images = [];
+            for (const variant of product.variants) {
+                if (variant.title.includes(value)) {
+                    variants.push(variant);
+                }
+            }
+            for (const img of product.images) {
+                if (img.src.includes(value)) {
+                    images.push(img);
+                }
+            }
+            resultProducts.push({
+                ...product,
+                id: ref + '-' + value.replace(/\s/g, ''),
+                variants: variants.length > 0 ? variants : product.variants,
+                images: images.length > 0 ? images : product.images
+            });
+        }
+    } else {
+        resultProducts.push(product);
+    }
+    return resultProducts;
 }
 
 let getOrderId = (credentials, orderId) => {
