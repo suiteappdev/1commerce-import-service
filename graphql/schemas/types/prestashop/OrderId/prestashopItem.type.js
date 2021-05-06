@@ -4,22 +4,22 @@ const {
   GraphQLInt
 } = require('graphql');
 
-const WoocommerceItemType = new GraphQLObjectType({
-  name: 'WoocommerceItemType',
+const PrestashopItemType = new GraphQLObjectType({
+  name: 'PrestashopItemType',
   fields: () => ({
     skuId:{ type:GraphQLString, resolve :(obj, args, context, info)=>{
-      return obj.sku;
+      return obj.product_attribute_id;
     }},
     quantity:{ type:GraphQLInt, resolve :(obj, args, context, info)=>{
-      return obj.quantity;
+      return obj.product_quantity;
     }},
     price: {type: GraphQLInt, resolve: (obj, args, context, info) => {
-      return Math.ceil(obj.total);
+      return Math.ceil(obj.unit_price_tax_incl);
     }},
     discount: {type: GraphQLInt, resolve: (obj, args, context, info) => {
-      return obj.discount_total ?   Math.ceil(obj.discount_total) : 0;
+      return (Math.ceil(obj.product_price)-Math.ceil(obj.unit_price_tax_excl));
     }}
   }),
 });
 
-module.exports = WoocommerceItemType;
+module.exports = PrestashopItemType;

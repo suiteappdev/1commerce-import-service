@@ -1,6 +1,7 @@
 const { GraphQLObjectType, GraphQLSchema } = require('graphql');
-const { public } = require('./querys/index');
+const { public} = require('./querys/index');
 const { Subscription }  = require('./subscriptions/index');
+const  { mutations }   = require('./mutations/index');
 
 const PublicRootQuery = new GraphQLObjectType({
     name: 'PublicQuery',
@@ -10,7 +11,8 @@ const PublicRootQuery = new GraphQLObjectType({
 module.exports = {
     publicGraph: new GraphQLSchema({
       query: PublicRootQuery,
-      subscription : Subscription
+      subscription : Subscription,
+      mutation :mutations
     })
 };
   

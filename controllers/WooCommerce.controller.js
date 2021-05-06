@@ -17,7 +17,9 @@ let init = (app, locals) => {
         getVariations,
         getImages,
         getPagination,
-        getProductId
+        getProductId,
+        addWebhook,
+        updateWebhook
     }
 
     logger.info("Initialization finished.");
@@ -26,8 +28,11 @@ let init = (app, locals) => {
 let getPagination = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
+            credentials.queryStringAuth = true;
+            credentials.verifySsl =  false;
             let WooCommerce = new services.WooCommerceRestApi(credentials);
-            let response = await WooCommerce.get("products", { per_page: listing.pagination.pageSize, page: listing.pagination.page });
+            let response = await WooCommerce.get(`products`, { per_page: listing.pagination.pageSize, page: listing.pagination.page });
+            
             resolve({
                 totalRecords : (response.headers['x-wp-total']),
                 pagesCount : parseInt(response.headers['x-wp-totalpages'])
@@ -42,6 +47,8 @@ let getPagination = (credentials, listing) => {
 let getProducts = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
+            credentials.queryStringAuth = true;
+            credentials.verifySsl =  false;
             let WooCommerce = new services.WooCommerceRestApi(credentials);
             let response = await WooCommerce.get("products", { per_page: listing.pagination.pageSize, page: listing.pagination.page });
             let tax = await WooCommerce.get("taxes");
@@ -76,7 +83,8 @@ let getProducts = (credentials, listing) => {
 let getVariations = (credentials, pro) => {
     return new Promise(async (resolve, reject) => {
         try {
-
+            credentials.queryStringAuth = true;
+            credentials.verifySsl =  false;
             let WooCommerce = new services.WooCommerceRestApi(credentials);
             let products = await WooCommerce.get(`products/${pro.id}/variations`);
             let tax = await WooCommerce.get("taxes");
@@ -106,7 +114,8 @@ let getVariations = (credentials, pro) => {
 let getProductId = (credentials, id) => {
     return new Promise(async (resolve, reject) => {
         try {
-
+            credentials.queryStringAuth = true;
+            credentials.verifySsl =  false;
             let WooCommerce = new services.WooCommerceRestApi(credentials);
             let products = await WooCommerce.get(`products/${id}`);
 
@@ -138,7 +147,8 @@ let getProductId = (credentials, id) => {
 let getImages = (credentials, productId) => {
     return new Promise(async (resolve, reject) => {
         try {
-
+            credentials.queryStringAuth = true;
+            credentials.verifySsl =  false;
             let WooCommerce = new services.WooCommerceRestApi(credentials);
             let product = await WooCommerce.get(`products/${productId}`);
             if (product && product.data.images) {
@@ -156,7 +166,8 @@ let getImages = (credentials, productId) => {
 let getOrderId = (credentials, orderId) => {
     return new Promise(async (resolve, reject) => {
         try {
-
+            credentials.queryStringAuth = true;
+            credentials.verifySsl =  false;
             let WooCommerce = new services.WooCommerceRestApi(credentials);
             let order = await WooCommerce.get(`orders/${orderId}`);
            
@@ -172,5 +183,50 @@ let getOrderId = (credentials, orderId) => {
     });
 }
 
+let addWebhook = (credentials, webhook) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            credentials.queryStringAuth = true;
+            credentials.verifySsl =  false;
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+              
+            let response = await WooCommerce.post("webhooks", webhook);
+           
+            if (response && response.data) {
+                return resolve(response.data);
+            }
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId, getOrderId };
+            resolve({});
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+let updateWebhook = (credentials,webhookId, webhook) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            credentials.queryStringAuth = true;
+            credentials.verifySsl =  false;
+            let WooCommerce = new services.WooCommerceRestApi(credentials);
+              
+            let response = await WooCommerce.put(`webhooks/${webhookId}`, { status :  webhook.status });
+           
+            if (response && response.data) {
+                return resolve(response.data);
+            }
+
+            resolve({});
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+
+
+
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId, getOrderId, addWebhook, updateWebhook };

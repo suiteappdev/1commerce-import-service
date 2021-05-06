@@ -6,6 +6,7 @@ const WoocommerceProducts = require('./Woocommerce/woocommerceProducts');
 const VtexProducts = require('./Vtex/vtexProducts');
 const VtexOrders = require('./Vtex/vtexOrders');
 const PrestashopProducts = require('./Prestashop/prestashopProducts');
+const PrestashopOrders = require('./Prestashop/prestashopOrders');
 
 
 const Subscription = new GraphQLObjectType({
@@ -18,7 +19,8 @@ const Subscription = new GraphQLObjectType({
     VtexOrders,
     WoocommerceProducts,
     WoocommerceOrders,
-    PrestashopProducts
+    PrestashopProducts,
+    PrestashopOrders
   }
 });
 
