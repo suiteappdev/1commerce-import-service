@@ -16,7 +16,9 @@ let init = (app, locals) => {
         getImages,
         getDiscount,
         getProductId,
-        getOrderId
+        getOrderId,
+        addWebhookShopify,
+        deleteWebhookShopify
     }
 
     logger.info("Initialization finished.");
@@ -337,4 +339,38 @@ let getOrderId = (credentials, orderId) => {
     });
 }
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getDiscount, getProductId, getOrderId};
+let addWebhookShopify = (credentials, webhook) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let resultWebhook = await services.Shopify.addWebhook({
+                shopName: credentials.shopName,
+                apiKey: credentials.apiKey,
+                password: credentials.password,
+                version: credentials.version
+            }, webhook);
+            let webhookShopify = resultWebhook ? resultWebhook.webhook : {};
+            return resolve(webhookShopify);
+        } catch (error) {
+            reject(error.message);
+        }
+    });
+}
+
+let deleteWebhookShopify = (credentials, webhookId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let resultWebhook = await services.Shopify.deleteWebhook({
+                shopName: credentials.shopName,
+                apiKey: credentials.apiKey,
+                password: credentials.password,
+                version: credentials.version
+            }, webhookId);
+            let webhookShopify = resultWebhook ? {id: webhookId} : {};
+            return resolve(webhookShopify);
+        } catch (error) {
+            reject(error.message);
+        }
+    });
+}
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getDiscount, getProductId, getOrderId, addWebhookShopify, deleteWebhookShopify};
