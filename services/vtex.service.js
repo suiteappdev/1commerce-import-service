@@ -21,7 +21,9 @@ let init = async (app, locals) => {
                 getPromotionById,
                 getProductIdsColletion,
                 getSpecification,
-                getOrderId
+                getOrderId,
+                addHookOrder,
+                deleteHookOrder
             };
 
             logger.info(`vtex service done.`);
@@ -394,6 +396,69 @@ let getOrderId = (credentials, orderId) => {
         }
         if(response && response.data){
             return resolve(response.data);
+        }
+        resolve(undefined);
+    });
+}
+
+let addHookOrder = (credentials, webhook) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'post',
+                url: `https://${credentials.shopName}.vtexcommercestable.com.br/api/orders/hook/config`,
+                headers: {
+                  'content-type': 'application/json',
+                  accept: 'application/json',
+                  'x-vtex-api-appkey': credentials.apiKey,
+                  'x-vtex-api-apptoken': credentials.password
+                },
+                data: {
+                    filter: {
+                        type: 'FromWorkflow',
+                        status: ['order-completed', 'handling', 'ready-for-handling'],
+                        disableSingleFire: false
+                    },
+                    hook: {
+                        headers: {key: 'vtexappkey-speedoco-LBCIYP'},
+                        url: webhook.url
+                    }
+                },
+                timeout: 60000
+            };
+            response = await axios(options)
+        } catch (error) {
+            console.log(error);
+        }
+        if(response){
+            return resolve('Ok');
+        }
+        resolve(undefined);
+    });
+}
+
+let deleteHookOrder = (credentials) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'delete',
+                url: `https://${credentials.shopName}.vtexcommercestable.com.br/api/orders/hook/config`,
+                headers: {
+                  'content-type': 'application/json',
+                  accept: 'application/json',
+                  'x-vtex-api-appkey': credentials.apiKey,
+                  'x-vtex-api-apptoken': credentials.password
+                },
+                timeout: 60000
+            };
+            response = await axios(options)
+        } catch (error) {
+            console.log(error);
+        }
+        if(response){
+            return resolve('Ok');
         }
         resolve(undefined);
     });

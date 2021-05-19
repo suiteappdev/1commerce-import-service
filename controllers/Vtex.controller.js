@@ -17,7 +17,9 @@ let init = (app, locals) => {
       getEan,
       getQuantity,
       getProductId,
-      getOrderId
+      getOrderId,
+      addWebhookVtex,
+      deleteWebhookVtex
     }
 
     logger.info("Initialization finished.");
@@ -439,4 +441,36 @@ let getOrderId = (credentials, orderId) => {
   })
 }
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getEan, getQuantity, getProductId, getSpecification, getOrderId };
+let addWebhookVtex = (credentials, webhook) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let resultWebhook = await services.Vtex.addHookOrder({
+        shopName: credentials.shopName,
+        apiKey: credentials.apiKey,
+        password: credentials.password
+      }, webhook);
+      let webhookVtex = resultWebhook ? {id: credentials.apiKey} : {};
+      return resolve(webhookVtex);
+    } catch (error) {
+      reject(error.message);
+    }
+  });
+}
+
+let deleteWebhookVtex = (credentials, webhookId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let resultWebhook = await services.Vtex.deleteHookOrder({
+        shopName: credentials.shopName,
+        apiKey: credentials.apiKey,
+        password: credentials.password
+      });
+      let webhookVtex = resultWebhook ? {id: webhookId} : {};
+      return resolve(webhookVtex);
+    } catch (error) {
+      reject(error.message);
+    }
+  });
+}
+
+module.exports = { init, getPagination, getProducts, getVariations, getImages, getEan, getQuantity, getProductId, getSpecification, getOrderId, addWebhookVtex, deleteWebhookVtex };
