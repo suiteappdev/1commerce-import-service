@@ -5,32 +5,26 @@ let init = async (app, locals) => {
     logger = locals.logger.getLogger("shopifyService");
 
     return new Promise(async (resolve, reject) => {
-
         logger.info(`Loading wooCommerce service`);
-
         try {
             locals.services = locals.services || {};
-
-
             locals.services.Shopify = {
                 getProducts,
                 requestProduct,
                 count,
                 getData,
                 getProductId,
-                getOrderId
+                getOrderId,
+                addWebhook,
+                deleteWebhook
             };
-
             logger.info(`shopify service done.`);
-
             return resolve();
-
         } catch (e) {
             logger.error(`Error loading  shopify Service`);
             reject(new Error(`[ERROR]:loading  shopify Service`));
         }
     });
-
 }
 
 let getProducts = (credentials, collection, params, includePagination) => {
@@ -122,6 +116,26 @@ let getOrderId = (credentials, collection, productId) => {
         let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/${collection}/${productId}.json`).catch(e => console.log("ERR", e) && reject(e))
         if(response && response.data){
             return resolve(response.data);
+        }
+        resolve(null);
+    });
+}
+
+let addWebhook = (credentials, webhook) => {
+    return new Promise(async (resolve, reject) => {
+        let response = await axios.post(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/webhooks.json`,{webhook}).catch(e => console.log(e) && resolve(null))
+        if(response && response.data){
+            return resolve(response.data);
+        }
+        resolve(null);
+    });
+}
+
+let deleteWebhook = (credentials, webhookId) => {
+    return new Promise(async (resolve, reject) => {
+        let response = await axios.delete(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/webhooks/${webhookId}.json`).catch(e => console.log(e) && resolve(null))
+        if(response){
+            return resolve('Ok');
         }
         resolve(null);
     });

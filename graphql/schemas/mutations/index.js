@@ -1,13 +1,21 @@
 const {
   GraphQLObjectType,
-  GraphQLID
+  GraphQLID,
+  GraphQLString
 } = require('graphql');
 
 const { addWebhook, updateWebhook } = require('../../../controllers/WooCommerce.controller');
+const { addWebhookShopify, deleteWebhookShopify } = require('../../../controllers/Shopify.controller');
+const { addWebhookVtex, deleteWebhookVtex } = require('../../../controllers/Vtex.controller');
 const { getToken, validate}  = require('../../../util/auth.util');
 
 const WoocommerceWebHookType = require('../types/wooCommerce/WebHook/WebHook.type');
+const ShopifyWebHookType = require('../types/shopify/Webhook/WebHook.type');
+const ShopifyDeleteWebHookType = require('../types/shopify/Webhook/deleteWebHook.type');
+const VtexWebHookType = require('../types/vtex/Webhook/WebHook.type');
 const WebHookInputType = require('./inputs/webhook.input');
+const WebHookShopifyInputType = require('./inputs/webhookShopify.input');
+const WebHookVtexInputType = require('./inputs/webhookVtex.input');
 
 const mutations = new GraphQLObjectType({
   name: 'RootMutations',
@@ -77,10 +85,90 @@ const mutations = new GraphQLObjectType({
         resolve: async (root, args, context) => {
             return {};
         }
-    }
-}
+    },
+    createShopifyWebHook: {
+      description: "create a shopify webhook entry",
+      type: ShopifyWebHookType,
+      args: {
+        input: {type: WebHookShopifyInputType}
+      },
+      resolve: async (root, args, context) => {
+        let token = getToken(context.req);
+        if(!token){
+          throw new Error("Auth error token no provided");
+        }
+        let credentials = validate(token);
+        if(!credentials){
+          throw new Error("Invalid credential data");
+        }
+        delete credentials.iat;
+        context.req = credentials;
+        let webhook = await addWebhookShopify(credentials, args.input);
+        return webhook;
+      }
+    },
+    deleteShopifyWebHook: {
+      description: "delete a shopify webhook",
+      type: ShopifyDeleteWebHookType,
+      args: { webhookId: {type: GraphQLString}},
+      resolve: async (root, args, context) => {
+        let token = getToken(context.req);
+        if(!token){
+          throw new Error("Auth error token no provided");
+        }
+        let credentials = validate(token);
+        if(!credentials){
+          throw new Error("Invalid credential data");
+        }
+        delete credentials.iat;
+        context.req = credentials;
+        let webhook = await deleteWebhookShopify(credentials, args.webhookId);
+        return webhook;
+      }
+    },
+    createVtexWebHook: {
+      description: "create a vtex webhook entry",
+      type: VtexWebHookType,
+      args: {
+        input: {type: WebHookVtexInputType}
+      },
+      resolve: async (root, args, context) => {
+        let token = getToken(context.req);
+        if(!token){
+          throw new Error("Auth error token no provided");
+        }
+        let credentials = validate(token);
+        if(!credentials){
+          throw new Error("Invalid credential data");
+        }
+        delete credentials.iat;
+        context.req = credentials;
+        let webhook = await addWebhookVtex(credentials, args.input);
+        return webhook;
+      }
+    },
+    deleteVtexWebHook: {
+      description: "delete a vtex webhook",
+      type: VtexWebHookType,
+      args: { webhookId: {type: GraphQLString}},
+      resolve: async (root, args, context) => {
+        let token = getToken(context.req);
+        if(!token){
+          throw new Error("Auth error token no provided");
+        }
+        let credentials = validate(token);
+        if(!credentials){
+          throw new Error("Invalid credential data");
+        }
+        delete credentials.iat;
+        context.req = credentials;
+        let webhook = await deleteWebhookVtex(credentials, args.webhookId);
+        return webhook;
+      }
+    },
+  }
 });
 
-module.exports = { mutations } ;
+module.exports = { mutations };
 
         
