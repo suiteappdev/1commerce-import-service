@@ -6,7 +6,7 @@ const {
 const moment = require('moment');
 const ShopifyProductVariationType = require('./shopifyProductVariation.type');
 const ShopifyDiscountType = require('./shopifyDiscount.type');
-const { getDiscount} = require('../../../../../controllers/Shopify.controller');
+// const { getDiscount} = require('../../../../../controllers/Shopify.controller');
 
 let ShopifyProductVType = new GraphQLObjectType({
   name: 'ShopifyProductVType',
@@ -27,29 +27,6 @@ let ShopifyProductVType = new GraphQLObjectType({
           type: 'C',
           value: obj.variants[0].compare_at_price - obj.variants[0].price,
         }]
-      } else {
-        let priceRule = await getDiscount(context.req);
-        if (priceRule) {
-          if (priceRule.entitled_product_ids.length > 0) {
-            if (priceRule.entitled_product_ids.some(id => id === obj.id)) {
-              disc = [{
-                name: priceRule.title,
-                from: moment(priceRule.starts_at).format('YYYY/MM/DD HH:mm:ss'),
-                to: moment(priceRule.ends_at).format('YYYY/MM/DD HH:mm:ss'),
-                type: priceRule.value_type === 'percentage' ? 'P' : 'C',
-                value: Math.abs(parseFloat(priceRule.value)),
-              }]
-            }
-          } else {
-            disc = [{
-              name: priceRule.title,
-              from: moment(priceRule.starts_at).format('YYYY/MM/DD HH:mm:ss'),
-              to: moment(priceRule.ends_at).format('YYYY/MM/DD HH:mm:ss'),
-              type: priceRule.value_type === 'percentage' ? 'P' : 'C',
-              value: Math.abs(parseFloat(priceRule.value)),
-            }]
-          }
-        }
       }
       return disc
     }},
