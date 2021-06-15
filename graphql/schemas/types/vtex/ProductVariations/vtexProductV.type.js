@@ -24,7 +24,7 @@ let VtexProductVType = new GraphQLObjectType({
         return []
       } else {
         let sku = obj.skus.find(sku => sku.available === true);
-        let price = sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice;
+        let price = sku ? sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice : 0;
         return obj.skus.map(sku => {
           if (sku.available === false) {
             sku.bestPrice = price;

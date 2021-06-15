@@ -12,7 +12,7 @@ let VtexProductVariationType = new GraphQLObjectType({
       return obj.listPrice !== 0 ? (obj.listPrice / 100) : (obj.bestPrice / 100);
     }},
     talla:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
-      return obj.dimensions.Talla && obj.dimensions.Talla !== '' ? obj.dimensions.Talla : 'único';
+      return obj.dimensions.Talla && obj.dimensions.Talla !== '' ? obj.dimensions.Talla : obj.dimensions.Presentación  && obj.dimensions.Presentación !== '' ? obj.dimensions.Presentación : 'único';
     }},
     quantity:{ type:GraphQLInt, resolve: async(obj, args, context, info)=>{
       let quantity = await getQuantity(context.req, obj.sku);
