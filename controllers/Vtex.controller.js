@@ -102,18 +102,19 @@ let getProducts = (credentials, listing) => {
               apiKey: credentials.apiKey,
               password: credentials.password
             }, product.BrandId);
-            let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
+            let color = variation && variation.dimensionsMap && variation.dimensionsMap.Color ? variation.dimensionsMap.Color[0] : '';
+            color = color ? ' ' + color.replace('.png','').split('_')[1] : ' Blanco';
             let sku = variation.skus.find(sku => sku.available === true);
-            let price = sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice;
-            product.width = variation ? sku.measures.width : 0;
-            product.height = variation ? sku.measures.height : 0;
-            product.length = variation ? sku.measures.length : 0;
-            product.weight = variation ? sku.measures.weight : 0;
-            product.price = variation ? price / 100 : 0;
-            product.tax = variation ? {tax: sku.taxAsInt != 0 ? sku.taxAsInt : 19 , name: 'iva'} : {};
-            product.color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0] : '';
+            let price = sku ? sku.listPrice !== 0 ? sku.listPrice : sku.bestPrice : 0;
+            product.width = sku ? sku.measures.width : 0;
+            product.height = sku ? sku.measures.height : 0;
+            product.length = sku ? sku.measures.length : 0;
+            product.weight = sku ? sku.measures.weight : 0;
+            product.price = sku ? price / 100 : 0;
+            product.tax = sku ? {tax: sku.taxAsInt != 0 ? sku.taxAsInt : 19 , name: 'iva'} : {};
+            product.color = color;
             product.Brand = brand;
-            product.textLink = product.LinkId.split('-').join(' ') + ' ' + color.replace('.png','').split('_')[1];
+            product.textLink = product.LinkId.split('-').join(' ') + color;
             products.push(product);
           }
         }
@@ -361,7 +362,8 @@ let getProductId = (credentials, productId) => {
       let getSku = [];
       let price = 0;
       let discounts = [];
-      let color = variation && variation.dimensionsMap ? variation.dimensionsMap.Color[0].replace('.png','').split('_')[1] : 'Multicolor';
+      let color = variation && variation.dimensionsMap && variation.dimensionsMap.Color ? variation.dimensionsMap.Color[0] : '';
+      color = color ? ' ' + color.replace('.png','').split('_')[1] : ' Blanco';
       let sku = variation ? variation.skus.find(sku => sku.available === true) : undefined;
       if (sku) {
         let colletions = [];
@@ -381,14 +383,14 @@ let getProductId = (credentials, productId) => {
         discounts = await existProductColletion(productId, colletions);
       }
 
-      product.width = variation ? sku.measures.width : 0;
-      product.height = variation ? sku.measures.height : 0;
-      product.length = variation ? sku.measures.length : 0;
-      product.weight = variation ? sku.measures.weight : 0;
+      product.width = sku ? sku.measures.width : 0;
+      product.height = sku ? sku.measures.height : 0;
+      product.length = sku ? sku.measures.length : 0;
+      product.weight = sku ? sku.measures.weight : 0;
       product.price = variation ? price / 100 : 0;
-      product.tax = variation ? {tax: sku.taxAsInt != 0 ? sku.taxAsInt : 19 , name: 'iva'} : {};
+      product.tax = sku ? {tax: sku.taxAsInt != 0 ? sku.taxAsInt : 19 , name: 'iva'} : {};
       product.Brand = brand;
-      product.textLink = product.LinkId.split('-').join(' ') + ' ' + color;
+      product.textLink = product.LinkId.split('-').join(' ') + color;
       product.Images = variation && getSku.Images.length > 0 ? getSku.Images : [];
       product.name = product.Name;
       product.skus = variation ? variation.skus : [];
