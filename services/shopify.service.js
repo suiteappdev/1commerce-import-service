@@ -78,9 +78,9 @@ let requestProduct = (credentials, collection, productId, params) => {
     });
 }
 
-let count = (credentials, collection) => {
+let count = (credentials, collection, params) => {
     return new Promise(async (resolve, reject) => {
-        let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/products/${collection}.json`).catch(e => console.log("ERR", e) && reject(e))
+        let response = await axios.get(`https://${credentials.apiKey}:${credentials.password}@${credentials.shopName}/admin/api/${credentials.version}/products/${collection}.json${params ? params : ''}`).catch(e => console.log("ERR", e) && reject(e))
         if(response && response.data){
             return resolve(response.data);
         }

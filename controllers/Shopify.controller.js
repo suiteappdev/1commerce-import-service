@@ -32,7 +32,7 @@ let getPagination = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'count');
+            }, 'count', `?published_status=published`);
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
 
@@ -65,14 +65,14 @@ let getProducts = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,title,body_html,published_at,variants,vendor,options`, true);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,title,body_html,published_at,variants,vendor,options&published_status=published`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'count');
+            }, 'count', `?published_status=published`);
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
             const resultProducts = productsColor(response.products);            
@@ -105,14 +105,14 @@ let getVariations = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,title,variants,options`, true);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,title,variants,options&published_status=published`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'count');
+            }, 'count', `?published_status=published`);
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
             const resultProducts = variantsColor(response.products);
@@ -139,14 +139,14 @@ let getImages = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,images,options`, true);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : ''}&fields=id,images,options&published_status=published`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'count');
+            }, 'count', `?published_status=published`);
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
             const resultProducts = imageColor(response.products);
