@@ -75,7 +75,7 @@ let getProducts = (credentials, listing) => {
             }, 'count', `?published_status=published`);
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
-            const resultProducts = productsColor(response.products);            
+            const resultProducts = productsColor(response.products);  
             
             let products = response.products ? resultProducts.map(p => {
                 p.tax = tax ? tax : {};
