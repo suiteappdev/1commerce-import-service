@@ -32,7 +32,7 @@
     "shopify-api-node": "^3.4.4",
     "string-strip-html": "^4.5.0",
     "strong-soap": "^3.0.0",
-    "subscriptions-transport-ws": "^0.9.18",
+    "subscriptions-transport-ws": "^0.10.0",
     "woocommerce-api": "^1.5.0",
     "xml-js": "^1.6.11"
   },
