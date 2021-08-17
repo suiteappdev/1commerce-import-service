@@ -24,6 +24,11 @@ const PrestashopProductVariation = require('./Prestashop/prestashopProductVariat
 const PrestashopProductId = require('./Prestashop/prestashopProductId.query');
 const PrestashopOrderId = require('./Prestashop/prestashopOrderId.query');
 
+const MagentoPagination = require('./Magento/magentoPagination.query');
+const MagentoProducts = require('./Magento/magentoProduct.query');
+const MagentoProductVariation = require('./Magento/magentoProductVariation.query');
+const MagentoProductImage = require('./Magento/magentoProductImage.query');
+
 module.exports = {
     public: {
         WooCommercePagination,
@@ -47,6 +52,10 @@ module.exports = {
         PrestashopProducts,
         PrestashopProductVariation,
         PrestashopProductId,
-        PrestashopOrderId
+        PrestashopOrderId,
+        MagentoPagination,
+        MagentoProducts,
+        MagentoProductVariation,
+        MagentoProductImage
     }
 }
