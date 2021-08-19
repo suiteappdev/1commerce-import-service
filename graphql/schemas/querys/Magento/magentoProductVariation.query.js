@@ -1,6 +1,6 @@
 const { getVariations } = require('../../../../controllers/Magento.controller');
 const { getToken, validate}  = require('../../../../util/auth.util');
-const magentoProductVariationListType  = require('../../types/magento/ProductVariation/magentoProductVariationListType');
+const magentoProductVariationListType  = require('../../types/Magento/ProductVariation/magentoProductVariationListType');
 const ListingInput = require('../../types/pagination/listingInput');
 
 const MagentoProductVariationListQuery = {

@@ -1,6 +1,6 @@
 const { getImages } = require('../../../../controllers/Magento.controller');
 const { getToken, validate}  = require('../../../../util/auth.util');
-const magentoProductImageListType  = require('../../types/magento/ProductImages/magentoImageListType');
+const magentoProductImageListType  = require('../../types/Magento/ProductImages/magentoImageListType');
 const ListingInput = require('../../types/pagination/listingInput');
 
 const MagentoProductImageListQuery = {
