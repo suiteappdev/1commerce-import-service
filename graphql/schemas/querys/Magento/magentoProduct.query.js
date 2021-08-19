@@ -13,6 +13,7 @@ const MagentoProductListQuery = {
     if(!credentials){
       throw new Error("Auth token error");
     }
+    
     context.req = credentials;
     return getProducts(credentials, listing);
   }
