@@ -148,7 +148,7 @@ let getPromotions = (credentials) => {
             apiKey: credentials.apiKey,
             password: credentials.password
           }, benefit);
-          if (promotion) {
+          if (promotion && !promotion.name.includes('NM-')) {
             result.push(promotion);
           }
         }
