@@ -28,7 +28,6 @@ let getPagination = (credentials, listing) => {
         password: credentials.password
       }, `?searchCriteria[pageSize]=1&searchCriteria[currentPage]=1&searchCriteria[filterGroups][0][filters][0][conditionType]=like&searchCriteria[filterGroups][0][filters][0][field]=type_id&searchCriteria[filterGroups][0][filters][0][value]=configurable&searchCriteria[filterGroups][1][filters][1][conditionType]=like&searchCriteria[filterGroups][1][filters][1][field]=status&searchCriteria[filterGroups][1][filters][1][value]=1`);
       let count = totalRecords ? Math.ceil(totalRecords.total_count / listing.pagination.pageSize) : null;
-
       let rs = {
         totalRecords: totalRecords.total_count || null,
         pagesCount: count,

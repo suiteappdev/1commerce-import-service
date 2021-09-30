@@ -67,7 +67,7 @@ let MagentoProductType = new GraphQLObjectType({
     },
     weight: {
       type: GraphQLFloat, resolve: (obj, args, context, info) => {
-        return obj.weight ? obj.weight/1000 : 0;;
+        return obj.weight ? obj.weight/1000 : 0;
       }
     }
   }),

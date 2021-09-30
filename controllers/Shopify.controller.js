@@ -1,4 +1,3 @@
-
 let services;
 let logger;
 
@@ -57,8 +56,8 @@ let getProducts = (credentials, listing) => {
                 password: credentials.password,
                 version: credentials.version
             }, 'countries', `?fields=name,tax,tax_name`);
-
-            let tax = data.countries.find(c => c.name.toLowerCase() === 'colombia');
+            
+            let tax = data  ? data.countries.find(c => c.name.toLowerCase() === 'colombia') : {};
 
             let response = await services.Shopify.getProducts({
                 shopName: credentials.shopName,
