@@ -33,6 +33,10 @@ let MercadolibreProductType = new GraphQLObjectType({
       const brand = obj.attributes.find(attr => attr.id === 'BRAND');
       return brand ? brand.value_name : '';
     }},
+    color: {type: GraphQLString, resolve: (obj, args, context, info) => {
+      const color = obj.attributes.find(attr => attr.id === 'COLOR');
+      return color ? color.value_name : '';
+    }},
     width: {type: GraphQLInt, resolve: (obj, args, context, info) => {
       return 0;
     }},
