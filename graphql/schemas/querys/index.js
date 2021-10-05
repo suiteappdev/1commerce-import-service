@@ -29,6 +29,11 @@ const MagentoProducts = require('./Magento/magentoProduct.query');
 const MagentoProductVariation = require('./Magento/magentoProductVariation.query');
 const MagentoProductImage = require('./Magento/magentoProductImage.query');
 
+const MercadolibrePagination = require('./Mercadolibre/mercadolibrePagination.query');
+const MercadolibreProducts = require('./Mercadolibre/mercadolibreProduct.query');
+const MercadolibreProductVariation = require('./Mercadolibre/mercadolibreProductVariation.query');
+const MercadolibreProductImage = require('./Mercadolibre/mercadolibreProductImage.query');
+
 module.exports = {
     public: {
         WooCommercePagination,
@@ -56,6 +61,10 @@ module.exports = {
         MagentoPagination,
         MagentoProducts,
         MagentoProductVariation,
-        MagentoProductImage
+        MagentoProductImage,
+        MercadolibrePagination,
+        MercadolibreProducts,
+        MercadolibreProductVariation,
+        MercadolibreProductImage
     }
 }
