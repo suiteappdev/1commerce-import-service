@@ -31,7 +31,7 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
       if(( obj.attributes &&  obj.attributes.length > 0 )){
         let attrs = obj.attributes;
         let color = attrs.filter(o=>(o.name.toLowerCase() === 'color' || o.name.toLowerCase() === 'color_primario'))[0];
-        return color.options ? color.options : [color.option];
+        return color ? color.options ? color.options : [color.option] : null;
       }
     }},
     weight:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
@@ -51,7 +51,7 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
       if(( obj.attributes &&  obj.attributes.length > 0 )){
         let attrs = obj.attributes;
         let size = attrs.filter(o=>(o.name.toLowerCase() === 'tamano' || o.name.toLowerCase() == "peso_producto" ))[0];
-        return size.options ? size.options : size.option;
+        return size ? size.options ? size.options : size.option : null;
       }
     }},
     quantity:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
