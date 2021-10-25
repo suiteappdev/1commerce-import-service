@@ -80,7 +80,7 @@ let getProducts = (credentials, listing) => {
                 p.tax = tax ? tax : {};
                 return p;
             }) : []
-
+            products = products.filter(product => product.published_at)
             let rs = {
                 totalRecords: totalRecords.count || null,
                 pagination: response.pagination || null,
@@ -274,10 +274,9 @@ let getProductId = (credentials, productId) => {
                 password: credentials.password,
                 version: credentials.version
             }, 'products', productId, `?fields=id,title,body_html,published_at,variants,vendor,options,images`);
-            let product = resultProduct ? resultProduct.product : {};
+            let product = resultProduct && resultProduct.product.published_at ? resultProduct.product : {};
             product.tax = tax ? tax : {};
-
-            const resultProducts = productColor(product);            
+            const resultProducts = product.id ? productColor(product) : [];   
 
             let rs = {
                 data: resultProducts
