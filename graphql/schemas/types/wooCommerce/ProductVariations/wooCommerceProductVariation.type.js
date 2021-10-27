@@ -12,7 +12,7 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
   name: 'WooCommerceProductVariationType',
   fields: () => ({
     price:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
-      return obj.price ? parseInt(obj.price == "" ? 0 : obj.price) : 0
+      return obj.regular_price ? parseInt(obj.regular_price == "" ? 0 : obj.regular_price) :  parseInt(obj.price)
     }},
     talla:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       if(( obj.attributes &&  obj.attributes.length > 0 )){
@@ -74,10 +74,15 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
           type: 'C',
           value:  parseInt(obj.regular_price) - parseInt(obj.sale_price)
         }]
-      }else{
-        return obj.discount;
+      } else if (obj.sale_price && parseInt(obj.sale_price) !== 0 && obj.sale_price !== obj.regular_price) {
+        disc = [{
+          name: obj.name || null,
+          from: moment().format('YYYY/MM/DD HH:mm:ss'),
+          to: moment().add(7, 'days').format('YYYY/MM/DD HH:mm:ss'),
+          type: 'C',
+          value: parseInt(obj.regular_price) - parseInt(obj.sale_price),
+        }]
       }
-
       return disc
     }},
   }),
