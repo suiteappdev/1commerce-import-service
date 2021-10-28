@@ -102,7 +102,6 @@ let getVariations = (credentials, pro) => {
 
                 return p;
             });
-
             resolve(results)
 
         } catch (error) {
@@ -118,7 +117,6 @@ let getProductId = (credentials, id) => {
             credentials.verifySsl =  false;
             let WooCommerce = new services.WooCommerceRestApi(credentials);
             let products = await WooCommerce.get(`products/${id}`);
-
             let tax = await WooCommerce.get("taxes");
             
             let findTax = (taxClass, taxes)=>{
@@ -130,7 +128,6 @@ let getProductId = (credentials, id) => {
             if(!tx || tx.length == 0){
                 products.data.tax = tax.data.filter(t=>t.class === 'standard')[0];
             }
-
             if (products && products.data) {
                 return resolve(products.data);
             }

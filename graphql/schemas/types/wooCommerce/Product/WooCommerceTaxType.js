@@ -8,10 +8,10 @@ let WooCommerceTaxType = new GraphQLObjectType({
     name: 'WooCommerceTaxType',
     fields: () => ({
       name:{ type:GraphQLString, resolve :(obj, args, context, info)=>{
-        return obj.name;
+        return obj.name || '';
       }},
       rate:{type:GraphQLInt, resolve :(obj, args, context, info)=>{
-        return parseInt(obj.rate);
+        return obj.rate ? parseInt(obj.rate) : 0;
       }}
     }),
 });

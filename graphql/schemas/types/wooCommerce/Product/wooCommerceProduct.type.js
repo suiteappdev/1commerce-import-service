@@ -35,10 +35,6 @@ let WooCommerceProductType = new GraphQLObjectType({
       active:{ type:GraphQLBoolean, resolve:(obj, args, context, info)=>{
         return obj.status == "publish" ? true : false
       }}, //Estado del Producto
-      price:{ type:GraphQLInt, resolve : (obj, args, context, info)=>{
-        let price = parseInt(obj.price == "" ? 0 : obj.price);
-        return  (obj.tax_status === "taxable") ? Math.ceil(price / (1+(obj.tax.rate/100))) : price ;
-      }}, 
       discount: {type: new GraphQLList(WoocommerceDiscountType),resolve:(obj, args, context, info)=>{
         let disc = [];
       
@@ -169,7 +165,7 @@ let WooCommerceProductType = new GraphQLObjectType({
 
 
           if(!obj.variations || obj.variations.length === 0){
-            let price = parseInt(obj.price == "" ? 0 : obj.price);
+            let price = obj.regular_price ? parseInt(obj.regular_price == "" ? 0 : obj.regular_price) :  parseInt(obj.price);
 
             let disc = [];
       
@@ -181,6 +177,14 @@ let WooCommerceProductType = new GraphQLObjectType({
                   type: 'C',
                   value: parseInt(obj.regular_price) - parseInt(obj.sale_price)
                 }]
+            } else if (obj.sale_price && parseInt(obj.sale_price) !== 0 && obj.sale_price !== obj.regular_price) {
+              disc = [{
+                name: obj.name || null,
+                from: moment().format('YYYY/MM/DD HH:mm:ss'),
+                to: moment().add(7, 'days').format('YYYY/MM/DD HH:mm:ss'),
+                type: 'C',
+                value: parseInt(obj.regular_price) - parseInt(obj.sale_price),
+              }]
             }
 
             let defaultVariation = {
