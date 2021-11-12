@@ -22,7 +22,7 @@ let ShopifyProductType = new GraphQLObjectType({
     }},
     reference: {
       type: GraphQLString, resolve: (obj, args, context, info) => {
-        return obj.id
+        return obj.handle || obj.id
       }
     },
     description: {
