@@ -64,7 +64,7 @@ let getProducts = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&published_status=published'}&fields=id,title,body_html,published_at,variants,vendor,options`, true);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&published_status=published'}&fields=id,handle,title,body_html,published_at,variants,vendor,options`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
@@ -104,7 +104,7 @@ let getVariations = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&published_status=published'}&fields=id,title,variants,options`, true);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&published_status=published'}&fields=id,handle,title,variants,options`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
@@ -138,7 +138,7 @@ let getImages = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&published_status=published'}&fields=id,images,options`, true);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&published_status=published'}&fields=id,handle,images,options`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
@@ -273,11 +273,10 @@ let getProductId = (credentials, productId) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', productId, `?fields=id,title,body_html,published_at,variants,vendor,options,images`);
+            }, 'products', productId, `?fields=id,handle,title,body_html,published_at,variants,vendor,options,images,tags`);
             let product = resultProduct && resultProduct.product.published_at ? resultProduct.product : {};
             product.tax = tax ? tax : {};
             const resultProducts = product.id ? productColor(product) : [];   
-
             let rs = {
                 data: resultProducts
             }
