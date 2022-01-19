@@ -7,7 +7,7 @@ const VtexProducts = require('./Vtex/vtexProducts');
 const VtexOrders = require('./Vtex/vtexOrders');
 const PrestashopProducts = require('./Prestashop/prestashopProducts');
 const PrestashopOrders = require('./Prestashop/prestashopOrders');
-
+const NotificationMeli = require('./Mercadolibre/notificationml');
 
 const Subscription = new GraphQLObjectType({
   name: 'RootSubscription',
@@ -20,7 +20,8 @@ const Subscription = new GraphQLObjectType({
     WoocommerceProducts,
     WoocommerceOrders,
     PrestashopProducts,
-    PrestashopOrders
+    PrestashopOrders,
+    NotificationMeli
   }
 });
 
