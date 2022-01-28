@@ -162,7 +162,7 @@ let getVariations = (credentials, listing) => {
                             combinations[i].quantity=quantity;
                             combinations[i].tax=products[index].tax;
                             if(combinations[i].price==0){
-                                combinations[i].price=products[index].price;
+                                combinations[i].price=products[index].price*(1+(products[index].tax.rate/100));
                             }
                             
                             
@@ -288,7 +288,7 @@ let getProductId = (credentials, productId) => {
                         combinations[i].quantity=quantity;
                         combinations[i].tax=product.tax;
                         if(combinations[i].price==0){
-                            combinations[i].price=product.price;
+                            combinations[i].price=product.price*(1+(product.tax.rate/100));
                         }
                         
                         
