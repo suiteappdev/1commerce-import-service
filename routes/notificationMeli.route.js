@@ -5,7 +5,7 @@ const { pubsub }  = require('../services/pubsub.service');
 const { NOTIFICATION_MELI }  = require('../graphql/schemas/subscriptions/events');
 
 let objectQueue = queue({
-  timeout: 6000,
+  timeout: 15000,
   concurrency: 1,
   autostart: true
 });
