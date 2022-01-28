@@ -41,7 +41,7 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "axios": "^0.21.1"
+    "axios": "^0.21.2"
   },
   "repository": {
     "type": "git",
