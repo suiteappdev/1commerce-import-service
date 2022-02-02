@@ -15,6 +15,7 @@ objectQueue.on('start', async (result) => {
 });
 
 router.post('/notificationml', async (req, res)=>{
+  res.send('Ok');
   let resource = req.body.resource;
   let userId = req.body.user_id;
   let topic = req.body.topic;
@@ -26,7 +27,6 @@ router.post('/notificationml', async (req, res)=>{
   let job = function() {};
   job.data = data;
   objectQueue.push(job);
-  res.json(data);
 });
 
 module.exports = router;
