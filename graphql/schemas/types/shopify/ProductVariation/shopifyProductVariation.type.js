@@ -1,8 +1,7 @@
 const {
     GraphQLObjectType,
     GraphQLString,
-    GraphQLInt,
-    GraphQLFloat
+    GraphQLInt
 } = require('graphql');
 
 let ShopifyProductVariationType = new GraphQLObjectType({

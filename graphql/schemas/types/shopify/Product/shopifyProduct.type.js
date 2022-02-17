@@ -37,7 +37,7 @@ let ShopifyProductType = new GraphQLObjectType({
     },
     active: {
       type: GraphQLBoolean, resolve: (obj, args, context, info) => {
-        return obj.published_at ? true : false
+        return obj.status === 'active' ? true : false
       }
     },
     price: {

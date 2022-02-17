@@ -31,7 +31,7 @@ let getPagination = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'count', `?published_status=published`);
+            }, 'count', `?status=active`);
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
 
@@ -64,14 +64,14 @@ let getProducts = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&published_status=published'}&fields=id,handle,title,body_html,published_at,variants,vendor,options`, true);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&status=active'}&fields=id,handle,title,body_html,published_at,variants,vendor,options,status`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'count', `?published_status=published`);
+            }, 'count', `?status=active`);
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
             const resultProducts = productsColor(response.products);  
@@ -104,14 +104,14 @@ let getVariations = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&published_status=published'}&fields=id,handle,title,variants,options`, true);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&status=active'}&fields=id,handle,title,variants,options,status`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'count', `?published_status=published`);
+            }, 'count', `?status=active`);
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
             const resultProducts = variantsColor(response.products);
@@ -138,14 +138,14 @@ let getImages = (credentials, listing) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&published_status=published'}&fields=id,handle,images,options`, true);
+            }, 'products', `?limit=${listing.pagination.pageSize}${listing.pagination.next ? `&page_info=${listing.pagination.next}` : '&status=active'}&fields=id,handle,images,options,status`, true);
 
             let totalRecords = await services.Shopify.count({
                 shopName: credentials.shopName,
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'count', `?published_status=published`);
+            }, 'count', `?status=active`);
 
             let count = totalRecords ? Math.ceil(totalRecords.count / listing.pagination.pageSize) : null;
             const resultProducts = imageColor(response.products);
@@ -273,10 +273,12 @@ let getProductId = (credentials, productId) => {
                 apiKey: credentials.apiKey,
                 password: credentials.password,
                 version: credentials.version
-            }, 'products', productId, `?fields=id,handle,title,body_html,published_at,variants,vendor,options,images,tags`);
-            let product = resultProduct && resultProduct.product.published_at ? resultProduct.product : {};
+            }, 'products', productId, `?fields=id,handle,title,body_html,published_at,variants,vendor,options,images,tags,status`);
+            
+            let product = resultProduct && resultProduct.product.status === 'active' ? resultProduct.product : {};
             product.tax = tax ? tax : {};
-            const resultProducts = product.id ? productColor(product) : [];   
+
+            const resultProducts = product.id ? productColor(product) : [];
             let rs = {
                 data: resultProducts
             }
