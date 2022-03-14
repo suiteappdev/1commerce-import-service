@@ -140,7 +140,6 @@ let getProductId = (credentials, id) => {
     });
 }
 
-
 let getImages = (credentials, productId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -221,9 +220,5 @@ let updateWebhook = (credentials,webhookId, webhook) => {
         }
     });
 }
-
-
-
-
 
 module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId, getOrderId, addWebhook, updateWebhook };

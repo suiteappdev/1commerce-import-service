@@ -94,14 +94,14 @@ let WooCommerceProductType = new GraphQLObjectType({
         if(( obj.attributes &&  obj.attributes.length > 0 )){
         let attrs = obj.attributes;
         let color = attrs.filter(o=>(o.name.toLowerCase() === 'color' || o.name.toLowerCase() === 'color_primario'))[0];
-        return color.options ? color.options : [color.option];
+        return color ? color.options ? color.options : [color.option] : null;
       }
     }},
   size:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       if(( obj.attributes &&  obj.attributes.length > 0 )){
       let attrs = obj.attributes;
       let size = attrs.filter(o=>(o.name.toLowerCase() === 'size'))[0];
-      return size.options ? size.options : [size.option];
+      return size ? size.options ? size.options : [size.option] : 'único';
     }
   }},
     product_weight:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
@@ -133,20 +133,6 @@ let WooCommerceProductType = new GraphQLObjectType({
                 return null;
             }
             return null;
-          }
-
-          let getSize = (p)=>{
-            if(( p.attributes &&  p.attributes.length > 0 )){
-              let attrs = p.attributes;
-              let size = attrs.filter(o=>(o.name.toLowerCase() === 'talla' || o.name.toLowerCase() === 'tamaño' || o.name.toLowerCase() === 'size'));
-    
-              if(size.length > 0)
-                return size[0].options[0];
-              else
-                return 'único';
-            }
-    
-            return 'único';
           }
 
           let getweight = (p)=>{

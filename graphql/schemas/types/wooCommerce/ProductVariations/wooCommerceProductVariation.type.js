@@ -51,11 +51,11 @@ let WooCommerceProductVariationType = new GraphQLObjectType({
       if(( obj.attributes &&  obj.attributes.length > 0 )){
         let attrs = obj.attributes;
         let size = attrs.filter(o=>(o.name.toLowerCase() === 'tamano' || o.name.toLowerCase() == "peso_producto" ))[0];
-        return size ? size.options ? size.options : size.option : null;
+        return size ? size.options ? size.options : size.option : 'única';
       }
     }},
     quantity:{ type:GraphQLInt, resolve:(obj, args, context, info)=>{
-      return obj.stock_quantity || 0
+      return obj.stock_quantity && obj.stock_quantity > 0 ? obj.stock_quantity : 0
     }},
     reference:{ type:GraphQLString, resolve:(obj, args, context, info)=>{
       return obj.sku
