@@ -21,27 +21,53 @@ let init = (app, locals) => {
 let getProducts = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
+            let optionColor=[];
+            let optionMarca=[];
             let response = await services.Prestashop.getData(credentials,listing);
             let count = await services.Prestashop.getCount(credentials);
             let tax_rules = await services.Prestashop.getIdTaxes(credentials);
             let taxes = await services.Prestashop.getTaxes(credentials);
+            let attributes = await services.Prestashop.getAttributes(credentials);
+            let optionsCms = await services.Prestashop.getOptions(credentials);
 
-            if(response.products){
-                for (let i = 0; i < response.products.length; i++) {
-                    let array_id_images=response.products[i].associations.images;
+            let resultOptions = optionsCms.filter(option => option.name.toLowerCase().includes('color'))
+            let resultOptionsMarca = optionsCms.filter(option => option.name.toLowerCase().includes('marca'))
+            for (const option of resultOptions) {
+                optionColor = [...optionColor, ...option.associations.product_option_values];
+            }
+            for (const option of resultOptionsMarca) {
+                optionMarca = [...optionMarca, ...option.associations.product_option_values];
+            }
+
+            let products = response.products.filter(product => product.active == '1')
+            if(products){
+                for (let i = 0; i < products.length; i++) {
+                    for (const option of products[i].associations.product_option_values) {
+                        let optColor = optionColor.find(a => a.id == option.id);
+                        let optMarca = optionMarca.find(a => a.id == option.id);
+                        if (optColor) {
+                            let attr = attributes.product_option_values.find(a => a.id == optColor.id);
+                            products[i].color = attr.name;
+                        }
+                        if (!products[i].manufacturer_name && optMarca) {
+                            let attr = attributes.product_option_values.find(a => a.id == optMarca.id);
+                            products[i].manufacturer_name = attr.name;
+                        }
+                    }
+                    let array_id_images=products[i].associations.images;
                     let id_images=[];
-                    response.products[i].images={};
+                    products[i].images={};
                     if(array_id_images){
                         for (let index = 0; index < array_id_images.length; index++) {
                             let id_img=array_id_images[index].id;
                             let file=id_img+'.jpg';
-                            let src=credentials.url+`/${id_img}-extra_large_default/${response.products[i].link_rewrite}.jpg`;                      
+                            let src=credentials.url+`/${id_img}-extra_large_default/${products[i].link_rewrite}.jpg`;                      
                             let obj={        
                                 file,
                                 src
                             };
                             id_images.push(obj);
-                            response.products[i].images=id_images;
+                            products[i].images=id_images;
                         }
                     }else{
                         let obj={        
@@ -49,38 +75,31 @@ let getProducts = (credentials, listing) => {
                             src:''
                         };
                         id_images.push(obj);
-                        response.products[i].images=id_images; //Condicional para los productos que no tienen imagenes
+                        products[i].images=id_images; //Condicional para los productos que no tienen imagenes
                     }
-
                 }
-
-
-             
-
-            taxes.taxes.map((t)=>{
-                response.products.map((p)=>{
-                    let id_tax=tax_rules.find(tr => tr.tax_rules_group = p.id_tax_rules_group).id_tax;
-                    if((t.id)==id_tax){
-                        p.tax={
-                            name:t.name,
-                            rate:t.rate
-                        }
-                    }else{
-                        p.tax={
-                            name:null,
-                            rate:'0'
-                        }
-                    };
-            });
-
-                
-            });
-        }
+                taxes.taxes.map((t)=>{
+                    products.map((p)=>{
+                        let id_tax=tax_rules.find(tr => tr.tax_rules_group = p.id_tax_rules_group).id_tax;
+                        if((t.id)==id_tax){
+                            p.tax={
+                                name:t.name,
+                                rate:t.rate
+                            }
+                        }else{
+                            p.tax={
+                                name:null,
+                                rate:'0'
+                            }
+                        };
+                    });
+                });
+            }
             let rs = {
                 totalRecords :count.products.length,
                 pagination : response.pagination  || null,
                 pagesCount : Math.ceil((count.products.length / listing.pagination.pageSize)) ,
-                data : response.products || []
+                data : products || []
             }
             return resolve(rs);
 
@@ -95,39 +114,23 @@ let getVariations = (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
             let variations=[];
+            let optionTallas=[];
             let combinations;
             let external_id;
             let products = await services.Prestashop.getData(credentials,listing);
+            let optionsCms = await services.Prestashop.getOptions(credentials);
             let quantities = await services.Prestashop.getQuantities(credentials);
             let attributes = await services.Prestashop.getAttributes(credentials);
-            let tax_rules = await services.Prestashop.getIdTaxes(credentials);
-            let taxes = await services.Prestashop.getTaxes(credentials);
             let discounts = await services.Prestashop.getDiscounts(credentials);
             let discount_names = await services.Prestashop.getDiscountNames(credentials);
 
+            let resultOptions = optionsCms.filter(option => option.name.toLowerCase().includes('talla'))
+            for (const option of resultOptions) {
+                optionTallas = [...optionTallas, ...option.associations.product_option_values];
+            }
+
             if(products.products){
-
-                products=products.products;
-
-                for (let index = 0; index < taxes.taxes.length; index++) {
-                    for (let i = 0; i < products.length; i++) {
-                        let id_tax=tax_rules.find(tr => tr.tax_rules_group = products[i].id_tax_rules_group).id_tax;
-                        if((taxes.taxes[index].id)==id_tax){
-                            products[i].tax={
-                                name:taxes.taxes[index].name,
-                                rate:taxes.taxes[index].rate
-                            }
-                        }else{
-                            products[i].tax={
-                                name:null,
-                                rate:'0'
-                            }
-                        };
-                    }
-                }
-                
-
-                
+                products=products.products;               
                 for (let index = 0; index < products.length; index++) {
                     let discount=[];
                     let disc=discounts.filter(d => (d.id_product == products[index].id)&&(moment(moment(d.to).valueOf()).isSameOrAfter(moment().valueOf())));
@@ -154,8 +157,13 @@ let getVariations = (credentials, listing) => {
                     
                     if (combinations) {
                         for (let i = 0; i < combinations.length; i++) {
-                            let id_attr=combinations[i].associations.product_option_values[0].id;
-                            let attr=attributes.product_option_values.find(a => a.id == id_attr);
+                            for (const option of combinations[i].associations.product_option_values) {
+                                let optionTalla = optionTallas.find(a => a.id == option.id);
+                                if (optionTalla) {
+                                    let attr = attributes.product_option_values.find(a => a.id == optionTalla.id);
+                                    combinations[i].talla = attr.name;
+                                }
+                            }
                             let id_variation=combinations[i].id;
                             let quantity=quantities.find(q => q.id_product_attribute == id_variation).quantity;
                             
@@ -165,12 +173,6 @@ let getVariations = (credentials, listing) => {
                                 combinations[i].price=products[index].price;
                             }
                             
-                            
-                            if(attr.id_attribute_group=='3'){
-                                combinations[i].talla='';
-                            }else{
-                                combinations[i].talla=attr.name;
-                            }
                             variations_product.push(combinations[i]);
                         }
 
@@ -182,7 +184,6 @@ let getVariations = (credentials, listing) => {
                         variations:variations_product
                     }
                     variations.push(obj);
-
                 }
             }
             
@@ -191,11 +192,8 @@ let getVariations = (credentials, listing) => {
                 pagesCount: Math.ceil((listing.pagination.pageSize / listing.pagination.pageSize)),
                 data : variations || []
             }
-            
             return resolve(rs);
             
-
-
         } catch (error) {
             reject(error);
         }
@@ -206,25 +204,42 @@ let getProductId = (credentials, productId) => {
     const moment = require('moment');
     return new Promise(async (resolve, reject) => {
         try {
+            let optionColor=[];
+            let optionMarca=[];
+            let optionTallas=[];
             let product = await services.Prestashop.getProductId(credentials,productId);
             let tax_rules = await services.Prestashop.getIdTaxes(credentials);
             let taxes = await services.Prestashop.getTaxes(credentials);
             let discounts = await services.Prestashop.getDiscounts(credentials);
+            let optionsCms = await services.Prestashop.getOptions(credentials);
             let discount_names = await services.Prestashop.getDiscountNames(credentials);
             let quantities = await services.Prestashop.getQuantities(credentials);
             let attributes = await services.Prestashop.getAttributes(credentials);
             let combinations;
 
+            let resultOptionsTalla = optionsCms.filter(option => option.name.toLowerCase().includes('talla'))
+            let resultOptions = optionsCms.filter(option => option.name.toLowerCase().includes('color'))
+            let resultOptionsMarca = optionsCms.filter(option => option.name.toLowerCase().includes('marca'))
+
+            for (const option of resultOptions) {
+                optionColor = [...optionColor, ...option.associations.product_option_values];
+            }
+            for (const option of resultOptionsMarca) {
+                optionMarca = [...optionMarca, ...option.associations.product_option_values];
+            }
+            for (const option of resultOptionsTalla) {
+                optionTallas = [...optionTallas, ...option.associations.product_option_values];
+            }
             if(product){
-                
                 let array_id_images=product.associations.images;
+                console.log(array_id_images=product.associations.images);
                 let id_images=[];
                 product.images={};
                 if(array_id_images){
                     for (let index = 0; index < array_id_images.length; index++) {
                         let id_img=array_id_images[index].id;
                         let file=id_img+'.jpg';
-                        let src=credentials.url+`/${id_img}-extra_large_default/${product.link_rewrite}.jpg`;                      
+                        let src=credentials.url+`/${id_img}/${product.link_rewrite}.jpg`;                      
                         let obj={        
                             file,
                             src
@@ -256,6 +271,19 @@ let getProductId = (credentials, productId) => {
                     };
                 });
 
+                for (const option of product.associations.product_option_values) {
+                    let optColor = optionColor.find(a => a.id == option.id);
+                    let optMarca = optionMarca.find(a => a.id == option.id);
+                    if (optColor) {
+                        let attr = attributes.product_option_values.find(a => a.id == optColor.id);
+                        product.color = attr.name;
+                    }
+                    if (!product.manufacturer_name && optMarca) {
+                        let attr = attributes.product_option_values.find(a => a.id == optMarca.id);
+                        product.manufacturer_name = attr.name;
+                    }
+                }
+
                 let discount=[];
                 let disc=discounts.filter(d => (d.id_product == product.id)&&(moment(moment(d.to).valueOf()).isSameOrAfter(moment().valueOf())));
                 if(disc.length>1){
@@ -280,8 +308,13 @@ let getProductId = (credentials, productId) => {
                 
                 if (combinations) {
                     for (let i = 0; i < combinations.length; i++) {
-                        let id_attr=combinations[i].associations.product_option_values[0].id;
-                        let attr=attributes.product_option_values.find(a => a.id == id_attr);
+                        for (const option of combinations[i].associations.product_option_values) {
+                            let optionTalla = optionTallas.find(a => a.id == option.id);
+                            if (optionTalla) {
+                                let attr = attributes.product_option_values.find(a => a.id == optionTalla.id);
+                                combinations[i].talla = attr.name;
+                            }
+                        }
                         let id_variation=combinations[i].id;
                         let quantity=quantities.find(q => q.id_product_attribute == id_variation).quantity;
                         
@@ -291,12 +324,6 @@ let getProductId = (credentials, productId) => {
                             combinations[i].price=product.price;
                         }
                         
-                        
-                        if(attr.id_attribute_group=='3'){
-                            combinations[i].talla='';
-                        }else{
-                            combinations[i].talla=attr.name;
-                        }
                         variations_product.push(combinations[i]);
                     }
 

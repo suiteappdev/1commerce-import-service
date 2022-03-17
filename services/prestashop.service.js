@@ -31,8 +31,8 @@ let init = async (app, locals) => {
                 getStatus,
                 getAddress,
                 getCountry,
-                getState
-
+                getState,
+                getOptions
             };
 
             logger.info(`Prestashop service done.`);
@@ -537,6 +537,32 @@ let getState = (credentials, id) => {
 
         resolve(null);
 });
+}
+
+let getOptions = (credentials,id) => {
+    return new Promise(async (resolve, reject) => {
+        let response;
+        try {
+            const options = {
+                method: 'get',
+                url: credentials.url+`/api/product_options/?display=full`,
+                headers: {
+                    'Io-Format':'JSON'
+                },
+                auth:{
+                    username:credentials.apiKey
+                }
+            };
+            response = await axios(options).catch(e => reject(e));
+        } catch (error) {
+            console.log(error);
+        }
+        if(response && response.data){
+            return resolve(response.data.product_options);
+        }
+
+        resolve(null);
+    });
 }
 
 module.exports = { init };
