@@ -1,12 +1,12 @@
 const { getProductId } = require('../../../../controllers/WooCommerce.controller');
 const { getToken, validate}  = require('../../../../util/auth.util');
-const WooCommerceProductIdType  = require('../../types/wooCommerce/ProductId/woocommerceProductId.type');
+const WoocommerceProductIdType  = require('../../types/wooCommerce/ProductId/woocommerceProductIdListType');
 const {
   GraphQLString
 } = require('graphql');
 
 const WoocommerceProductIdQuery = {
-  type:  WooCommerceProductIdType,
+  type:  WoocommerceProductIdType,
   args: { productId: { type: GraphQLString} },
   resolve: (_, { productId }, context) => {
     let token = getToken(context.req);

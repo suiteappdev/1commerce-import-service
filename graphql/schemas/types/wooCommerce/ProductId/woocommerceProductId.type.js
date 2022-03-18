@@ -2,17 +2,23 @@ const {
   GraphQLObjectType
 } = require('graphql');
 
-const WooCommerceProductType = require('../../wooCommerce/Product/wooCommerceProduct.type');
-const WooCommerceProductVariationType = require('../../wooCommerce/ProductVariations/wooCommerceProductVariation.type');
-const WooCommerceProductImageType = require('../../wooCommerce/ProductImages/WooCommerceProductImage.type');
+const WoocommerceProduct = require('../Product/wooCommerceProduct.type');
+const WoocommerceProductVType = require('../ProductVariations/woocommerceProductV.type');
+const WoocommerceProductImg = require('../ProductImages/woocommerceProductImg.type');
 
-let  WooCommerceProductIdType = new GraphQLObjectType({
-  name: 'WooCommerceProductIdType',
+let WoocommerceProductIdType = new GraphQLObjectType({
+  name: 'WoocommerceProductIdType',
   fields: () => ({
-    product: {type: WooCommerceProductType, resolve: (obj, args, context, info) => {
+    product: {type: WoocommerceProduct, resolve: (obj, args, context, info) => {
       return obj;
-    }}
+    }},
+    productVariations: {type: WoocommerceProductVType, resolve: (obj, args, context, info) => {
+      return obj;
+    }},
+    productImages: {type: WoocommerceProductImg, resolve: (obj, args, context, info) => {
+      return obj;
+    }},
   }),
 });
 
-module.exports = WooCommerceProductIdType;
+module.exports = WoocommerceProductIdType;

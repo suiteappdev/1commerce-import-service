@@ -161,16 +161,50 @@ let getProductId = (credentials, id) => {
             if(!tx || tx.length == 0){
                 products.data.tax = tax.data.filter(t=>t.class === 'standard')[0];
             }
-            if (products && products.data) {
-                return resolve(products.data);
-            }
 
-            resolve([])
+            let product = products.data && products.data.status == "publish" ? products.data : {};
+            const resultProducts = product.id ? await productColor(credentials, product) : [];
+
+            let rs = {
+                data: resultProducts
+            }
+            return resolve(rs);
 
         } catch (error) {
             reject(error);
         }
     });
+}
+
+let productColor = async (credentials, product) => {
+    let resultProducts = [];
+    if (product.type == 'simple') {
+        let variations = await getVariationsProduct(credentials, product);
+        resultProducts.push({...product, variations: variations});
+    } else {
+        let existColors = getColors(product);
+        if (existColors.length > 0) {
+            const name = product.name;
+            let variationsColor = await getVariationsProduct(credentials, product);
+            for (const variat of variationsColor) {
+                let colorVariation = getColors(variat);
+                if (colorVariation.length > 0) {
+                    resultProducts.push({
+                        ...product,
+                        id: variat.id,
+                        sku: variat.sku + '-' + colorVariation[0].replace(/\s/g, ''),
+                        name: name + ' ' + colorVariation[0].replace(/\s/g, ''),
+                        images: variat.image ? [variat.image] : variat.images,
+                        variants: []
+                    });
+                }
+            }
+        } else {
+            let variations = await getVariationsProduct(credentials, product);
+            resultProducts.push({...product, variations: variations});
+        }
+    }
+    return resultProducts; 
 }
 
 let getVariations = (credentials, listing) => {
