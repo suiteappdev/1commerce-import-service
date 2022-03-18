@@ -72,7 +72,7 @@ let getProducts = (credentials, listing) => {
             });
 
         } catch (error) {
-            reject(error);
+            resolve({});
         }
     });
 }
@@ -191,7 +191,7 @@ let getVariations = (credentials, listing) => {
             resolve(rs)
             
         } catch (error) {
-            reject(error);
+            resolve({});
         }
     });
 }
@@ -228,23 +228,54 @@ let variantsColor = async (credentials, products) => {
     return resultProducts;
 }
 
-let getImages = (credentials, productId) => {
+let getImages = async (credentials, listing) => {
     return new Promise(async (resolve, reject) => {
         try {
             credentials.queryStringAuth = true;
             credentials.verifySsl =  false;
             let WooCommerce = new services.WooCommerceRestApi(credentials);
-            let product = await WooCommerce.get(`products/${productId}`);
-            if (product && product.data.images) {
-                return resolve({data: product.data.images});
-            }
+            let response = await WooCommerce.get("products", { per_page: listing.pagination.pageSize, page: listing.pagination.page });  
+            let products = response.data.filter(product => product.status == "publish")
+            products = await imageColor(credentials, products);
 
-            resolve({data: []})
+            let rs = {
+                totalRecords: (response.headers['x-wp-total']),
+                pagesCount: parseInt(response.headers['x-wp-totalpages']),
+                data: products || []
+            }
+            resolve(rs)
 
         } catch (error) {
             reject(error);
         }
     });
+}
+
+let imageColor = async (credentials, products) => {
+    let resultProducts = [];
+    for (let product of products) {
+        if (product.type == 'simple') {
+            resultProducts.push(product);
+        } else {
+            let existColors = getColors(product);
+            if (existColors.length > 0) {
+                let variationsColor = await getVariationsProduct(credentials, product);
+                for (const variat of variationsColor) {
+                    let colorVariation = getColors(variat);
+                    if (colorVariation.length > 0) {
+                        resultProducts.push({
+                            ...product,
+                            id: variat.id,
+                            images: variat.image ? [variat.image] : variat.images
+                        });
+                    }
+                }
+            } else {
+                resultProducts.push(product);
+            }
+        }
+    }
+    return resultProducts;
 }
 
 let getOrderId = (credentials, orderId) => {

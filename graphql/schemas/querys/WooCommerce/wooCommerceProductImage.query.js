@@ -1,25 +1,25 @@
-const {
-  GraphQLString,
-} = require('graphql');
 const { getImages } = require('../../../../controllers/WooCommerce.controller');
 const { getToken, validate}  = require('../../../../util/auth.util');
-const WooCommerceProductImageListType  = require('../../types/wooCommerce/ProductImages/WooCommerceProductImageListType');
+const woocommerceProductImageListType  = require('../../types/wooCommerce/ProductImages/woocommerceImageListType');
+const ListingInput = require('../../types/pagination/listingInput');
 
-const WooCommerceProductImageQuery = {
-  type:  WooCommerceProductImageListType,
-  args: { productId: { type: GraphQLString } },
-  resolve: (_, { productId }, context) => {
+const WoocommerceProductImageListQuery = {
+  type:  woocommerceProductImageListType,
+  args: { listing: { type: ListingInput } },
+  resolve: (_, { listing }, context) => {
     let token = getToken(context.req);
     let credentials = validate(token);
+    
     delete credentials.iat;
     
     if(!credentials){
       throw new Error("Auth token error");
     }
+    
     context.req = credentials;
     
-    return getImages(credentials, productId);
+    return getImages(credentials, listing);
   }
 };
   
-module.exports = WooCommerceProductImageQuery;
+module.exports = WoocommerceProductImageListQuery;
