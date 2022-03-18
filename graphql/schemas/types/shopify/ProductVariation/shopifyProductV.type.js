@@ -6,7 +6,6 @@ const {
 const moment = require('moment');
 const ShopifyProductVariationType = require('./shopifyProductVariation.type');
 const ShopifyDiscountType = require('./shopifyDiscount.type');
-// const { getDiscount} = require('../../../../../controllers/Shopify.controller');
 
 let ShopifyProductVType = new GraphQLObjectType({
   name: 'ShopifyProductVType',
@@ -15,7 +14,7 @@ let ShopifyProductVType = new GraphQLObjectType({
       return obj.id;
     }},
     reference: { type: GraphQLString, resolve: (obj, args, context, info) => {
-      return obj.id
+      return obj.handle || obj.id
     }},
     discount: {type: new GraphQLList(ShopifyDiscountType),resolve: async (obj, args, context, info)=>{
       let disc = [];

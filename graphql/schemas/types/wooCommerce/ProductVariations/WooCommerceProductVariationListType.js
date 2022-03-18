@@ -1,17 +1,19 @@
 const {
   GraphQLObjectType,
-  GraphQLList
+  GraphQLInt,
+  GraphQLList,
+  GraphQLString
 } = require('graphql');
 
-const WooCommerceProductVariationType = require('./wooCommerceProductVariation.type');
-const WooCommerceProductType = require('../Product/wooCommerceProduct.type');
+const WoocommerceProductVType = require('./woocommerceProductV.type');
+
 const WooCommerceProductVariationListType = new GraphQLObjectType({
   name: 'WooCommerceProductVariationListType',
   fields: () => ({
-    data: { type: new GraphQLList(WooCommerceProductType), resolve:(obj, args, context, info)=>{
-      return obj;
-    }},
-  })
+    totalRecords: { type: GraphQLInt },
+    pagesCount: { type: GraphQLInt },
+    data: { type: new GraphQLList(WoocommerceProductVType) },
+  }),
 });
 
 module.exports = WooCommerceProductVariationListType;

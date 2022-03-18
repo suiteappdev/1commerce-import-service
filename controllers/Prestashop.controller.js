@@ -232,7 +232,6 @@ let getProductId = (credentials, productId) => {
             }
             if(product){
                 let array_id_images=product.associations.images;
-                console.log(array_id_images=product.associations.images);
                 let id_images=[];
                 product.images={};
                 if(array_id_images){
