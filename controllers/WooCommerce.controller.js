@@ -374,4 +374,4 @@ let updateWebhook = (credentials,webhookId, webhook) => {
     });
 }
 
-module.exports = { init, getPagination, getProducts, getVariations, getImages, getProductId, getOrderId, addWebhook, updateWebhook };
+module.exports = { init, getPagination, getProducts, getVariations,getVariationsProduct, getImages, getProductId, getOrderId, addWebhook, updateWebhook };

@@ -6,6 +6,7 @@ const {
 const moment = require('moment');
 const WoocommerceProductVariationType = require('./woocommerceProductVariation.type');
 const WoocommerceDiscountType = require('./woocommerceDiscount.type');
+const { getVariationsProduct } = require('../../../../../controllers/WooCommerce.controller');
 
 let WoocommerceProductVType = new GraphQLObjectType({
   name: 'WoocommerceProductVType',
@@ -37,16 +38,21 @@ let WoocommerceProductVType = new GraphQLObjectType({
       }
       return disc
     }},
-    variations:{ type:new GraphQLList(WoocommerceProductVariationType), resolve:(obj, args, context, info)=>{      
+    variations:{ type:new GraphQLList(WoocommerceProductVariationType), resolve: async(obj, args, context, info)=>{      
       if (!obj.variations || obj.variations.length === 0) {
-        let price = obj.regular_price ? parseInt(obj.regular_price == "" ? 0 : obj.regular_price) :  parseInt(obj.price);
-        return [{
-          sku: obj.sku,
-          ean13: obj.ean13 || '0',
-          price: price,
-          talla: 'única',
-          stock_quantity: obj.stock_quantity || 0
-        }]
+        let variations = await getVariationsProduct(context.req, obj);
+        if (variations.length === 0) {
+          let price = obj.regular_price ? parseInt(obj.regular_price == "" ? 0 : obj.regular_price) :  parseInt(obj.price);
+          return [{
+            sku: obj.sku,
+            ean13: obj.ean13 || '0',
+            price: price,
+            talla: 'única',
+            stock_quantity: obj.stock_quantity || 0
+          }]
+        } else {
+          return variations
+        }
       }
       return obj.variations
     }},
