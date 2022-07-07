@@ -29,7 +29,7 @@
     "jsonwebtoken": "^8.5.1",
     "limiter": "^2.1.0",
     "log4js": "^0.6.37",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "morgan": "^1.10.0",
     "promise-ratelimit": "0.0.3",
     "queue": "^6.0.2",
